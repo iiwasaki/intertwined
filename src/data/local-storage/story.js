@@ -8,6 +8,12 @@ manually. This minimizes the number of writes to local storage.
 let { createStory } = require('../actions/story');
 let { passageDefaults, storyDefaults } = require('../store/story');
 let commaList = require('./comma-list');
+const { PutItemCommand, DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+
+let creds = {accessKeyId: "foo"}
+
+const dynamodb = new DynamoDBClient({region: "local", endpoint: "http://localhost:8000", credentials: creds});
+
 
 const story = module.exports = {
 	/*
@@ -37,7 +43,10 @@ const story = module.exports = {
 		if (!story.id) {
 			throw new Error('Story has no id');
 		}
-		
+		else {
+			console.log("My story");
+			console.log(story.id);
+		}
 		transaction.storyIds = commaList.addUnique(
 			transaction.storyIds,
 			story.id
@@ -48,12 +57,34 @@ const story = module.exports = {
 		as those are serialized under separate keys.
 		*/
 
+		
 		window.localStorage.setItem(
 			'twine-stories-' + story.id,
 			JSON.stringify(
 				Object.assign({}, story, { passages: undefined })
 			)
 		);
+		
+
+		// Testing adding to database
+		var params = {
+			TableName: "Stories",
+			Item: {
+				storyid: { S: "MyID"},
+				content: { S: "mycontent"}
+			}
+		};
+		var command = new PutItemCommand(params);
+		const run = async() => {
+			try {
+				const data = dynamodb.send(command);
+				console.log(data);
+			}
+			catch (error){
+				console.log("Error saving!!!");
+			}
+		};
+		run();
 	},
 
 	/*
@@ -110,6 +141,11 @@ const story = module.exports = {
 
 	load(store) {
 		let stories = {};
+
+		/* Test to see if we can grab stories from the database
+		*/
+
+
 		const serializedStories = window.localStorage.getItem('twine-stories');
 
 		if (!serializedStories) {
