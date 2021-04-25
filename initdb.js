@@ -21,6 +21,20 @@ var params = {
     }
 };
 
+var paramsForPassages = {
+    TableName: "Passages",
+    KeySchema: [
+        {AttributeName: "passageid", KeyType: "HASH"}
+    ],
+    AttributeDefinitions: [
+        {AttributeName: "passageid", AttributeType: "S"}
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 10,
+        WriteCapacityUnits: 10
+    }
+}
+
 async function run() {
     try {
         const data = await dynamodb.send(new CreateTableCommand(params));
@@ -30,4 +44,15 @@ async function run() {
         console.log("Error", err);
     }
 };
+
+async function runPassage(){
+    try{
+        const data = await dynamodb.send(new CreateTableCommand(paramsForPassages));
+        console.log("Passages Success", data);
+    }
+    catch (err) {
+        console.log("Error", err);
+    }
+};
 run();
+runPassage();
