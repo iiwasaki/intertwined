@@ -8,7 +8,7 @@ const package = require('./package.json');
 
 const isRelease = process.env.NODE_ENV === 'production';
 const useCdn = process.env.USE_CDN === 'y';
-const useElectron = process.env.USE_ELECTRON === 'y';
+const useElectron = process.env.USE_ELECTRON === 'n';
 
 const config = (module.exports = {
 	mode: isRelease ? 'production' : 'development',
