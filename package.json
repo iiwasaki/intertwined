@@ -11,11 +11,9 @@
 	"browserslist": "iOS 1-12, last 2 versions",
 	"main": "src/electron/index.js",
 	"scripts": {
-		"build": "npm-run-all -l --parallel build:cdn build:electron build:web --serial build:build-number",
+		"build": "npm-run-all -l --parallel build:cdn build:web --serial build:build-number",
 		"build:build-number": "node scripts/build-number.js",
 		"build:cdn": "cross-env NODE_ENV=production USE_CDN=y webpack",
-		"build:electron": "cross-env NODE_ENV=production USE_ELECTRON=y webpack && electron-builder -mwl",
-		"build:electron-dev": "cross-env USE_ELECTRON=y webpack --progress && electron .",
 		"build:web": "cross-env NODE_ENV=production webpack",
 		"clean": "rimraf dist/",
 		"lint": "eslint src/ || exit 0",
