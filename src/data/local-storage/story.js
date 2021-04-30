@@ -5,9 +5,14 @@ time. As a result, saving requires that you start and end a transaction
 manually. This minimizes the number of writes to local storage.
 */
 
+
 let { createStory } = require('../actions/story');
 let { passageDefaults, storyDefaults } = require('../store/story');
 let commaList = require('./comma-list');
+const FirebaseHandler = require('../firebase-handler').default;
+
+
+
 
 const story = module.exports = {
 	/*
@@ -37,16 +42,17 @@ const story = module.exports = {
 		if (!story.id) {
 			throw new Error('Story has no id');
 		}
-		
 		transaction.storyIds = commaList.addUnique(
 			transaction.storyIds,
 			story.id
 		);
 
-		/*
+		// Save the story to Firebase
+		FirebaseHandler.saveStory(story);
+
+		/* Code from original Twine
 		We have to remove the passages property before serializing the story,
 		as those are serialized under separate keys.
-		*/
 
 		window.localStorage.setItem(
 			'twine-stories-' + story.id,
@@ -54,6 +60,7 @@ const story = module.exports = {
 				Object.assign({}, story, { passages: undefined })
 			)
 		);
+		*/
 	},
 
 	/*
@@ -65,9 +72,10 @@ const story = module.exports = {
 		if (!story.id) {
 			throw new Error('Story has no id');
 		}
-		
 		transaction.storyIds = commaList.remove(transaction.storyIds, story.id);
-		window.localStorage.removeItem('twine-stories-' + story.id);
+
+		FirebaseHandler.deleteStory(story);
+		//window.localStorage.removeItem('twine-stories-' + story.id);
 	},
 
 	/* Saves a passage to local storage. */
@@ -76,16 +84,16 @@ const story = module.exports = {
 		if (!passage.id) {
 			throw new Error('Passage has no id');
 		}
-		
+
 		transaction.passageIds = commaList.addUnique(
 			transaction.passageIds,
 			passage.id
 		);
-
+		/*
 		window.localStorage.setItem(
 			'twine-passages-' + passage.id,
 			JSON.stringify(passage)
-		);
+		);*/
 	},
 
 	/* Deletes a passage from local storage. */
@@ -105,112 +113,107 @@ const story = module.exports = {
 			transaction.passageIds,
 			id
 		);
-		window.localStorage.removeItem('twine-passages-' + id);
+		//window.localStorage.removeItem('twine-passages-' + id);
 	},
 
 	load(store) {
-		let stories = {};
-		const serializedStories = window.localStorage.getItem('twine-stories');
+		// let stories = {};
+		// const serializedStories = window.localStorage.getItem('twine-stories');
+		// if (!serializedStories) {
+		// 	console.log("No stories on load!");
+		// 	return;
+		// }
 
-		if (!serializedStories) {
-			return;
-		}
+		// /*
+		// First, deserialize stories. We index them by id so that we can quickly
+		// add passages to them as they are deserialized.
+		// */
 
-		/*
-		First, deserialize stories. We index them by id so that we can quickly
-		add passages to them as they are deserialized.
-		*/
+		// serializedStories.split(',').forEach(id => {
+		// 	let newStory = JSON.parse(
+		// 		window.localStorage.getItem('twine-stories-' + id)
+		// 	);
 
-		serializedStories.split(',').forEach(id => {
-			let newStory = JSON.parse(
-				window.localStorage.getItem('twine-stories-' + id)
-			);
+		// 	if (newStory) {
+		// 		/* Set defaults if any are missing. */
 
-			if (newStory) {
-				/* Set defaults if any are missing. */
-
-				Object.keys(storyDefaults).forEach(key => {
-					if (newStory[key] === undefined) {
-						newStory[key] = storyDefaults[key];
-					}
-				});
+		// 		Object.keys(storyDefaults).forEach(key => {
+		// 			if (newStory[key] === undefined) {
+		// 				newStory[key] = storyDefaults[key];
+		// 			}
+		// 		});
 				
-				/* Coerce the lastUpdate property to a date. */
+		// 		/* Coerce the lastUpdate property to a date. */
 				
-				if (newStory.lastUpdate) {
-					newStory.lastUpdate = new Date(
-						Date.parse(newStory.lastUpdate)
-					);
-				}
-				else {
-					newStory.lastUpdate = new Date();
-				}
+		// 		if (newStory.lastUpdate) {
+		// 			newStory.lastUpdate = new Date(
+		// 				Date.parse(newStory.lastUpdate)
+		// 			);
+		// 		}
+		// 		else {
+		// 			newStory.lastUpdate = new Date();
+		// 		}
 				
-				/*
-				Force the passages property to be an empty array -- we'll
-				populate it when we load passages below.
-				*/
+		// 		/*
+		// 		Force the passages property to be an empty array -- we'll
+		// 		populate it when we load passages below.
+		// 		*/
 
-				newStory.passages = [];
+		// 		newStory.passages = [];
 
-				stories[newStory.id] = newStory;
-			}
-			else {
-				console.warn(
-					`Could not parse story ${id}, skipping`,
-					window.localStorage.getItem('twine-stories-' + id)
-				);
-			}
-		});
+		// 		stories[newStory.id] = newStory;
+		// 	}
+		// 	else {
+		// 		console.warn(
+		// 			`Could not parse story ${id}, skipping`,
+		// 			window.localStorage.getItem('twine-stories-' + id)
+		// 		);
+		// 	}
+		// });
 
-		/* Then create passages, adding them to their parent story. */
+		// /* Then create passages, adding them to their parent story. */
 
-		const serializedPassages = window.localStorage.getItem('twine-passages');
+		// const serializedPassages = window.localStorage.getItem('twine-passages');
 
-		if (serializedPassages) {
-			serializedPassages.split(',').forEach(id => {
-				let newPassage = JSON.parse(
-					window.localStorage.getItem('twine-passages-' + id)
-				);
+		// if (serializedPassages) {
+		// 	serializedPassages.split(',').forEach(id => {
+		// 		let newPassage = JSON.parse(
+		// 			window.localStorage.getItem('twine-passages-' + id)
+		// 		);
 
-				if (!newPassage || !newPassage.story) {
-					console.warn(
-						`Passage ${id} did not have parent story id, skipping`,
-						newPassage
-					);
-					return;
-				}
+		// 		if (!newPassage || !newPassage.story) {
+		// 			console.warn(
+		// 				`Passage ${id} did not have parent story id, skipping`,
+		// 				newPassage
+		// 			);
+		// 			return;
+		// 		}
 
-				if (!stories[newPassage.story]) {
-					console.warn(
-						`Passage ${id} is orphaned (looking for ` +
-						`${newPassage.story}), skipping`
-					);
-					return;
-				}
+		// 		if (!stories[newPassage.story]) {
+		// 			console.warn(
+		// 				`Passage ${id} is orphaned (looking for ` +
+		// 				`${newPassage.story}), skipping`
+		// 			);
+		// 			return;
+		// 		}
 
-				/* Set defaults if any are missing. */
+		// 		/* Set defaults if any are missing. */
 
-				Object.keys(passageDefaults).forEach(key => {
-					if (newPassage[key] === undefined) {
-						newPassage[key] = passageDefaults[key];
-					}
-				});
+		// 		Object.keys(passageDefaults).forEach(key => {
+		// 			if (newPassage[key] === undefined) {
+		// 				newPassage[key] = passageDefaults[key];
+		// 			}
+		// 		});
 
-				/* Remove empty tags. */
+		// 		/* Remove empty tags. */
 
-				newPassage.tags = newPassage.tags.filter(
-					tag => tag.length && tag.length > 0
-				);
+		// 		newPassage.tags = newPassage.tags.filter(
+		// 			tag => tag.length && tag.length > 0
+		// 		);
 
-				stories[newPassage.story].passages.push(newPassage);
-			});
-		}
-
-		/* Finally, we dispatch actions to add the stories to the store. */
-
-		Object.keys(stories).forEach(id => {
-			createStory(store, stories[id]);
-		});
+		// 		stories[newPassage.story].passages.push(newPassage);
+		// 	});
+		// }
+		FirebaseHandler.loadStories(store);
 	}
 };

@@ -31,6 +31,7 @@ module.exports = store => {
 
 		switch (mutation.type) {
 			case 'CREATE_STORY':
+				console.log("We are in Create Story");
 				story.update(transaction => {
 					story.saveStory(
 						transaction,
