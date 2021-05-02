@@ -54,7 +54,14 @@ export default class {
         db.collection("stories").get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
-                console.log(typeof(loadedStory.id));
+                console.log("Date, ", loadedStory.lastUpdate);
+                /* Coerce the lastUpdate property to a date. */
+		 		if (loadedStory.lastUpdate) {
+		 			loadedStory.lastUpdate = loadedStory.lastUpdate.toDate();
+		 		}
+                 else {
+                    loadedStory.lastUpdate = new Date();
+                 }
                 stories[loadedStory.id] = loadedStory;
                 createStory(store, loadedStory);
             });
