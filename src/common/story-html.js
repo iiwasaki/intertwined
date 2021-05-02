@@ -7,19 +7,18 @@ asynchronous.
 const {loadFormat} = require('../data/actions/story-format');
 const locale = require('../locale');
 const {publishStoryWithFormat} = require('../data/publish');
+const FirebaseHandler = require('../data/firebase-handler').default;
 
 module.exports = {
-	getStoryPlayHtml(store, storyId) {
-		const story = store.state.story.stories.find(
-			story => story.id === storyId
-		);
+	async getStoryPlayHtml(store, storyId) {
+		const story = await FirebaseHandler.loadStoryById(storyId);
 
 		if (!story) {
 			throw new Error(
 				locale.say('There is no story with ID %s.', storyId)
 			);
 		}
-
+		console.log("Format version update: ", story);
 		return loadFormat(
 			store,
 			story.storyFormat,
@@ -29,10 +28,8 @@ module.exports = {
 		);
 	},
 
-	getStoryProofingHtml(store, storyId) {
-		const story = store.state.story.stories.find(
-			story => story.id === storyId
-		);
+	async getStoryProofingHtml(store, storyId) {
+		const story = await FirebaseHandler.loadStoryById(storyId);
 
 		if (!story) {
 			throw new Error(
@@ -49,10 +46,8 @@ module.exports = {
 		);
 	},
 
-	getStoryTestHtml(store, storyId, startPassageId) {
-		const story = store.state.story.stories.find(
-			story => story.id === storyId
-		);
+	async getStoryTestHtml(store, storyId, startPassageId) {
+		const story = await FirebaseHandler.loadStoryById(storyId);
 
 		if (!story) {
 			throw new Error(

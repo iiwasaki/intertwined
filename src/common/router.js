@@ -6,10 +6,11 @@ const LocaleView = require('../locale/view');
 const StoryEditView = require('../story-edit-view');
 const StoryListView = require('../story-list-view');
 const WelcomeView = require('../welcome');
-const locale = require('../locale'); 
+const locale = require('../locale');
 const { getStoryPlayHtml, getStoryProofingHtml, getStoryTestHtml } = require('./story-html');
 const replaceUI = require('../ui/replace');
 const store = require('../data/store');
+const FirebaseHandler = require('../data/firebase-handler').default;
 
 Vue.use(VueRouter);
 

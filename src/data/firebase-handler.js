@@ -19,6 +19,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const storyCollection = db.collection("stories");
 
 export default class {
 
@@ -30,7 +31,7 @@ export default class {
     // Saves an entire story object; could grow to be pretty huge if the story gets big.
     // Should think about deconstructing story to be story + references to passages
     static saveStory(story){
-        db.collection("stories").doc(story.id).set(story).then(() => {
+        storyCollection.doc(story.id).set(story).then(() => {
             console.log("Story successfully saved.");
         })
         .catch((error) => {
@@ -40,7 +41,7 @@ export default class {
 
     // Delete an entire story object.
     static deleteStory(story){
-        db.collection("stories").doc(story.id).delete().then(() => {
+        storyCollection.doc(story.id).delete().then(() => {
             console.log("Story successfully deleted.");
         })
         .catch((error) => {
@@ -51,10 +52,9 @@ export default class {
     // Load all of the stories stored in the stories collection
     static loadStories(store){
         let stories = {};
-        db.collection("stories").get().then((doc) => {
+        storyCollection.get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
-                console.log("Date, ", loadedStory.lastUpdate);
                 /* Coerce the lastUpdate property to a date. */
 		 		if (loadedStory.lastUpdate) {
 		 			loadedStory.lastUpdate = loadedStory.lastUpdate.toDate();
@@ -68,5 +68,18 @@ export default class {
         }).catch((error) => {
             console.error("Error getting document: ", error);
         });
+    }
+
+    // Grab and return a singular story based off of ID
+    static async loadStoryById(id) {
+        try {
+            const query = await storyCollection.doc(id).get().then((result) => {
+                return result.data();
+            });
+            return query;
+        }
+        catch (error){
+            console.error("Error loading story: ", error);
+        }
     }
 }
