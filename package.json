@@ -23,6 +23,7 @@
 		"test:watch": "jest --watch"
 	},
 	"dependencies": {
+		"@babel/polyfill": "^7.12.1",
 		"blob-polyfill": "^1.0.20150320",
 		"browser-saveas": "^1.0.0",
 		"codemirror": "^5.5.0",
