@@ -5,6 +5,7 @@ import firebase from 'firebase/app';
 import "firebase/analytics";
 import "firebase/firestore";
 import actions, { createStory } from "./actions/story";
+import regeneratorRuntime from "regenerator-runtime";
 
 // Config file unique to this app that points to the Firebase project
 const firebaseConfig = {
