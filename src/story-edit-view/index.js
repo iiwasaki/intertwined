@@ -1,7 +1,7 @@
 /* The main view where story editing takes place. */
 
 const values = require('lodash.values');
-const Vue = require('vue');
+import Vue from 'vue';
 const { confirm } = require('../dialogs/confirm');
 const { createPassage, deletePassage, positionPassage, updatePassage } = require('../data/actions/passage');
 const { loadFormat } = require('../data/actions/story-format');
@@ -10,6 +10,7 @@ const domEvents = require('../vue/mixins/dom-events');
 const locale = require('../locale');
 const { passageDefaults } = require('../data/store/story');
 const zoomSettings = require('./zoom-settings');
+const FirebaseHandler = require('../data/firebase-handler').default;
 
 require('./index.less');
 
@@ -19,7 +20,7 @@ A memoized, sorted array of zoom levels used when zooming in or out.
 
 const zoomLevels = values(zoomSettings).sort();
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	/* The id of the story we're editing is provided by the router. */
@@ -146,6 +147,7 @@ module.exports = Vue.extend({
 		},
 
 		story() {
+			FirebaseHandler.listenToStory(this.storyId);
 			return this.allStories.find(story => story.id === this.storyId);
 		},
 

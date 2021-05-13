@@ -1,11 +1,11 @@
-const Vue = require('vue');
+import Vue from 'vue';
 const without = require('lodash.without');
 const { setTagColorInStory } = require('../../../../data/actions/story');
 const { updatePassage } = require('../../../../data/actions/passage');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	props: {
 		tag: {
 			type: String,

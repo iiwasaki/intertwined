@@ -1,4 +1,4 @@
-const Vue = require('vue');
+import Vue from 'vue';
 const { loadFormat } = require('../../data/actions/story-format');
 const locale = require('../../locale');
 const notify = require('../../ui/notify');
@@ -6,7 +6,7 @@ const semverUtils = require('semver-utils');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

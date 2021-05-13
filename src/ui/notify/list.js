@@ -1,7 +1,7 @@
 // This is a list of notifications at the top of the page. See index.js for the
 // public API for this.
 
-const Vue = require('vue');
+import Vue from 'vue';
 
 require('./list.less');
 
@@ -9,7 +9,7 @@ require('./list.less');
 
 const APPEAR_DURATION = 3000;
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./list.html'),
 
 	data: () => ({

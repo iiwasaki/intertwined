@@ -2,14 +2,14 @@
 A modal which shows aggregrate statistics for a story.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const moment = require('moment');
 const linkParser = require('../../data/link-parser');
 const locale = require('../../locale');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

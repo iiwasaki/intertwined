@@ -2,12 +2,12 @@
 A component showing a single search result.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { updatePassage } = require('../../data/actions/passage');
 
 require('./result.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./result.html'),
 	
 	props: {

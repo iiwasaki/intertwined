@@ -1,14 +1,17 @@
 // The main app running the show.
 
 'use strict';
-const Vue = require('vue');
-const ui = require('../../ui');
+import Vue from 'vue';
+import ui from '../../ui';
 const {repairFormats} = require('../../data/actions/story-format');
 const {repairStories} = require('../../data/actions/story');
-const store = require('../../data/store');
+import store from '../../data/store';
+import router from '../router';
 
-module.exports = Vue.extend({
-	template: '<div><router-view></router-view></div>',
+export default new Vue({
+	el: "#main",
+	router: router,
+	template: '<router-view></router-view>',
 
 	ready() {
 		ui.init();

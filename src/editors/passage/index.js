@@ -3,7 +3,7 @@ A modal dialog for editing a single passage.
 */
 
 const CodeMirror = require('codemirror');
-const Vue = require('vue');
+import Vue from 'vue';
 const locale = require('../../locale');
 const { thenable } = require('../../vue/mixins/thenable');
 const { changeLinksInStory, updatePassage } = require('../../data/actions/passage');
@@ -22,7 +22,7 @@ Expose CodeMirror to story formats, currently for Harlowe compatibility.
 
 window.CodeMirror = CodeMirror;
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

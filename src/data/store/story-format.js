@@ -16,7 +16,7 @@ module.exports = {
 		formats: []
 	},
 
-	mutations: {
+	actions: {
 		CREATE_FORMAT(state, props) {
 			let newFormat = Object.assign({}, formatDefaults, props);
 

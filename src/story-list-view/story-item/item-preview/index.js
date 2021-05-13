@@ -4,7 +4,7 @@
 **/
 
 'use strict';
-const Vue = require('vue');
+import Vue from 'vue';
 
 const passageCenterOffset = 50;
 
@@ -12,7 +12,7 @@ function passageRadius(length, longestLength) {
 	return (200 + 200 * (length / longestLength)) / 2;
 }
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

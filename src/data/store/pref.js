@@ -2,7 +2,7 @@
 // over-engieneered, as it is designed to be compatible with Twine 2.0 data
 // structures, where each preference had to have its own ID.
 
-module.exports = {
+export default {
 	state: {
 		appTheme: 'light',
 		defaultFormat: 'Harlowe',
@@ -20,9 +20,10 @@ module.exports = {
 		welcomeSeen: false,
 	},
 
-	mutations: {
-		UPDATE_PREF(state, name, value) {
-			state[name] = value;
+	mutations:{
+		UPDATE_PREF(state, payload) {
+			state[payload.name] = payload.value;
 		}
-	}
+	},
+
 };

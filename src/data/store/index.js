@@ -2,21 +2,27 @@
 The main module managing the application's Vuex state and mutations.
 */
 
-const Vue = require('vue');
-const Vuex = require('vuex');
-const isElectron = require('../../electron/is-electron');
+import Vue from 'vue';
+import Vuex from 'vuex';
+import {vuexfireMutations, firestoreAction} from 'vuexfire';
+import db from "../firebase-handler";
+import prefs from './pref';
+import appInfo from './app-info';
+import story from './story';
+import storyFormat from './story-format';
+import localstorage from '../local-storage';
 
 Vue.use(Vuex);
 
-module.exports = new Vuex.Store({
+export default new Vuex.Store({
 	modules: {
-		appInfo: require('./app-info'),
-		pref: require('./pref'),
-		story: require('./story'),
-		storyFormat: require('./story-format')
+		appInfo: appInfo,
+		pref: prefs,
+		story: story,
+		storyFormat: storyFormat
 	},
 
 	plugins: [
-		isElectron() ? require('../file-system') : require('../local-storage')
+		localstorage
 	]
 });

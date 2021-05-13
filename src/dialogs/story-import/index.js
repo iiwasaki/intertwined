@@ -3,14 +3,14 @@ A dialog which allows a user to import a story from a file. This returns a
 promise resolving to the stories that were imported, if any.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { deleteStory, importStory } = require('../../data/actions/story');
 const importHTML = require('../../data/import');
 const load = require('../../file/load');
 const locale = require('../../locale');
 const { thenable } = require('../../vue/mixins/thenable');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

@@ -1,12 +1,12 @@
 // Shows a single story format, with a radio button to allow the user to
 // choose it.
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { updateStory } = require('../../data/actions/story');
 
 require('./item.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./item.html'),
 
 	props: {

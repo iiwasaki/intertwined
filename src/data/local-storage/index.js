@@ -9,14 +9,14 @@ This pattern is emulated, even with structures (like prefs) that don't need
 this, for compatibility.
 */
 
-const pref = require('./pref');
+import pref from './pref';
 const story = require('./story');
 const storyFormat = require('./story-format');
 
 let enabled = true;
 let previousStories;
 
-module.exports = store => {
+export default function(store) {
 	enabled = false;
 	pref.load(store);
 	story.load(store);
@@ -30,8 +30,10 @@ module.exports = store => {
 		}
 
 		switch (mutation.type) {
+			case 'ADD_STORY_TO_LIST':
+				state.story.stories.push(mutation.payload[0]);
+				break;
 			case 'CREATE_STORY':
-				console.log("We are in Create Story");
 				story.update(transaction => {
 					story.saveStory(
 						transaction,
@@ -163,6 +165,7 @@ module.exports = store => {
 			}
 
 			case 'UPDATE_PREF':
+				console.log("Updating preference");
 				pref.save(store);
 				break;
 

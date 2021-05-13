@@ -6,16 +6,18 @@
 **/
 
 'use strict';
-const Vue = require('vue');
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
 const locale = require('../locale');
 const {check: checkForAppUpdate} = require('../dialogs/app-update');
 const {check: checkForDonation} = require('../dialogs/app-donation');
 const isElectron = require('../electron/is-electron');
 const ImportDialog = require('../dialogs/story-import');
+import listToolbar from './list-toolbar';
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {
@@ -40,6 +42,25 @@ module.exports = Vue.extend({
 	}),
 
 	computed: {
+		...mapGetters(["stories"]),
+		byDateClass: function() {
+			return 'subtle' + (this.storyOrder === 'lastUpdate' ? ' active' : '');
+		},
+		byNameClass: function() {
+			return 'subtle' + (this.storyOrder === 'name' ? ' active' : '');
+		},
+		lastUpdatei: function() {
+			return 'fa fa-sort-amount-' + this.storyOrderDir;
+		},
+		namei : function() {
+			return 'fa fa-sort-alpha-' + this.storyOrderDir;
+		},
+		lastUpdateTitle: function() {
+			return 'Last changed date' | locale.say();
+		},
+		nameTitle: function(){
+			return 'Story name' | locale.say();
+		},
 		showBrowserWarning() {
 			if (!/Safari\//.test(navigator.userAgent)) {
 				return false;
@@ -199,7 +220,7 @@ module.exports = Vue.extend({
 
 	components: {
 		'story-item': require('./story-item'),
-		'list-toolbar': require('./list-toolbar'),
+		'list-toolbar': listToolbar,
 		'file-drag-n-drop': require('../ui/file-drag-n-drop')
 	},
 
@@ -224,10 +245,4 @@ module.exports = Vue.extend({
 			}).$mountTo(document.body);
 		}
 	},
-
-	vuex: {
-		getters: {
-			stories: state => state.story.stories
-		}
-	}
 });

@@ -3,7 +3,7 @@ This is an gauge that shows how much space is available in the user's local
 storage. It's only applicable when the app is running in a Web browser.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const isElectron = require('../../electron/is-electron');
 const locale = require('../../locale');
 
@@ -11,7 +11,7 @@ require('./index.less');
 
 const CHUNK_SIZE = 102400;
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

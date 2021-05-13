@@ -2,8 +2,9 @@
 Preference-related actions.
 */
 
-module.exports = {
+export default {
 	setPref({ dispatch }, name, value) {
+		console.log("In setPref in actions/pref.js");
 		dispatch('UPDATE_PREF', name, value);
 	}
 };

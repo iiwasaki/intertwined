@@ -7,7 +7,6 @@ const latestFormatVersions = require('../latest-format-versions');
 
 const actions = (module.exports = {
 	createStory(store, props) {
-		console.log("Making story...");
 		let normalizedProps = Object.assign({}, props);
 
 		/* If a format isn't specified, use the default one. */

@@ -1,15 +1,15 @@
 /* Shows a modal dialog asking for a text response from the user. */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const locale = require('../../locale');
 const { thenable } = require('../../vue/mixins/thenable');
 
 require('./index.less');
 
-const prompter = module.exports = {
+const prompter = {
 	component: Vue.extend({
 		template: require('./index.html'),
-		
+
 		data: () => ({
 			message: '',
 			response: '',
@@ -66,7 +66,7 @@ const prompter = module.exports = {
 				/*
 				False results are produced by the close button and the cancel
 				button. If the result is false, convert it into a rejection.
-				
+
 				Note: this may change in the future, as using rejections for
 				negative results is somewhat unidiomatic.
 				*/
@@ -80,3 +80,5 @@ const prompter = module.exports = {
 		);
 	}
 };
+
+export default prompter;

@@ -7,6 +7,8 @@ const uuid = require('tiny-uuid');
 const locale = require('../../locale');
 const idFor = require('../id');
 const ui = require('../../ui');
+const {vuexfireMutations, firestoreAction} = require('vuexfire');
+const db = require("../firebase-handler").db;
 
 /*
 A shorthand function for finding a particular story in the state, or a
@@ -33,12 +35,25 @@ function getPassageInStory(story, id) {
 	return passage;
 }
 
-const storyStore = (module.exports = {
+const storyStore = {
 	state: {
 		stories: []
 	},
 
 	mutations: {
+		ADD_STORY_TO_LIST(state, payload){
+			state.stories.push(payload);
+		}
+	},
+
+	getters: {
+		stories: state => {
+			return state.stories;
+		}
+	},
+
+	actions: {
+
 		CREATE_STORY(state, props) {
 			let story = Object.assign(
 				{
@@ -56,7 +71,7 @@ const storyStore = (module.exports = {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
 
-			state.stories.push(story);
+			state.commit("ADD_STORY_TO_LIST", story);
 		},
 
 		UPDATE_STORY(state, id, props) {
@@ -242,4 +257,5 @@ const storyStore = (module.exports = {
 			? locale.say('Tap this passage, then the pencil icon to edit it.')
 			: locale.say('Double-click this passage to edit it.')
 	}
-});
+};
+export default storyStore;

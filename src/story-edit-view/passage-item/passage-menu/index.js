@@ -1,13 +1,13 @@
 /* A contextual menu that appears when the user points at a passage. */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const {testStory} = require('../../../common/launch-story');
 const {updatePassage} = require('../../../data/actions/passage');
 const {updateStory} = require('../../../data/actions/story');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

@@ -3,12 +3,12 @@ A modal which allows the user to perform find and replace on a array of
 passages.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const escapeRegexp = require('lodash.escaperegexp');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

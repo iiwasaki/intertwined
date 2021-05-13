@@ -1,6 +1,6 @@
 // Shows a dialog asking the user to make a donation.
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { setPref } = require('../../data/actions/pref');
 
 require('./index.less');
@@ -10,7 +10,7 @@ require('./index.less');
 
 const DONATION_DELAY = 1000 * 60 * 60 * 24 * 14;
 
-const donation = module.exports = {
+const donation = {
 	check(store) {
 		const now = new Date().getTime();
 
@@ -41,3 +41,4 @@ const donation = module.exports = {
 	})
 };
 
+export default donation;

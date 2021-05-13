@@ -3,7 +3,7 @@ A generic modal dialog component. This implements the Thenable mixin and
 resolves itself when it is closed.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const domEvents = require('../../vue/mixins/dom-events');
 const { thenable, symbols: { reject, resolve } } =
 	require('../../vue/mixins/thenable');
@@ -17,7 +17,7 @@ const animationEndEvents = [
 
 require('./index.less');
 
-const ModalDialog = module.exports = Vue.extend({
+const ModalDialog = Vue.extend({
 	template: require('./index.html'),
 
 	props: {
@@ -117,6 +117,36 @@ const ModalDialog = module.exports = Vue.extend({
 				e.preventDefault();
 				this.close();
 			}
+		},
+
+		beforeEnter: function(el) {
+			let overlay = el.querySelector('#modal-overlay');
+			let dialog = el.querySelector('.modal-dialog');
+
+			overlay.classList.add('fade-in-out-transition', 'fade-in-out-enter');
+			dialog.classList.add('grow-in-out-enter');
+
+			dialog.addEventListener('animationend', function() {
+				dialog.classList.remove('grow-in-out-enter');
+			});
+		},
+
+		enter: function(el, done) {
+			let overlay = el.querySelector('#modal-overlay');
+
+			Vue.nextTick(() => {
+				overlay.classList.remove('fade-in-out-enter');
+				overlay.addEventListener('transitionend', done);
+			});
+		},
+
+		leave: function(el, done) {
+			let overlay = el.querySelector('#modal-overlay');
+			let dialog = el.querySelector('.modal-dialog');
+
+			dialog.classList.add('grow-in-out-leave');
+			overlay.classList.add('fade-in-out-leave');
+			overlay.addEventListener('transitionend', done);
 		}
 	},
 
@@ -135,38 +165,5 @@ const ModalDialog = module.exports = Vue.extend({
 	mixins: [domEvents, thenable]
 });
 
-/*
-We have to transition in our individual parts through a custom transition.
-*/
 
-ModalDialog.transition('modal-dialog', {
-	beforeEnter: function(el) {
-		let overlay = el.querySelector('#modal-overlay');
-		let dialog = el.querySelector('.modal-dialog');
-
-		overlay.classList.add('fade-in-out-transition', 'fade-in-out-enter');
-		dialog.classList.add('grow-in-out-enter');
-
-		dialog.addEventListener('animationend', function() {
-			dialog.classList.remove('grow-in-out-enter');
-		});
-	},
-
-	enter: function(el, done) {
-		let overlay = el.querySelector('#modal-overlay');
-
-		Vue.nextTick(() => {
-			overlay.classList.remove('fade-in-out-enter');
-			overlay.addEventListener('transitionend', done);
-		});
-	},
-
-	leave: function(el, done) {
-		let overlay = el.querySelector('#modal-overlay');
-		let dialog = el.querySelector('.modal-dialog');
-
-		dialog.classList.add('grow-in-out-leave');
-		overlay.classList.add('fade-in-out-leave');
-		overlay.addEventListener('transitionend', done);
-	}
-});
+export default ModalDialog;

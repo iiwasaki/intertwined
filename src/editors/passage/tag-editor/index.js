@@ -1,10 +1,10 @@
 /* An editor for adding and removing tags from a passage. */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { updatePassage } = require('../../../data/actions/passage');
 const uniq = require('lodash.uniq');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	data: () => ({
 		newVisible: false
 	}),

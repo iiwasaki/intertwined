@@ -1,11 +1,11 @@
 // A lightweight Vue component that wraps a CodeMirror instance.
 
-const Vue = require('vue');
+import Vue from 'vue';
 const CodeMirror = require('codemirror');
 
 require('./codemirror-theme.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: '<div></div>',
 
 	props: ['options', 'text'],

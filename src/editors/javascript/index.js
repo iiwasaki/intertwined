@@ -1,13 +1,13 @@
 // A component showing a modal dialog where a story's JavaSCript.
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { updateStory } = require('../../data/actions/story');
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/display/placeholder');
 require('codemirror/addon/hint/show-hint');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

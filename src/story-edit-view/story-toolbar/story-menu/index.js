@@ -1,7 +1,7 @@
 // A drop-down menu with miscellaneous editing options for a story.
 
 const escape = require('lodash.escape');
-const Vue = require('vue');
+import Vue from 'vue';
 const FormatDialog = require('../../../dialogs/story-format');
 const JavaScriptEditor = require('../../../editors/javascript');
 const StatsDialog = require('../../../dialogs/story-stats');
@@ -15,7 +15,7 @@ const save = require('../../../file/save');
 const {selectPassages} = require('../../../data/actions/passage');
 const {updateStory} = require('../../../data/actions/story');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

@@ -7,14 +7,14 @@
 **/
 
 'use strict';
-const Vue = require('vue');
-const scroll = require('scroll');
+import Vue from 'vue';
+import scroll from 'scroll';
 const isElectron = require('../electron/is-electron');
-const {setPref} = require('../data/actions/pref');
+import setPref from '../data/actions/pref';
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({
@@ -38,8 +38,12 @@ module.exports = Vue.extend({
 		},
 
 		finish() {
-			this.setPref('welcomeSeen', true);
-			window.location.hash = '#stories';
+			this.$store.commit("UPDATE_PREF", {name: 'welcomeSeen', value: true});
+			this.$router.push('/stories');
+		},
+
+		parseIntoHtml(text) {
+			return `${text}`;
 		}
 	},
 
@@ -48,4 +52,5 @@ module.exports = Vue.extend({
 			setPref
 		}
 	}
+
 });

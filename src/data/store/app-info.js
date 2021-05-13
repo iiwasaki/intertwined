@@ -5,7 +5,7 @@ on metadata embedded in the HTML during the compilation process.
 
 const htmlEl = document.querySelector('html');
 
-module.exports = {
+export default {
 	state: {
 		name: htmlEl.getAttribute('data-app-name'),
 		version: htmlEl.getAttribute('data-version'),

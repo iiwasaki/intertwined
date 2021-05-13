@@ -3,12 +3,12 @@ Manages a drag-and-drop-target on a component. When a file is dragged onto it,
 this component dispatches a `file-drag-n-drop` event to its parent.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const domEvents = require('../../vue/mixins/dom-events');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	data: () => ({

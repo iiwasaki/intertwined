@@ -3,12 +3,12 @@ Draws connector lines between passages.
 */
 
 const uniq = require('lodash.uniq');
-const Vue = require('vue');
+import Vue from 'vue';
 const linkParser = require('../../data/link-parser');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

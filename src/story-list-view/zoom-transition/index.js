@@ -1,11 +1,11 @@
 'use strict';
-const Vue = require('vue');
+import Vue from 'vue';
 const { ZOOM_MAPPINGS } = require('../../story-edit-view');
 const { thenable, symbols:{ resolve } } = require('../../vue/mixins/thenable');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	data: () => ({
 		zoom: 0,
 		x: window.innerWidth / 2,

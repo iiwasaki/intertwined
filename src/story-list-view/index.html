@@ -16,15 +16,15 @@
 			<label>{{ 'Sort By' | say }}</label>
 
 			<span class="button-group">
-				<button class="{{ 'subtle' + (storyOrder === 'lastUpdate' ? ' active' : '') }}" @click="sortByDate" title="{{ 'Last changed date' | say }}">
+				<button v-bind:class="byDateClass" @click="sortByDate" v-bind:title="lastUpdateTitle">
 					{{ 'Edit Date' | say }}
 
-					<i class="fa fa-sort-amount-{{storyOrderDir}}" v-if="storyOrder === 'lastUpdate'"></i>
+					<i v-bind:class="lastUpdatei" v-if="storyOrder === 'lastUpdate'"></i>
 				</button>
 
-				<button class="{{ 'subtle' + (storyOrder === 'name' ? ' active' : '') }}" @click="sortByName" title="{{ 'Story name' | say }}">
+				<button v-bind:class="byNameClass" @click="sortByName" title="nameTitle">
 					{{ 'Name' | say }}
-					<i class="fa fa-sort-alpha-{{storyOrderDir}}" v-if="storyOrder === 'name'"></i>
+					<i v-bind:class="namei" v-if="storyOrder === 'name'"></i>
 				</button>
 			</span>
 		</p>

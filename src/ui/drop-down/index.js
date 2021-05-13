@@ -2,13 +2,13 @@
 // button used to trigger the menu.
 
 const Drop = require('tether-drop');
-const Vue = require('vue');
+import Vue from 'vue';
 const { hasPrimaryTouchUI } = require('../index');
 const domEvents = require('../../vue/mixins/dom-events');
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

@@ -3,7 +3,7 @@ A single passage in the story map.
 */
 
 const escape = require('lodash.escape');
-const Vue = require('vue');
+import Vue from 'vue';
 const PassageEditor = require('../../editors/passage');
 const { confirm } = require('../../dialogs/confirm');
 const domEvents = require('../../vue/mixins/dom-events');
@@ -19,7 +19,7 @@ const {
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

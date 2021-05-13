@@ -2,12 +2,12 @@
 Allows the user to pick what locale they would like to use.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const isElectron = require('../../electron/is-electron');
 const {setPref} = require('../../data/actions/pref');
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 	data: () => ({
 		/* The locales we offer with their codes. */

@@ -1,7 +1,7 @@
 // Handles the cog menu for a single story.
 
 const escape = require('lodash.escape');
-const Vue = require('vue');
+import Vue from 'vue';
 const {confirm} = require('../../../dialogs/confirm');
 const {
 	deleteStory,
@@ -15,7 +15,7 @@ const locale = require('../../../locale');
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

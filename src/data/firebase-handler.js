@@ -19,7 +19,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+export const db = firebase.firestore();
 const storyCollection = db.collection("stories");
 
 export default class {
@@ -52,7 +52,6 @@ export default class {
 
     // Load all of the stories stored in the stories collection
     static loadStories(store){
-        let stories = {};
         storyCollection.get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
@@ -63,7 +62,6 @@ export default class {
                  else {
                     loadedStory.lastUpdate = new Date();
                  }
-                stories[loadedStory.id] = loadedStory;
                 createStory(store, loadedStory);
             });
         }).catch((error) => {
@@ -82,5 +80,12 @@ export default class {
         catch (error){
             console.error("Error loading story: ", error);
         }
+    }
+
+    static listenToStory(id){
+        storyCollection.doc(id).onSnapshot((result) => {
+            console.log("Current story: ", result.data());
+            return result.data();
+        });
     }
 }

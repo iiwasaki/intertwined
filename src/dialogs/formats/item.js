@@ -1,5 +1,5 @@
 'use strict';
-const Vue = require('vue');
+import Vue from 'vue';
 const locale = require('../../locale');
 const { confirm } = require('../confirm');
 const { deleteFormat } = require('../../data/actions/story-format');
@@ -7,7 +7,7 @@ const { setPref } = require('../../data/actions/pref');
 
 require('./item.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./item.html'),
 
 	props: {

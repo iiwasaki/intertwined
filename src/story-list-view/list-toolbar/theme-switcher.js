@@ -2,10 +2,10 @@
 A toggle between light and dark themes.
 */
 
-const Vue = require('vue');
+import Vue from 'vue';
 const { setPref } = require('../../data/actions/pref');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./theme-switcher.html'),
 
 	methods: {

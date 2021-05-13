@@ -1,8 +1,8 @@
-const Vue = require('vue');
+import Vue from 'vue';
 
 require('./index.less');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	data: () => ({
 		origin: null
 	}),

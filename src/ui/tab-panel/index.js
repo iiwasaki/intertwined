@@ -1,8 +1,8 @@
 // A container for tabs.
 
-const Vue = require('vue');
+import Vue from 'vue';
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {

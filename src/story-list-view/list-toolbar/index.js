@@ -1,6 +1,6 @@
 // The side toolbar of a story list.
 
-const Vue = require('vue');
+import Vue from 'vue';
 const AboutDialog = require('../../dialogs/about');
 const FormatsDialog = require('../../dialogs/formats');
 const ImportDialog = require('../../dialogs/story-import');
@@ -11,7 +11,7 @@ const {prompt} = require('../../dialogs/prompt');
 const {publishArchive} = require('../../data/publish');
 const saveFile = require('../../file/save');
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: require('./index.html'),
 
 	methods: {

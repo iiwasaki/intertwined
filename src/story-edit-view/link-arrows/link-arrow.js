@@ -1,4 +1,4 @@
-const Vue = require('vue');
+import Vue from 'vue';
 const rect = require('../../common/rect');
 
 /*
@@ -17,7 +17,7 @@ function arc(props) {
 		end.left + ',' + end.top;
 }
 
-module.exports = Vue.extend({
+export default Vue.extend({
 	template: '<path :d="pathString" class="marker-{{markerType}}"></path>',
 
 	props: {

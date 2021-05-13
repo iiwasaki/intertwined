@@ -6,7 +6,7 @@
 
 'use strict';
 const locale = require('../../locale');
-const Vue = require('vue');
+import Vue from 'vue';
 const { thenable } = require('../../vue/mixins/thenable');
 
 require('./index.less');
@@ -22,7 +22,7 @@ require('./index.less');
 						 buttonLabel (HTML label for the button)
 **/
 
-const confirmation = module.exports = {
+const confirmation = {
 	component: Vue.extend({
 		template: require('./index.html'),
 
@@ -80,3 +80,4 @@ const confirmation = module.exports = {
 		);
 	}
 };
+export default confirmation;
