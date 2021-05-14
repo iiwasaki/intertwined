@@ -8,14 +8,14 @@
 'use strict';
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-const locale = require('../locale');
+import locale from '../locale';
 const {check: checkForAppUpdate} = require('../dialogs/app-update');
 const {check: checkForDonation} = require('../dialogs/app-donation');
 const isElectron = require('../electron/is-electron');
-const ImportDialog = require('../dialogs/story-import');
+import ImportDialog from '../dialogs/story-import';
 import listToolbar from './list-toolbar';
-
-require('./index.less');
+import storyitem from './story-item';
+import filedragndrop from '../ui/file-drag-n-drop';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -43,24 +43,32 @@ export default Vue.extend({
 
 	computed: {
 		...mapGetters(["stories"]),
-		byDateClass: function() {
+		byDateClass() {
 			return 'subtle' + (this.storyOrder === 'lastUpdate' ? ' active' : '');
 		},
-		byNameClass: function() {
+		byNameClass() {
 			return 'subtle' + (this.storyOrder === 'name' ? ' active' : '');
 		},
-		lastUpdatei: function() {
+		lastUpdatei() {
 			return 'fa fa-sort-amount-' + this.storyOrderDir;
 		},
-		namei : function() {
+		namei() {
 			return 'fa fa-sort-alpha-' + this.storyOrderDir;
 		},
-		lastUpdateTitle: function() {
-			return 'Last changed date' | locale.say();
+		lastUpdateTitle() {
+			return locale.say('Last changed date');
 		},
-		nameTitle: function(){
-			return 'Story name' | locale.say();
+		nameTitle() {
+			return locale.say('Story name');
 		},
+		sortBySay(){
+			return locale.say('Sort By');
+		},
+		dropImportSay(){
+			return locale.say('Drop a story file to import');
+		},
+
+
 		showBrowserWarning() {
 			if (!/Safari\//.test(navigator.userAgent)) {
 				return false;
@@ -219,9 +227,9 @@ export default Vue.extend({
 	},
 
 	components: {
-		'story-item': require('./story-item'),
+		'story-item': storyitem,
 		'list-toolbar': listToolbar,
-		'file-drag-n-drop': require('../ui/file-drag-n-drop')
+		'file-drag-n-drop': filedragndrop,
 	},
 
 	events: {

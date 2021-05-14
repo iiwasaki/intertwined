@@ -91,6 +91,30 @@ export default Vue.extend({
 		}
 	},
 
+	computed: {
+		newStoryTitle() {
+			return locale.say('Create a brand-new story');
+		},
+		importStoryTitle() {
+			return locale.say('Import a published story or Twine archive');
+		},
+		saveArchiveTitle() {
+			return locale.say('Save all stories to a Twine archive file');
+		},
+		workWithProofingTitle(){
+			return locale.say('Work with story and proofing formats');
+		},
+		changeLanguageTitle() {
+			return locale.say('Change the language Twine uses');
+		},
+		helpTitle() {
+			return locale.say('Browse online help');
+		},
+		sayStory() {
+			return locale.say('Story');
+		}
+	},
+
 	components: {
 		'quota-gauge': require('../../ui/quota-gauge'),
 		'theme-switcher': require('./theme-switcher')

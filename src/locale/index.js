@@ -2,20 +2,19 @@
 Manages localizing strings, dates, and times.
 */
 
-const jsonp = require('jsonp');
-const Jed = require('jed');
-const moment = require('moment');
+import jsonp from 'jsonp';
+import Jed from 'jed';
+import moment from 'moment';
 
 /*
 The Jed instance used to localize strings.
 */
-let i8n;
+var i18n;
 
-const Locale = (module.exports = {
+const Locale = {
 	/*
-	Loads gettext strings via AJAX and sets 
+	Loads gettext strings via AJAX and sets
 	*/
-
 	loadViaAjax(locale) {
 		return new Promise(resolve => {
 			/*
@@ -30,12 +29,12 @@ const Locale = (module.exports = {
 			}
 
 			/* Attempt to fetch the locale data. */
-
 			jsonp(
 				`locale/${locale}.js`,
 				{name: 'locale', timeout: 1000},
 				(err, data) => {
 					if (err) {
+						console.error(err);
 						Locale.loadDefault();
 						resolve();
 					} else {
@@ -125,4 +124,6 @@ const Locale = (module.exports = {
 			return sourcePlural.replace(/%d/g, count);
 		}
 	}
-});
+};
+
+export default Locale;

@@ -5,7 +5,7 @@
 		<span v-else>Please archive your stories and use another platform. Please see <a href="https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/">this WebKit blog post</a> for technical details.</span>
 	</p>
 
-	<file-drag-n-drop>{{ 'Drop a story file to import' | say}}</file-drag-n-drop>
+	<file-drag-n-drop>{{ dropImportSay }}</file-drag-n-drop>
 
 	<list-toolbar></list-toolbar>
 
@@ -13,7 +13,7 @@
 		<h1>{{ storyCountDesc }}</h1>
 
 		<p>
-			<label>{{ 'Sort By' | say }}</label>
+			<label>{{ sortBySay }}</label>
 
 			<span class="button-group">
 				<button v-bind:class="byDateClass" @click="sortByDate" v-bind:title="lastUpdateTitle">

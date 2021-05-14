@@ -1,4 +1,4 @@
-require('./index.less');
+import './index.less';
 
 /*
 The main entry point for the application.
@@ -10,21 +10,21 @@ Load Vue extensions as early as possible so that they're available to
 everything.
 */
 
-const localeFilters = require('./vue/filters/locale');
-const mountMixin = require('./vue/mixins/mount-to');
-const mouseScrollingDirective = require('./vue/directives/mouse-scrolling');
+import localeFilters from './vue/filters/locale';
+import mountMixin from './vue/mixins/mount-to';
+import mouseScrollingDirective from './vue/directives/mouse-scrolling';
 
 Vue.mixin({mountMixin});
 localeFilters.addTo(Vue);
 mouseScrollingDirective.addTo(Vue);
 
-const locale = require('./locale');
-const notify = require('./ui/notify');
+import locale from './locale';
+import notify from './ui/notify';
 import store from './data/store';
-const TwineApp = require('./common/app');
+import TwineApp from './common/app';
 import TwineRouter from './common/router';
 
-require('core-js');
+import 'core-js';
 
 /* Start the application after loading the appropriate locale data. */
 
@@ -43,32 +43,33 @@ if (localeUrlMatch) {
 	userLocale = store.state.pref.locale;
 }
 
-// if (typeof userLocale === 'string') {
-// 	/* Load the locale, then start the application. */
+if (typeof userLocale === 'string') {
+	/* Load the locale, then start the application. */
 
-// 	locale.loadViaAjax(userLocale.toLowerCase()).then(() => {
-// 		TwineRouter.start(TwineApp, '#main');
-// 	});
-// } else {
-// 	/*
-// 	Something has gone pretty wrong; fall back to English as a last resort.
-// 	*/
+	locale.loadViaAjax(userLocale.toLowerCase()).then(() => {
+		//TwineRouter.start(TwineApp, '#main');
+		// No need for starting router anymore with upgraded Vue
+	});
+} else {
+	/*
+	Something has gone pretty wrong; fall back to English as a last resort.
+	*/
 
-// 	locale.load('en').then(() => {
-// 		TwineRouter.start(TwineApp, '#main');
+	locale.load('en').then(() => {
+		//TwineRouter.start(TwineApp, '#main');
 
-// 		Vue.nextTick(() => {
-// 			/*
-// 			The message below is not localized because if we've reached
-// 			this step, localization is not working.
-// 			*/
+		Vue.nextTick(() => {
+			/*
+			The message below is not localized because if we've reached
+			this step, localization is not working.
+			*/
 
-// 			notify(
-// 				'Your locale preference has been reset to English due ' +
-// 					'to a technical problem.<br>Please change it with the ' +
-// 					'<b>Language</b> option in the story list.',
-// 				'danger'
-// 			);
-// 		});
-// 	});
-// }
+			notify(
+				'Your locale preference has been reset to English due ' +
+					'to a technical problem.<br>Please change it with the ' +
+					'<b>Language</b> option in the story list.',
+				'danger'
+			);
+		});
+	});
+}

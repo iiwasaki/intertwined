@@ -3,12 +3,12 @@ A Vuex module for working with stories. This is meant to be incorporated by
 index.js.
 */
 
-const uuid = require('tiny-uuid');
-const locale = require('../../locale');
-const idFor = require('../id');
-const ui = require('../../ui');
-const {vuexfireMutations, firestoreAction} = require('vuexfire');
-const db = require("../firebase-handler").db;
+import uuid from 'tiny-uuid';
+import locale from '../../locale';
+import idFor from '../id';
+import ui from '../../ui';
+import {vuexfireMutations, firestoreAction} from 'vuexfire';
+import db from "../firebase-handler";
 
 /*
 A shorthand function for finding a particular story in the state, or a
