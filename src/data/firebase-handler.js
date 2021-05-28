@@ -62,7 +62,7 @@ export default class {
                  else {
                     loadedStory.lastUpdate = new Date();
                  }
-                createStory(store, loadedStory);
+                store.commit("ADD_STORY_TO_LIST", loadedStory);
             });
         }).catch((error) => {
             console.error("Error getting document: ", error);

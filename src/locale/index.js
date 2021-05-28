@@ -27,7 +27,6 @@ const Locale = {
 				resolve();
 				return;
 			}
-
 			/* Attempt to fetch the locale data. */
 			jsonp(
 				`locale/${locale}.js`,

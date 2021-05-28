@@ -10,5 +10,10 @@ export default {
 		name: htmlEl.getAttribute('data-app-name'),
 		version: htmlEl.getAttribute('data-version'),
 		buildNumber: parseInt(htmlEl.getAttribute('data-build-number'))
+	},
+	getters: {
+		appInfo: state => {
+			return state;
+		}
 	}
 };

@@ -1,15 +1,17 @@
 // The side toolbar of a story list.
 
 import Vue from 'vue';
-const AboutDialog = require('../../dialogs/about');
+import AboutDialog from '../../dialogs/about';
 const FormatsDialog = require('../../dialogs/formats');
 const ImportDialog = require('../../dialogs/story-import');
 const {createStory} = require('../../data/actions/story');
 const isElectron = require('../../electron/is-electron');
-const locale = require('../../locale');
+import locale from '../../locale';
 const {prompt} = require('../../dialogs/prompt');
 const {publishArchive} = require('../../data/publish');
 const saveFile = require('../../file/save');
+import {mapGetters} from 'vuex';
+import themeswitcher from './theme-switcher';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -92,6 +94,9 @@ export default Vue.extend({
 	},
 
 	computed: {
+		...mapGetters({
+			appInfo: 'appInfo'
+		}),
 		newStoryTitle() {
 			return locale.say('Create a brand-new story');
 		},
@@ -110,14 +115,25 @@ export default Vue.extend({
 		helpTitle() {
 			return locale.say('Browse online help');
 		},
-		sayStory() {
+		storySay() {
 			return locale.say('Story');
+		},
+		twineSay() {
+			return locale.say('Twine');
+		},
+		importSay(){
+			return locale.say
+		}
+	},
+
+	filters: {
+		say: (message) => {
+			return locale.say(message);
 		}
 	},
 
 	components: {
-		'quota-gauge': require('../../ui/quota-gauge'),
-		'theme-switcher': require('./theme-switcher')
+		'theme-switcher': themeswitcher,
 	},
 
 	vuex: {
@@ -126,7 +142,6 @@ export default Vue.extend({
 		},
 
 		getters: {
-			appInfo: state => state.appInfo,
 			existingStories: state => state.story.stories
 		}
 	}

@@ -43,17 +43,7 @@ const storyStore = {
 	mutations: {
 		ADD_STORY_TO_LIST(state, payload){
 			state.stories.push(payload);
-		}
-	},
-
-	getters: {
-		stories: state => {
-			return state.stories;
-		}
-	},
-
-	actions: {
-
+		},
 		CREATE_STORY(state, props) {
 			let story = Object.assign(
 				{
@@ -70,9 +60,18 @@ const storyStore = {
 			if (story.passages) {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
-
-			state.commit("ADD_STORY_TO_LIST", story);
+			console.log("Committing action to story?");
+			state.stories.push(story);
 		},
+	},
+
+	getters: {
+		stories: state => {
+			return state.stories;
+		}
+	},
+
+	actions: {
 
 		UPDATE_STORY(state, id, props) {
 			let story = getStoryById(state, id);
@@ -145,6 +144,7 @@ const storyStore = {
 		},
 
 		CREATE_PASSAGE_IN_STORY(state, storyId, props) {
+			console.log("Create passage in story story.js");
 			/*
 			uuid is used here as a salt so that passages always contain unique
 			IDs in Electron (which otherwise uses deterministic IDs based on

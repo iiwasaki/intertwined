@@ -20,6 +20,12 @@ export default {
 		welcomeSeen: false,
 	},
 
+	getters: {
+		themePref: state => {
+			return state.appTheme;
+		}
+	},
+
 	mutations:{
 		UPDATE_PREF(state, payload) {
 			state[payload.name] = payload.value;

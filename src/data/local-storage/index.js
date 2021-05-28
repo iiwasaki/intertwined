@@ -10,8 +10,8 @@ this, for compatibility.
 */
 
 import pref from './pref';
-const story = require('./story');
-const storyFormat = require('./story-format');
+import story from './story';
+import storyFormat from './story-format';
 
 let enabled = true;
 let previousStories;
@@ -31,7 +31,7 @@ export default function(store) {
 
 		switch (mutation.type) {
 			case 'ADD_STORY_TO_LIST':
-				state.story.stories.push(mutation.payload[0]);
+				console.log("In local storage add story - we don't need anymore. This is not doing anything. Will clean later.");
 				break;
 			case 'CREATE_STORY':
 				story.update(transaction => {
@@ -165,7 +165,7 @@ export default function(store) {
 			}
 
 			case 'UPDATE_PREF':
-				console.log("Updating preference");
+				console.log("Updating preference - delete me, I'm in local-storage index.js");
 				pref.save(store);
 				break;
 

@@ -14,6 +14,7 @@ const {prompt} = require('../../../dialogs/prompt');
 const locale = require('../../../locale');
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
+import dropdown from '../../../ui/drop-down';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -26,7 +27,7 @@ export default Vue.extend({
 	},
 
 	components: {
-		'drop-down': require('../../../ui/drop-down')
+		'drop-down': dropdown,
 	},
 
 	methods: {
@@ -74,7 +75,7 @@ export default Vue.extend({
 		 @method confirmDelete
 		**/
 
-		delete() {
+		deleteStory() {
 			confirm({
 				message: locale.say(
 					'Are you sure you want to delete &ldquo;%s&rdquo;? ' +

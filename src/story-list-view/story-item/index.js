@@ -3,9 +3,11 @@
 // detailed changes.
 
 'use strict';
-const moment = require('moment');
+import moment from 'moment';
 import Vue from 'vue';
-const ZoomTransition = require('../zoom-transition');
+import ZoomTransition from '../zoom-transition';
+import itempreview from './item-preview';
+import itemmenu from './item-menu';
 
 require('./index.less');
 
@@ -20,8 +22,8 @@ export default Vue.extend({
 	},
 
 	components: {
-		'item-preview': require('./item-preview'),
-		'item-menu': require('./item-menu')
+		'item-preview': itempreview,
+		'item-menu': itemmenu,
 	},
 
 	computed: {

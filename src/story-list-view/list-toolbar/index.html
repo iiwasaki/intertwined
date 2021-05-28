@@ -1,10 +1,10 @@
 <nav class="listControls">
-	<h1 class="logo">{{ 'Twine' | say }}</h1>
+	<h1 class="logo">{{ twineSay }}</h1>
 
 	<ul class="plain">
 		<li>
 			<button class="create block" @click="createStoryPrompt" v-bind:title="newStoryTitle">
-				<i class="fa fa-plus"></i> {{ sayStory }}
+				<i class="fa fa-plus"></i> {{ storySay }}
 			</button>
 		</li>
 		<li>
@@ -37,10 +37,6 @@
 	<footer>
 		<p>
 			<theme-switcher></theme-switcher>
-		</p>
-
-		<p>
-			<quota-gauge></quota-gauge>
 		</p>
 
 		<p>

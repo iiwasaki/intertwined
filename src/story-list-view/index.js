@@ -9,9 +9,6 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import locale from '../locale';
-const {check: checkForAppUpdate} = require('../dialogs/app-update');
-const {check: checkForDonation} = require('../dialogs/app-donation');
-const isElectron = require('../electron/is-electron');
 import ImportDialog from '../dialogs/story-import';
 import listToolbar from './list-toolbar';
 import storyitem from './story-item';
@@ -41,6 +38,12 @@ export default Vue.extend({
 		storyOrderDir: 'asc'
 	}),
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	computed: {
 		...mapGetters(["stories"]),
 		byDateClass() {
@@ -55,20 +58,6 @@ export default Vue.extend({
 		namei() {
 			return 'fa fa-sort-alpha-' + this.storyOrderDir;
 		},
-		lastUpdateTitle() {
-			return locale.say('Last changed date');
-		},
-		nameTitle() {
-			return locale.say('Story name');
-		},
-		sortBySay(){
-			return locale.say('Sort By');
-		},
-		dropImportSay(){
-			return locale.say('Drop a story file to import');
-		},
-
-
 		showBrowserWarning() {
 			if (!/Safari\//.test(navigator.userAgent)) {
 				return false;
@@ -166,19 +155,6 @@ export default Vue.extend({
 
 		if (this.appearFast) {
 			return;
-		}
-
-		/*
-		Otherwise, we check to see if we should ask for a donation, and then an
-		app update...
-		*/
-
-		if (
-			!this.appearFast &&
-			!checkForDonation(this.$store) &&
-			isElectron()
-		) {
-			checkForAppUpdate(this.$store);
 		}
 
 		/*

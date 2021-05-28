@@ -1,10 +1,10 @@
 // A component which wraps a dropdown menu. This must be a direct child of the
 // button used to trigger the menu.
 
-const Drop = require('tether-drop');
+import Drop from 'tether-drop';
 import Vue from 'vue';
-const { hasPrimaryTouchUI } = require('../index');
-const domEvents = require('../../vue/mixins/dom-events');
+import hasPrimaryTouchUI from '../index';
+import domEvents from '../../vue/mixins/dom-events';
 
 require('./index.less');
 
@@ -12,7 +12,7 @@ export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {
-		class: {
+		childClass: {
 			type: String,
 			default: ''
 		},
@@ -72,7 +72,7 @@ export default Vue.extend({
 			content: this.$el,
 			position: this.position,
 			openOn: openOn,
-			classes: this.class,
+			classes: this.childClass,
 			constrainToWindow: false,
 			constrainToScrollParent: false,
 			tetherOptions
