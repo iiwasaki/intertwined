@@ -5,14 +5,14 @@
 **/
 
 'use strict';
-const fastclick = require('fastclick');
+import fastclick from 'fastclick';
 
 require('./index.less');
 
-let inited = false;
-let fastclickInstance;
+var inited = false;
+var fastclickInstance;
 
-module.exports = {
+export default {
 	/**
 	 Performs one-time startup tasks, mainly setting up event listeners.
 	 The heavy lifting is done in submodules or jQuery plugins living

@@ -1,8 +1,8 @@
 // Handles the cog menu for a single story.
 
-const escape = require('lodash.escape');
+import escape from 'lodash.escape';
 import Vue from 'vue';
-const {confirm} = require('../../../dialogs/confirm');
+import confirm from '../../../dialogs/confirm';
 const {
 	deleteStory,
 	duplicateStory,
@@ -11,7 +11,7 @@ const {
 const {loadFormat} = require('../../../data/actions/story-format');
 const {playStory, testStory} = require('../../../common/launch-story');
 const {prompt} = require('../../../dialogs/prompt');
-const locale = require('../../../locale');
+import locale from  '../../../locale';
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
 import dropdown from '../../../ui/drop-down';

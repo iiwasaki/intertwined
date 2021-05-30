@@ -3,7 +3,7 @@
 
 import Drop from 'tether-drop';
 import Vue from 'vue';
-import hasPrimaryTouchUI from '../index';
+import ui from '../index';
 import domEvents from '../../vue/mixins/dom-events';
 
 require('./index.less');
@@ -33,11 +33,11 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		let openOn = this.openOn;
 		const target = this.$el.parentNode;
 
-		if (hasPrimaryTouchUI() && openOn === 'click') {
+		if ( ui.hasPrimaryTouchUI() && openOn === 'click') {
 			/*
 			FastClick interferes with Drop's native handling -- we have to
 			handle it manually.
@@ -83,13 +83,13 @@ export default Vue.extend({
 		components can signal to us to close or reposition the drop.
 		*/
 
-		this.$drop.on('open', () => {
-			this.$dispatch('drop-down-opened', this);
-		});
+		// this.$drop.on('open', () => {
+		// 	this.$dispatch('drop-down-opened', this);
+		// });
 
-		this.$drop.on('close', () => {
-			this.$dispatch('drop-down-closed', this);
-		});
+		// this.$drop.on('close', () => {
+		// 	this.$dispatch('drop-down-closed', this);
+		// });
 
 		/*
 		Close the dropdown when one of its menu items is clicked, unless any
@@ -128,6 +128,5 @@ export default Vue.extend({
 			this.$drop.position();
 		}
 	},
-	
 	mixins: [domEvents]
 });
