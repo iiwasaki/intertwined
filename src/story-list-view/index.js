@@ -14,6 +14,8 @@ import listToolbar from './list-toolbar';
 import storyitem from './story-item';
 import filedragndrop from '../ui/file-drag-n-drop';
 
+require('./index.less');
+
 export default Vue.extend({
 	template: require('./index.html'),
 

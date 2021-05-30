@@ -4,7 +4,7 @@ this component dispatches a `file-drag-n-drop` event to its parent.
 */
 
 import Vue from 'vue';
-const domEvents = require('../../vue/mixins/dom-events');
+import domEvents from '../../vue/mixins/dom-events';
 
 require('./index.less');
 
