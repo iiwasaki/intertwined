@@ -85,17 +85,15 @@ export default Vue.extend({
 
 		edit() {
 			const pos = this.$el.getBoundingClientRect();
-
 			new ZoomTransition({
 				data: {
 					x: pos.left + pos.width / 2,
-					y: pos.top
-				}
-			})
-				.$mountTo(this.$el)
-				.then(
-					() => (window.location.hash = '#stories/' + this.story.id)
-				);
+					y: pos.top,
+				},
+			}).$mountTo(this.$el)
+			.then(
+				() => (this.$router.push('/stories/' + this.story.id))
+			);
 		}
 	}
 });

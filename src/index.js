@@ -14,7 +14,7 @@ import localeFilters from './vue/filters/locale';
 import mountMixin from './vue/mixins/mount-to';
 import mouseScrollingDirective from './vue/directives/mouse-scrolling';
 
-Vue.mixin({mountMixin});
+Vue.mixin(mountMixin);
 localeFilters.addTo(Vue);
 mouseScrollingDirective.addTo(Vue);
 

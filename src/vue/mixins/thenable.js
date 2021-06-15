@@ -9,14 +9,13 @@ const Symbol = (window.Symbol || Math.random);
 
 /* These are symbols that key to "private" component methods. */
 
-const symbols = {
+export const symbols = {
 	resolve: Symbol(),
 	reject: Symbol(),
 };
 
-module.exports = {
-	thenable: {
-		init() {
+export const thenable = {
+		beforeCreate() {
 			const promise = new Promise((resolve, reject) => {
 				/*
 				These methods should be private (to the instance), but the only
@@ -47,7 +46,4 @@ module.exports = {
 					_catch(this[symbols.reject]);
 				});
 		},
-	},
-
-	symbols
 };

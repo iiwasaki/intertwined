@@ -4,9 +4,8 @@ resolves itself when it is closed.
 */
 
 import Vue from 'vue';
-const domEvents = require('../../vue/mixins/dom-events');
-const { thenable, symbols: { reject, resolve } } =
-	require('../../vue/mixins/thenable');
+import domEvents from '../../vue/mixins/dom-events';
+import {thenable, symbols} from '../../vue/mixins/thenable';
 
 const animationEndEvents = [
 	'animationend',
@@ -152,12 +151,12 @@ const ModalDialog = Vue.extend({
 
 	events: {
 		close(message) {
-			this[resolve](message);
+			this[symbols.resolve](message);
 			this.$destroy(true);
 		},
 
 		reject(message) {
-			this[reject](message);
+			this[symbols.reject](message);
 			this.$destroy(true);
 		}
 	},

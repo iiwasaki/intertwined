@@ -152,7 +152,7 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		/* If we were asked to appear fast, we do nothing. */
 
 		if (this.appearFast) {

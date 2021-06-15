@@ -1,11 +1,11 @@
 'use strict';
 import Vue from 'vue';
-const { ZOOM_MAPPINGS } = require('../../story-edit-view');
-const { thenable, symbols:{ resolve } } = require('../../vue/mixins/thenable');
+//import { ZOOM_MAPPINGS } from '../../story-edit-view';
+import {thenable, symbols} from '../../vue/mixins/thenable';
 
 require('./index.less');
 
-export default Vue.extend({
+const ZoomTransition = Vue.extend({
 	data: () => ({
 		zoom: 0,
 		x: window.innerWidth / 2,
@@ -14,34 +14,31 @@ export default Vue.extend({
 		reverse: false,
 	}),
 
-	template: `<div id="storyEditProxy"
-		:class="(reverse ? 'reverse ' : '') + zoomClass"
-		:style="{transformOrigin: x + 'px ' + y + 'px'}"></div>`,
+	template: require('./index.html'),
 
 	computed: {
 		zoomClass() {
-			for (let desc in ZOOM_MAPPINGS) {
-				if (ZOOM_MAPPINGS[desc] === this.zoom) {
-					return 'zoom-' + desc;
-				}
-			}
+			// for (let desc in ZOOM_MAPPINGS) {
+			// 	if (ZOOM_MAPPINGS[desc] === this.zoom) {
+			// 		return 'zoom-' + desc;
+			// 	}
+			// }
 
 			return '';
 		},
 	},
 
-	ready() {
+	mounted() {
 		/*
 		Ugly hack to make this work on NW.js, which Vue doesn't seem to process
 		animation events correctly for.
 		*/
-
 		window.setTimeout(this.animationend, 200);
 	},
 
 	methods: {
 		animationend() {
-			this[resolve]();
+			this[symbols.resolve]();
 
 			/*
 			Do not destroy this immediately: consumers may want to do an
@@ -52,3 +49,5 @@ export default Vue.extend({
 
 	mixins: [thenable]
 });
+
+export default ZoomTransition;

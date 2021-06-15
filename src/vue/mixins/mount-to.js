@@ -1,12 +1,13 @@
 // A mixin that offers a convenience method for mounting a component to a given
 // element.
 
-module.exports = {
+export default {
 	methods: {
 		$mountTo(el) {
 			const mountPoint = document.createElement('div');
-
-			this.$mount(mountPoint).$appendTo(el);
+			el.appendChild(this.$mount(mountPoint).$el);
+			//this.$mount(mountPoint).append(el);
+			//return this;
 			return this;
 		},
 	}

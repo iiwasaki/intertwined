@@ -11,7 +11,7 @@ of objects with event, el, and listener properties.
 */
 let listeners = {};
 
-module.exports = {
+export default {
 	created() {
 		this.$domEventKey = Symbol();
 

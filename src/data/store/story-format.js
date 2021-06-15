@@ -16,6 +16,12 @@ export default {
 		formats: []
 	},
 
+	getters: {
+		allFormats: state => {
+			return state.formats;
+		}
+	},
+
 	actions: {
 		CREATE_FORMAT(state, props) {
 			let newFormat = Object.assign({}, formatDefaults, props);

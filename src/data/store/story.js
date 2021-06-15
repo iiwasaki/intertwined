@@ -68,6 +68,9 @@ const storyStore = {
 	getters: {
 		stories: state => {
 			return state.stories;
+		},
+		allStories: state => {
+			return state.stories;
 		}
 	},
 

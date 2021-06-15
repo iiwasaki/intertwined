@@ -1,16 +1,17 @@
 /* The main view where story editing takes place. */
 
-const values = require('lodash.values');
+import values from 'lodash.values';
 import Vue from 'vue';
-const { confirm } = require('../dialogs/confirm');
+import confirm from '../dialogs/confirm';
 const { createPassage, deletePassage, positionPassage, updatePassage } = require('../data/actions/passage');
 const { loadFormat } = require('../data/actions/story-format');
 const { updateStory } = require('../data/actions/story');
-const domEvents = require('../vue/mixins/dom-events');
-const locale = require('../locale');
+import domEvents from '../vue/mixins/dom-events';
+import locale from '../locale';
 const { passageDefaults } = require('../data/store/story');
-const zoomSettings = require('./zoom-settings');
-const FirebaseHandler = require('../data/firebase-handler').default;
+import zoomSettings from './zoom-settings';
+import FirebaseHandler from '../data/firebase-handler';
+import { mapGetters } from 'vuex';
 
 require('./index.less');
 
@@ -67,6 +68,7 @@ export default Vue.extend({
 	}),
 
 	computed: {
+		...mapGetters(["allStories", "allFormats", "defaultFormatName"]),
 		/*
 		Sets our width and height to:
 		* the size of the browser window
@@ -189,7 +191,7 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		this.resize();
 		this.on(window, 'resize', this.resize);
 		this.on(window, 'keyup', this.onKeyup);
@@ -493,12 +495,6 @@ export default Vue.extend({
 			updatePassage,
 			updateStory
 		},
-
-		getters: {
-			allFormats: state => state.storyFormat.formats,
-			allStories: state => state.story.stories,
-			defaultFormatName: state => state.pref.defaultFormat
-		}
 	},
 
 	mixins: [domEvents]

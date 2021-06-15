@@ -7,8 +7,8 @@ import Vue from 'vue';
 const { deleteStory, importStory } = require('../../data/actions/story');
 const importHTML = require('../../data/import');
 const load = require('../../file/load');
-const locale = require('../../locale');
-const { thenable } = require('../../vue/mixins/thenable');
+import locale from '../../locale';
+import {thenable} from '../../vue/mixins/thenable';
 
 export default Vue.extend({
 	template: require('./index.html'),

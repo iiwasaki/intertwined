@@ -23,6 +23,9 @@ export default {
 	getters: {
 		themePref: state => {
 			return state.appTheme;
+		},
+		defaultFormatName: state => {
+			return state.defaultFormat;
 		}
 	},
 

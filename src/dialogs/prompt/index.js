@@ -1,8 +1,8 @@
 /* Shows a modal dialog asking for a text response from the user. */
 
 import Vue from 'vue';
-const locale = require('../../locale');
-const { thenable } = require('../../vue/mixins/thenable');
+import locale from '../../locale';
+import {thenable} from '../../vue/mixins/thenable';
 
 require('./index.less');
 

@@ -5,9 +5,10 @@
 **/
 
 'use strict';
-const locale = require('../../locale');
+import locale from '../../locale';
 import Vue from 'vue';
-const { thenable } = require('../../vue/mixins/thenable');
+import {thenable} from '../../vue/mixins/thenable';
+import modaldialog from '../../ui/modal-dialog';
 
 require('./index.less');
 
@@ -46,7 +47,7 @@ const confirmation = {
 		},
 
 		components: {
-			'modal-dialog': require('../../ui/modal-dialog'),
+			'modal-dialog': modaldialog,
 		},
 
 		mixins: [thenable]
