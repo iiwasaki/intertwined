@@ -2,9 +2,10 @@
 Draws connector lines between passages.
 */
 
-const uniq = require('lodash.uniq');
+import uniq from 'lodash.uniq';
 import Vue from 'vue';
-const linkParser = require('../../data/link-parser');
+import linkParser from '../../data/link-parser';
+import linkarrow from './link-arrow';
 
 require('./index.less');
 
@@ -17,20 +18,31 @@ export default Vue.extend({
 			required: true
 		},
 
-		/*
-		The positions of the passages, indexed by passage name. Each entry
-		should contain top, left, width and height properties.
-		*/
+		zoom: {
+			type: Number,
+			required: true
+		},
 
 		positions: {
 			type: Object,
 			required: true
-		},
-
-		zoom: {
-			type: Number,
-			required: true
 		}
+	},
+
+	mounted(){
+		console.log("Link arrows mounted");
+	},
+
+	beforeCreate(){
+		console.log("Before create link arrows");
+	},
+
+	created(){
+		console.log("Link arrows created");
+	},
+
+	beforeMount(){
+		console.log("Link arrows before Mount");
 	},
 
 	computed: {
@@ -44,9 +56,12 @@ export default Vue.extend({
 		*/
 
 		links() {
+			console.log("in links");
+			console.log(this.positions);
 			return this.passages.reduce(
 				(result, passage) => {
 					result[passage.name] = uniq(linkParser(passage.text, true));
+					console.log(result);
 					return result;
 				},
 
@@ -72,6 +87,6 @@ export default Vue.extend({
 	},
 
 	components: {
-		'link-arrow': require('./link-arrow')
+		'link-arrow': linkarrow,
 	}
 });

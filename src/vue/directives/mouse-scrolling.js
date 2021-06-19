@@ -4,13 +4,12 @@ may scroll the document by holding down the middle button and dragging (or the
 space bar and left button).
 */
 
-const ui = require('../../ui');
+import ui from '../../ui';
 
 require('./mouse-scrolling.less');
 
 let handlers = {};
-
-module.exports = {
+export default {
 	addTo(Vue) {
 		Vue.directive('mouse-scrolling', {
 			bind() {

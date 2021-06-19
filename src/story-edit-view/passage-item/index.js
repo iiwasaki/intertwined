@@ -2,13 +2,13 @@
 A single passage in the story map.
 */
 
-const escape = require('lodash.escape');
+import escape from'lodash.escape';
 import Vue from 'vue';
 const PassageEditor = require('../../editors/passage');
 const { confirm } = require('../../dialogs/confirm');
 const domEvents = require('../../vue/mixins/dom-events');
 const locale = require('../../locale');
-const { hasPrimaryTouchUI } = require('../../ui');
+import ui from '../../ui';
 const {
 	createNewlyLinkedPassages,
 	deletePassage,
@@ -16,10 +16,14 @@ const {
 	updatePassage
 } =
 	require('../../data/actions/passage');
+import passagemenu from './passage-menu';
 
 require('./index.less');
 
 export default Vue.extend({
+	beforeCreate() {
+		console.log("passage-item create");
+	},
 	template: require('./index.html'),
 
 	props: {
@@ -149,6 +153,9 @@ export default Vue.extend({
 			return result;
 		},
 
+	},
+
+	methods: {
 		excerpt() {
 			if (this.passage.text.length < 100) {
 				return escape(this.passage.text);
@@ -156,9 +163,6 @@ export default Vue.extend({
 
 			return escape(this.passage.text.substr(0, 99)) + '&hellip;';
 		},
-	},
-
-	methods: {
 		delete() {
 			this.deletePassage(this.parentStory.id, this.passage.id);
 		},
@@ -247,7 +251,7 @@ export default Vue.extend({
 			this.screenDragStartX = srcPoint.clientX + window.pageXOffset;
 			this.screenDragStartY = srcPoint.clientY + window.pageYOffset;
 
-			if (hasPrimaryTouchUI()) {
+			if (ui.hasPrimaryTouchUI()) {
 				this.on(window, 'touchmove', this.followDrag, { passive: false });
 				this.on(window, 'touchend', this.stopDrag);
 			}
@@ -421,7 +425,7 @@ export default Vue.extend({
 	},
 
 	components: {
-		'passage-menu': require('./passage-menu')
+		'passage-menu': passagemenu,
 	},
 
 	vuex: {

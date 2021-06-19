@@ -9,6 +9,9 @@ require('../../ui/ie-mouse-event-polyfill');
 require('./index.less');
 
 export default Vue.extend({
+	beforeCreate() {
+		console.log("marquee-selector create");
+	},
 	template: require('./index.html'),
 
 	props: {

@@ -4,6 +4,7 @@ import Vue from 'vue';
 const {testStory} = require('../../../common/launch-story');
 const {updatePassage} = require('../../../data/actions/passage');
 const {updateStory} = require('../../../data/actions/story');
+import dropdown from '../../../ui/drop-down';
 
 require('./index.less');
 
@@ -124,7 +125,7 @@ export default Vue.extend({
 	},
 
 	components: {
-		'drop-down': require('../../../ui/drop-down')
+		'drop-down': dropdown,
 	},
 
 	vuex: {

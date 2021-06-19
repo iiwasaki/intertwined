@@ -5,9 +5,17 @@ show the search modal dialog.
 
 import Vue from 'vue';
 const SearchDialog = require('../../../dialogs/story-search');
+import locale from '../../../locale';
 
 export default Vue.extend({
 	template: require('./index.html'),
+
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 
 	props: {
 		story: {

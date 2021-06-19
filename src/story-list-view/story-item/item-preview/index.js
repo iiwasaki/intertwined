@@ -5,6 +5,7 @@
 
 'use strict';
 import Vue from 'vue';
+import previewcircle from '../preview-circle';
 
 const passageCenterOffset = 50;
 
@@ -14,6 +15,10 @@ function passageRadius(length, longestLength) {
 
 export default Vue.extend({
 	template: require('./index.html'),
+
+	components: {
+		'preview-circle': previewcircle,
+	},
 
 	props: {
 		edit: {
@@ -28,6 +33,22 @@ export default Vue.extend({
 			type: Array,
 			required: true
 		}
+	},
+
+	methods: {
+		longestPassageLength() {
+			let maxLength = 0;
+			
+			this.passages.forEach(passage => {
+				const len = passage.text.length;
+
+				if (len > maxLength) {
+					maxLength = len;
+				}
+			});
+			
+			return maxLength;
+		},
 	},
 
 	computed: {
@@ -45,39 +66,6 @@ export default Vue.extend({
 			return `hsla(${this.hue}, 90%, 60%, 0.5)`;
 		},
 
-		longestPassageLength() {
-			let maxLength = 0;
-			
-			this.passages.forEach(passage => {
-				const len = passage.text.length;
-
-				if (len > maxLength) {
-					maxLength = len;
-				}
-			});
-			
-			return maxLength;
-		},
-
-		svg() {
-			if (this.passages.length <= 1) {
-				return `<circle cx="100" cy="100" r="75" fill="${this.passageFill}"
-					stroke="${this.passageStroke}" stroke-width="1px" />`;
-			}
-
-			return this.passages.reduce(
-				(result, p) =>
-					result + `<circle cx="${p.left + passageCenterOffset}"
-						cy="${p.top + passageCenterOffset}"
-						r="${passageRadius(p.text.length, this.longestPassageLength)}"
-						fill="${this.passageFill}"
-						stroke="${this.passageStroke}"
-						stroke-width="4px" />`
-				,
-				''
-			);
-		},
-
 		svgViewBox() {
 			if (this.passages.length <= 1) {
 				return '0 0 200 200';
@@ -89,11 +77,12 @@ export default Vue.extend({
 			let maxY = Number.NEGATIVE_INFINITY;
 			
 			this.passages.forEach(p => {
+				console.log("in pass");
 				const x = p.left + passageCenterOffset;
 				const y = p.top + passageCenterOffset;
 				const radius = passageRadius(
 					p.text.length,
-					this.longestPassageLength
+					this.longestPassageLength()
 				);
 
 				if (x - radius < minX) { minX = x - radius; }

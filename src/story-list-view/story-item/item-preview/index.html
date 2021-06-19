@@ -1,3 +1,5 @@
 <button class="preview" @click="edit" :style="style">	
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" :view-box.camel="svgViewBox">{{svg}}</svg>
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" :view-box.camel="svgViewBox">
+		<preview-circle v-for="passage in passages" :key="passage.id" v-bind:passage="passage" v-bind:maxlength="longestPassageLength()" v-bind:hue="hue"></preview-circle>
+	</svg>
 </button>

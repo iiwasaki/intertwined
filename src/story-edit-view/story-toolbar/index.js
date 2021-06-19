@@ -1,9 +1,13 @@
 // The toolbar at the bottom of the screen with editing controls.
 
 import Vue from 'vue';
+import locale from '../../locale';
 const zoomMappings = require('../zoom-settings');
 const {playStory, testStory} = require('../../common/launch-story');
 const {updateStory} = require('../../data/actions/story');
+import storymenu from './story-menu';
+import storysearch from './story-search';
+
 
 require('./index.less');
 
@@ -22,9 +26,15 @@ export default Vue.extend({
 		}
 	},
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	components: {
-		'story-menu': require('./story-menu'),
-		'story-search': require('./story-search')
+		'story-menu': storymenu,
+		'story-search': storysearch,
 	},
 
 	methods: {

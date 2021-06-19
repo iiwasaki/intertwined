@@ -2,9 +2,9 @@
 // rectangles to be specified as objects with { top, left, width, height }
 // properties.
 
-const segseg = require('segseg');
+import segseg from 'segseg';
 
-module.exports = {
+export default {
 	// Returns whether two rectangles intersect.
 	// http://stackoverflow.com/questions/2752349/fast-rectangle-to-rectangle-intersection
 

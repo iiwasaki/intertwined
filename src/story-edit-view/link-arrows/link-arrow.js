@@ -1,5 +1,5 @@
 import Vue from 'vue';
-const rect = require('../../common/rect');
+import rect from '../../common/rect';
 
 /*
 Renders an SVG arc. This expects an object with start, radius, largeArc,
@@ -18,7 +18,11 @@ function arc(props) {
 }
 
 export default Vue.extend({
-	template: '<path :d="pathString" class="marker-{{markerType}}"></path>',
+	template: '<path :d="pathString" v-bind:class="markerType"></path>',
+
+	beforeCreate(){
+		console.log("Before create link-arrow singular");
+	},
 
 	props: {
 		/*
@@ -63,10 +67,10 @@ export default Vue.extend({
 			/* Special case broken links. */
 
 			if (!end) {
-				return 'broken';
+				return 'marker-broken';
 			}
 
-			return 'arrow';
+			return 'marker-arrow';
 		},
 
 		/*

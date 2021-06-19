@@ -12,6 +12,10 @@ const { passageDefaults } = require('../data/store/story');
 import zoomSettings from './zoom-settings';
 import FirebaseHandler from '../data/firebase-handler';
 import { mapGetters } from 'vuex';
+import passageitem from './passage-item';
+import marqueeselector from './marquee-selector';
+import storytoolbar from './story-toolbar';
+import linkarrows from './link-arrows';
 
 require('./index.less');
 
@@ -69,6 +73,19 @@ export default Vue.extend({
 
 	computed: {
 		...mapGetters(["allStories", "allFormats", "defaultFormatName"]),
+		/* A human readable adjective for the story's zoom level. */
+
+		zoomDescClass(){
+			return 'zoom-' + Object.keys(zoomSettings).find(
+				key => zoomSettings[key] === this.story.zoom
+			);
+		},
+
+		zoomDesc() {
+			return Object.keys(zoomSettings).find(
+				key => zoomSettings[key] === this.story.zoom
+			);
+		},
 		/*
 		Sets our width and height to:
 		* the size of the browser window
@@ -132,34 +149,11 @@ export default Vue.extend({
 			return this.$refs.passages.filter(p => p.passage.selected);
 		},
 
-		/*
-		An array of <passage-item> components and their link positions,
-		indexed by name.
-		*/
-
-		passagePositions() {
-			return this.$refs.passages.reduce(
-				(result, passageView) => {
-					result[passageView.passage.name] = passageView.linkPosition;
-					return result;
-				},
-
-				{}
-			);
-		},
-
 		story() {
 			FirebaseHandler.listenToStory(this.storyId);
 			return this.allStories.find(story => story.id === this.storyId);
 		},
 
-		/* A human readable adjective for the story's zoom level. */
-
-		zoomDesc() {
-			return Object.keys(zoomSettings).find(
-				key => zoomSettings[key] === this.story.zoom
-			);
-		}
 	},
 
 	watch: {
@@ -202,6 +196,39 @@ export default Vue.extend({
 	},
 
 	methods: {
+		/*
+		An array of <passage-item> components and their link positions,
+		indexed by name.
+		*/
+
+		passagePositions() {
+			console.log("in Passagepositions");
+			let r = this.story.passages.reduce(
+				(result, currentPassage) => {
+					result[currentPassage.name] = this.linkPosition(currentPassage);
+					console.log(result[currentPassage.name]);
+					return result;
+				},
+
+				{}
+			);
+			console.log(r);
+			return r;
+		},
+		linkPosition(currentPassage) {
+			let result = {
+				top: currentPassage.top,
+				left: currentPassage.left,
+				width: currentPassage.width,
+				height: currentPassage.height
+			};
+
+			if (currentPassage.selected) {
+				result.left += this.screenDragOffsetX / this.story.zoom;
+				result.top += this.screenDragOffsetY / this.story.zoom;
+			}
+			return result;
+		},
 		resize() {
 			this.winWidth = window.innerWidth;
 			this.winHeight = window.innerHeight;
@@ -480,10 +507,10 @@ export default Vue.extend({
 	},
 
 	components: {
-		'link-arrows': require('./link-arrows'),
-		'passage-item': require('./passage-item'),
-		'story-toolbar': require('./story-toolbar'),
-		'marquee-selector': require('./marquee-selector')
+		'link-arrows': linkarrows,
+		'passage-item': passageitem,
+		'story-toolbar': storytoolbar,
+		'marquee-selector': marqueeselector,
 	},
 
 	vuex: {

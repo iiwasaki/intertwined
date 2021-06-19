@@ -1,19 +1,20 @@
 // A drop-down menu with miscellaneous editing options for a story.
 
-const escape = require('lodash.escape');
+import escape from 'lodash.escape';
 import Vue from 'vue';
 const FormatDialog = require('../../../dialogs/story-format');
 const JavaScriptEditor = require('../../../editors/javascript');
 const StatsDialog = require('../../../dialogs/story-stats');
 const StylesheetEditor = require('../../../editors/stylesheet');
 const {loadFormat} = require('../../../data/actions/story-format');
-const locale = require('../../../locale');
+import locale from '../../../locale';
 const {proofStory} = require('../../../common/launch-story');
 const {prompt} = require('../../../dialogs/prompt');
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
 const {selectPassages} = require('../../../data/actions/passage');
 const {updateStory} = require('../../../data/actions/story');
+import dropdown from '../../../ui/drop-down';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -100,7 +101,7 @@ export default Vue.extend({
 	},
 
 	components: {
-		'drop-down': require('../../../ui/drop-down')
+		'drop-down': dropdown,
 	},
 
 	vuex: {
