@@ -2,9 +2,10 @@
 
 import Vue from 'vue';
 const {testStory} = require('../../../common/launch-story');
-const {updatePassage} = require('../../../data/actions/passage');
+const {updatePassage, default: passage} = require('../../../data/actions/passage');
 const {updateStory} = require('../../../data/actions/story');
 import dropdown from '../../../ui/drop-down';
+import locale from '../../../locale';
 
 require('./index.less');
 
@@ -32,6 +33,23 @@ export default Vue.extend({
 			return this.parentStory.startPassage === this.passage.id;
 		},
 
+		deleteTitle() {
+			var title = locale.say("Delete");
+			title += '"';
+			title += locale.say(this.passage.name);
+			title += '"';
+			console.log(title);
+			return title;
+		},
+
+		editTitle() {
+			var title = locale.say("Edit");
+			title += '"';
+			title += locale.say(this.passage.name);
+			title += '"';
+			return title;
+		},
+
 		size() {
 			if (this.passage.width === 100 && this.passage.height === 100) {
 				return 'small';
@@ -57,12 +75,18 @@ export default Vue.extend({
 		}
 	},
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	methods: {
 		edit() {
 			this.$dispatch('passage-edit');
 		},
 
-		delete(e) {
+		deletePassage(e) {
 			this.$dispatch('passage-delete', e.shiftKey);
 		},
 
@@ -115,7 +139,7 @@ export default Vue.extend({
 			}
 
 			this.$dispatch('passage-position', this.passage, {});
-		}
+		},
 	},
 
 	events: {
