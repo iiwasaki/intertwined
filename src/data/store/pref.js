@@ -31,6 +31,7 @@ export default {
 
 	mutations:{
 		UPDATE_PREF(state, payload) {
+			console.log("Updating pref - mutation in store/passage.js");
 			state[payload.name] = payload.value;
 		}
 	},

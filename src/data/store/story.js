@@ -63,6 +63,46 @@ const storyStore = {
 			console.log("Committing action to story?");
 			state.stories.push(story);
 		},
+
+		UPDATE_PASSAGE_IN_STORY(state, payload) {
+			let story;
+			let storyId = payload.storyId;
+			let passageId = payload.passageId;
+			let props = payload.props;
+			console.log(storyId);
+			console.log(passageId);
+			console.log(props);
+
+			try {
+				story = getStoryById(state, storyId);
+			} catch (e) {
+				return;
+			}
+
+			/*
+			Force the top and left properties to be at least zero, to keep
+			passages onscreen.
+			*/
+
+			if (props.left && props.left < 0) {
+				props.left = 0;
+			}
+
+			if (props.top && props.top < 0) {
+				props.top = 0;
+			}
+
+			let passage;
+
+			try {
+				passage = getPassageInStory(story, passageId);
+			} catch (e) {
+				return;
+			}
+
+			Object.assign(passage, props);
+			story.lastUpdate = new Date();
+		},
 	},
 
 	getters: {
@@ -189,39 +229,6 @@ const storyStore = {
 			console.log(story.passages);
 		},
 
-		UPDATE_PASSAGE_IN_STORY(state, storyId, passageId, props) {
-			let story;
-
-			try {
-				story = getStoryById(state, storyId);
-			} catch (e) {
-				return;
-			}
-
-			/*
-			Force the top and left properties to be at least zero, to keep
-			passages onscreen.
-			*/
-
-			if (props.left && props.left < 0) {
-				props.left = 0;
-			}
-
-			if (props.top && props.top < 0) {
-				props.top = 0;
-			}
-
-			let passage;
-
-			try {
-				passage = getPassageInStory(story, passageId);
-			} catch (e) {
-				return;
-			}
-
-			Object.assign(passage, props);
-			story.lastUpdate = new Date();
-		},
 
 		DELETE_PASSAGE_IN_STORY(state, storyId, passageId) {
 			let story = getStoryById(state, storyId);

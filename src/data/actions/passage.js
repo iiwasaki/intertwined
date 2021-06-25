@@ -1,20 +1,40 @@
-const linkParser = require('../link-parser');
-const rect = require('../../common/rect');
+import linkParser from '../link-parser';
+import rect from '../../common/rect';
 
-const actions = module.exports = {
-	createPassage({ dispatch }, storyId, props) {
-		dispatch('CREATE_PASSAGE_IN_STORY', storyId, props);
+export default {
+	createPassage(store, storyId, props) {
+		store.commit(
+			'CREATE_PASSAGE_IN_STORY',
+			{
+				storyId: storyId,
+				props: props
+			}
+		);
 	},
 
-	updatePassage({ dispatch }, storyId, passageId, props) {
-		dispatch('UPDATE_PASSAGE_IN_STORY', storyId, passageId, props);
+	updatePassage(store, storyId, passageId, props) {
+		store.commit(
+			'UPDATE_PASSAGE_IN_STORY',
+			{
+				storyId: storyId,
+				passageId: passageId,
+				props: props
+			}
+		);
 	},
 
-	deletePassage({ dispatch }, storyId, passageId) {
-		dispatch('DELETE_PASSAGE_IN_STORY', storyId, passageId);
+	deletePassage(store, storyId, passageId) {
+		store.commit(
+			'DELETE_PASSAGE_IN_STORY',
+			{
+				storyId: storyId,
+				passageId: passageId,
+			}
+		);
 	},
 
 	selectPassages(store, storyId, filter) {
+		console.log("In selectPassages. Store is " + store);
 		const story = store.state.story.stories.find(
 			story => story.id == storyId
 		);
@@ -30,11 +50,15 @@ const actions = module.exports = {
 			/* Only dispatch updates where there are changes. */
 
 			if (wantSelect !== current) {
-				store.dispatch(
+				console.log("Update happening?");
+				store.commit(
 					'UPDATE_PASSAGE_IN_STORY',
-					storyId,
-					p.id,
-					{ selected: wantSelect });
+					{
+						storyId: storyId,
+						passageId: p.id,
+						props: {selected: wantSelect}
+					}
+				);
 			}
 		});
 	},

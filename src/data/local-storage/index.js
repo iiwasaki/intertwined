@@ -129,13 +129,15 @@ export default function(store) {
 
 			case 'UPDATE_PASSAGE_IN_STORY': {
 				/* Is this a significant update? */
+				console.log("in Update Passage in Story Local Storage plugin mutation: ");
+				console.log(mutation.payload);
 
-				if (Object.keys(mutation.payload[2]).some(key => key !== 'selected')) {
+				if (Object.keys(mutation.payload.props).some(key => key !== 'selected')) {
 					const parentStory = state.story.stories.find(
-						s => s.id === mutation.payload[0]
+						s => s.id === mutation.payload.storyId
 					);
 					const passage = parentStory.passages.find(
-						p => p.id === mutation.payload[1]
+						p => p.id === mutation.payload.passageId
 					);
 
 					story.update(transaction => {

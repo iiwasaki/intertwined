@@ -6,6 +6,7 @@ const {updatePassage, default: passage} = require('../../../data/actions/passage
 const {updateStory} = require('../../../data/actions/story');
 import dropdown from '../../../ui/drop-down';
 import locale from '../../../locale';
+import eventHub from '../../../vue/eventhub';
 
 require('./index.less');
 
@@ -28,22 +29,29 @@ export default Vue.extend({
 		expanded: false
 	}),
 
+	created(){
+		eventHub.$on('drop-down-opened', this.dropDownOpened);
+	},
+
+	beforeDestroy(){
+		eventHub.$on('drop-down-opened', this.dropDownOpened);
+	},
+
 	computed: {
 		isStart() {
 			return this.parentStory.startPassage === this.passage.id;
 		},
 
 		deleteTitle() {
-			var title = locale.say("Delete");
+			var title = locale.say("Delete ");
 			title += '"';
 			title += locale.say(this.passage.name);
 			title += '"';
-			console.log(title);
 			return title;
 		},
 
 		editTitle() {
-			var title = locale.say("Edit");
+			var title = locale.say("Edit ");
 			title += '"';
 			title += locale.say(this.passage.name);
 			title += '"';
@@ -82,6 +90,10 @@ export default Vue.extend({
 	},
 
 	methods: {
+		dropDownOpened() {
+			this.expanded = false;
+		},
+
 		edit() {
 			this.$dispatch('passage-edit');
 		},
@@ -143,9 +155,7 @@ export default Vue.extend({
 	},
 
 	events: {
-		'drop-down-opened'() {
-			this.expanded = false;
-		}
+		
 	},
 
 	components: {

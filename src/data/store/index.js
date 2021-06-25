@@ -19,7 +19,7 @@ export default new Vuex.Store({
 		appInfo: appInfo,
 		pref: prefs,
 		story: story,
-		storyFormat: storyFormat
+		storyFormat: storyFormat,
 	},
 
 	plugins: [

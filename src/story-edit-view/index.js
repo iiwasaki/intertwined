@@ -3,7 +3,7 @@
 import values from 'lodash.values';
 import Vue from 'vue';
 import confirm from '../dialogs/confirm';
-const { createPassage, deletePassage, positionPassage, updatePassage } = require('../data/actions/passage');
+import passageActions from '../data/actions/passage';
 const { loadFormat } = require('../data/actions/story-format');
 const { updateStory } = require('../data/actions/story');
 import domEvents from '../vue/mixins/dom-events';
@@ -16,6 +16,7 @@ import passageitem from './passage-item';
 import marqueeselector from './marquee-selector';
 import storytoolbar from './story-toolbar';
 import linkarrows from './link-arrows';
+import eventHub from '../vue/eventhub';
 
 require('./index.less');
 
@@ -195,24 +196,93 @@ export default Vue.extend({
 		}
 	},
 
+	// Replacement for the old way of doing events
+	created() {
+		eventHub.$on('passage-drag', this.passageDrag);
+		eventHub.$on('passage-drag-complete', this.passageDragComplete);
+		eventHub.$on('passage-position', this.passagePosition);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('passage-drag', this.passageDrag);
+		eventHub.$off('passage-drag-complete', this.passageDragComplete);
+		eventHub.$off('passage-position', this.passagePosition);
+	},
+
 	methods: {
+
+		/*
+		A child will dispatch this event to us as it is dragged around. We
+		set a data property here and other selected passages react to it by
+		temporarily shifting their onscreen position.
+		*/
+
+		passageDrag: function(xOffset, yOffset) {
+			if (this.story.snapToGrid) {
+				const zoomedGridSize = this.gridSize * this.story.zoom;
+
+				this.screenDragOffsetX = Math.round(xOffset / zoomedGridSize) *
+					zoomedGridSize;
+				this.screenDragOffsetY = Math.round(yOffset / zoomedGridSize) *
+					zoomedGridSize;
+			}
+			else {
+				this.screenDragOffsetX = xOffset;
+				this.screenDragOffsetY = yOffset;
+			}
+		},
+
+		/*
+		A child will dispatch this event at the completion of a drag. We
+		pass this onto our children, who use it as a chance to save what was
+		a temporary change in the DOM to their model.
+		*/
+
+		passageDragComplete: function (xOffset, yOffset) {
+			this.screenDragOffsetX = 0;
+			this.screenDragOffsetY = 0;
+
+			if (this.story.snapToGrid) {
+				const zoomedGridSize = this.gridSize * this.story.zoom;
+
+				xOffset = Math.round(xOffset / zoomedGridSize) * zoomedGridSize;
+				yOffset = Math.round(yOffset / zoomedGridSize) * zoomedGridSize;
+			}
+
+			eventHub.$emit('passage-drag-complete-child', xOffset, yOffset);
+		},
+
+		/*
+		Positions a passage on behalf of a child component. This needs to be
+		here, as opposed to a direct Vuex action, because this takes into
+		account the grid size.
+		*/
+
+		passagePosition(passage, options) {
+			passageActions.positionPassage(
+				this.$store,
+				this.story.id,
+				passage.id,
+				this.gridSize,
+				options.ignoreSelected && (otherPassage =>
+					!otherPassage.selected)
+			);
+		},
+
 		/*
 		An array of <passage-item> components and their link positions,
 		indexed by name.
 		*/
 
 		passagePositions() {
-			console.log("in Passagepositions");
 			let r = this.story.passages.reduce(
 				(result, currentPassage) => {
 					result[currentPassage.name] = this.linkPosition(currentPassage);
-					console.log(result[currentPassage.name]);
 					return result;
 				},
 
 				{}
 			);
-			console.log(r);
 			return r;
 		},
 		linkPosition(currentPassage) {
@@ -321,14 +391,14 @@ export default Vue.extend({
 
 			/* Add it to our collection. */
 
-			this.createPassage(this.story.id, { name, left, top });
+			passageActions.createPassage(this.story.id, { name, left, top });
 
 			/*
 			Then position it so it doesn't overlap any others, and save it
 			again.
 			*/
 			
-			this.positionPassage(
+			passageActions.positionPassage(
 				this.story.id,
 				this.story.passages.find(p => p.name === name).id,
 				this.gridSize
@@ -347,7 +417,7 @@ export default Vue.extend({
 			let left = (e.pageX / this.story.zoom) -
 				(passageDefaults.width / 2);
 			
-			this.createPassage(null, top, left);
+			passageActions.createPassage(null, top, left);
 		},
 
 		/*
@@ -421,7 +491,7 @@ export default Vue.extend({
 						buttonClass: 'danger'
 					}).then(() => {
 						toDelete.forEach(
-							p => this.deletePassage(this.story.id, p.id)
+							p => passageActions.deletePassage(this.story.id, p.id)
 						);
 					});
 					break;
@@ -447,63 +517,9 @@ export default Vue.extend({
 		'passage-create'(name, left, top) {
 			this.createPassageAt(name, left, top);
 		},
+		
 
-		/*
-		A child will dispatch this event to us as it is dragged around. We
-		set a data property here and other selected passages react to it by
-		temporarily shifting their onscreen position.
-		*/
-
-		'passage-drag'(xOffset, yOffset) {
-			if (this.story.snapToGrid) {
-				const zoomedGridSize = this.gridSize * this.story.zoom;
-
-				this.screenDragOffsetX = Math.round(xOffset / zoomedGridSize) *
-					zoomedGridSize;
-				this.screenDragOffsetY = Math.round(yOffset / zoomedGridSize) *
-					zoomedGridSize;
-			}
-			else {
-				this.screenDragOffsetX = xOffset;
-				this.screenDragOffsetY = yOffset;
-			}
-		},
-
-		/*
-		A child will dispatch this event at the completion of a drag. We
-		pass this onto our children, who use it as a chance to save what was
-		a temporary change in the DOM to their model.
-		*/
-
-		'passage-drag-complete'(xOffset, yOffset) {
-			this.screenDragOffsetX = 0;
-			this.screenDragOffsetY = 0;
-
-			if (this.story.snapToGrid) {
-				const zoomedGridSize = this.gridSize * this.story.zoom;
-
-				xOffset = Math.round(xOffset / zoomedGridSize) * zoomedGridSize;
-				yOffset = Math.round(yOffset / zoomedGridSize) * zoomedGridSize;
-			}
-
-			this.$broadcast('passage-drag-complete', xOffset, yOffset);
-		},
-
-		/*
-		Positions a passage on behalf of a child component. This needs to be
-		here, as opposed to a direct Vuex action, because this takes into
-		account the grid size.
-		*/
-
-		'passage-position'(passage, options) {
-			this.positionPassage(
-				this.story.id,
-				passage.id,
-				this.gridSize,
-				options.ignoreSelected && (otherPassage =>
-					!otherPassage.selected)
-			);
-		}
+		
 	},
 
 	components: {
@@ -515,11 +531,7 @@ export default Vue.extend({
 
 	vuex: {
 		actions: {
-			createPassage,
-			deletePassage,
 			loadFormat,
-			positionPassage,
-			updatePassage,
 			updateStory
 		},
 	},

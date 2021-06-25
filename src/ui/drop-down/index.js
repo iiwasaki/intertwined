@@ -5,6 +5,7 @@ import Drop from 'tether-drop';
 import Vue from 'vue';
 import ui from '../index';
 import domEvents from '../../vue/mixins/dom-events';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
@@ -31,6 +32,16 @@ export default Vue.extend({
 		targetOffset: {
 			type: String
 		}
+	},
+
+	created() {
+		eventHub.$on('drop-down-close', this.dropDownClose);
+		eventHub.$on('drop-down-reposition', this.dropDownReposition);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('drop-down-close', this.dropDownClose);
+		eventHub.$off('drop-down-reposition', this.dropDownReposition);
 	},
 
 	mounted() {
@@ -83,13 +94,13 @@ export default Vue.extend({
 		components can signal to us to close or reposition the drop.
 		*/
 
-		// this.$drop.on('open', () => {
-		// 	this.$dispatch('drop-down-opened', this);
-		// });
+		this.$drop.on('open', () => {
+			eventHub.$emit('drop-down-opened', this);
+		});
 
-		// this.$drop.on('close', () => {
-		// 	this.$dispatch('drop-down-closed', this);
-		// });
+		this.$drop.on('close', () => {
+			eventHub.$emit('drop-down-closed', this);
+		});
 
 		/*
 		Close the dropdown when one of its menu items is clicked, unless any
@@ -119,14 +130,15 @@ export default Vue.extend({
 		this.$drop.destroy();
 	},
 
-	events: {
-		'drop-down-close'() {
+	methods: {
+		dropDownClose() {
 			this.$drop.close();
 		},
 
-		'drop-down-reposition'() {
+		dropDownReposition(){
 			this.$drop.position();
 		}
 	},
+
 	mixins: [domEvents]
 });

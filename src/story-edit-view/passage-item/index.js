@@ -4,26 +4,18 @@ A single passage in the story map.
 
 import escape from'lodash.escape';
 import Vue from 'vue';
-const PassageEditor = require('../../editors/passage');
+import PassageEditor from '../../editors/passage';
 const { confirm } = require('../../dialogs/confirm');
-const domEvents = require('../../vue/mixins/dom-events');
-const locale = require('../../locale');
+import domEvents from '../../vue/mixins/dom-events';
+import locale from '../../locale';
 import ui from '../../ui';
-const {
-	createNewlyLinkedPassages,
-	deletePassage,
-	selectPassages,
-	updatePassage
-} =
-	require('../../data/actions/passage');
+import passageActions from '../../data/actions/passage';
 import passagemenu from './passage-menu';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
 export default Vue.extend({
-	beforeCreate() {
-		console.log("passage-item create");
-	},
 	template: require('./index.html'),
 
 	props: {
@@ -81,6 +73,15 @@ export default Vue.extend({
 		screenDragStartX: 0,
 		screenDragStartY: 0
 	}),
+
+	// New way of doing events in Vue 2
+	created() {
+		eventHub.$on('passage-drag-complete-child', this.passageDragCompleteChild);
+	},
+
+	beforeDestroy() {
+		eventHub.$off('passage-drag-complete-child', this.passageDragCompleteChild);
+	},
 
 	computed: {
 		/*
@@ -156,6 +157,54 @@ export default Vue.extend({
 	},
 
 	methods: {
+		passageDragCompleteChild: function(xOffset, yOffset, emitter) {
+			/*
+			We have to check whether we originally emitted this event, as
+			$dispatch triggers first on ourselves, then our parent.
+			*/
+
+			if (this.passage.selected && emitter !== this) {
+				/*
+				Because the x and y offsets are in screen coordinates, we need
+				to convert back to logical space.
+				*/
+
+				const top = this.passage.top + yOffset
+				/ this.parentStory.zoom;
+				const left = this.passage.left + xOffset
+				/ this.parentStory.zoom;
+
+				if (this.passage.top !== top || this.passage.left !== left) {
+					passageActions.updatePassage(
+						this.$store,
+						this.parentStory.id,
+						this.passage.id,
+						{ top, left }
+					);
+				}
+
+				/*
+				Ask our parent to position us so we overlap no unselected
+				passages. We need to stipulate that passages are not selected so
+				that we don't inadvertantly collide with other passages being
+				dragged.
+				*/
+
+				eventHub.$emit(
+					'passage-position',
+					this.passage,
+					{ ignoreSelected: true }
+				);
+			}
+
+			/*
+			Tell our menu that our position has changed, so that it in turn can
+			change its position.
+			*/
+
+			eventHub.$emit('drop-down-reposition');
+		},
+
 		excerpt() {
 			if (this.passage.text.length < 100) {
 				return escape(this.passage.text);
@@ -164,7 +213,7 @@ export default Vue.extend({
 			return escape(this.passage.text.substr(0, 99)) + '&hellip;';
 		},
 		delete() {
-			this.deletePassage(this.parentStory.id, this.passage.id);
+			passageActions.deletePassage(this.parentStory.id, this.passage.id);
 		},
 
 		edit() {
@@ -177,7 +226,7 @@ export default Vue.extend({
 
 			const oldText = this.passage.text;
 			const afterEdit = () => {
-				this.createNewlyLinkedPassages(
+				passageActions.createNewlyLinkedPassages(
 					this.parentStory.id,
 					this.passage.id,
 					oldText,
@@ -210,6 +259,8 @@ export default Vue.extend({
 		startDrag(e) {
 			/* Only listen to the left mouse button. */
 
+			console.log("Start dragging");
+
 			if (e.type === 'mousedown' && e.which !== 1) {
 				return;
 			}
@@ -221,7 +272,7 @@ export default Vue.extend({
 				or control key was not held down, select only ourselves.
 				*/
 
-				this.selectPassages(this.parentStory.id, p => {
+				passageActions.selectPassages(this.$store, this.parentStory.id, p => {
 					if (p === this.passage) {
 						return !p.selected;
 					}
@@ -238,7 +289,7 @@ export default Vue.extend({
 				in the mouse up handler, above.
 				*/
 
-				this.selectPassages(
+				passageActions.selectPassages(this.$store,
 					this.parentStory.id,
 					p => p === this.passage
 				);
@@ -266,7 +317,7 @@ export default Vue.extend({
 		followDrag(e) {
 			const srcPoint = (e.type === 'mousemove') ? e : e.touches[0];
 
-			this.$dispatch(
+			eventHub.$emit(
 				'passage-drag',
 				srcPoint.clientX + window.pageXOffset - this.screenDragStartX,
 				srcPoint.clientY + window.pageYOffset - this.screenDragStartY
@@ -292,7 +343,7 @@ export default Vue.extend({
 
 			/* Remove event listeners set up at the start of the drag. */
 
-			if (hasPrimaryTouchUI()) {
+			if (ui.hasPrimaryTouchUI()) {
 				this.off(window, 'touchmove');
 				this.off(window, 'touchend');
 			}
@@ -314,7 +365,7 @@ export default Vue.extend({
 			
 			if (this.dragXOffset === 0 && this.dragYOffset === 0) {
 				if (!(e.ctrlKey || e.shiftKey)) {
-					this.selectPassages(this.parentStory.id, p => p !== this);
+					passageActions.selectPassages(this.parentStory.id, p => p !== this);
 				}
 			}
 			else {
@@ -324,7 +375,7 @@ export default Vue.extend({
 				*/
 
 				if (e.type === 'mouseup') {
-					this.$dispatch(
+					eventHub.$emit(
 						'passage-drag-complete',
 						e.clientX + window.pageXOffset - this.screenDragStartX,
 						e.clientY + window.pageYOffset - this.screenDragStartY,
@@ -332,7 +383,7 @@ export default Vue.extend({
 					);
 				}
 				else {
-					this.$dispatch(
+					eventHub.$emit(
 						'passage-drag-complete',
 						this.screenDragOffsetX,
 						this.screenDragOffsetY,
@@ -376,66 +427,20 @@ export default Vue.extend({
 			}
 		},
 
-		'passage-drag-complete'(xOffset, yOffset, emitter) {
-			/*
-			We have to check whether we originally emitted this event, as
-			$dispatch triggers first on ourselves, then our parent.
-			*/
-
-			if (this.passage.selected && emitter !== this) {
-				/*
-				Because the x and y offsets are in screen coordinates, we need
-				to convert back to logical space.
-				*/
-
-				const top = this.passage.top + yOffset
-				/ this.parentStory.zoom;
-				const left = this.passage.left + xOffset
-				/ this.parentStory.zoom; 
-				
-				if (this.passage.top !== top || this.passage.left !== left) {
-					this.updatePassage(
-						this.parentStory.id,
-						this.passage.id,
-						{ top, left }
-					);
-				}
-
-				/*
-				Ask our parent to position us so we overlap no unselected
-				passages. We need to stipulate that passages are not selected so
-				that we don't inadvertantly collide with other passages being
-				dragged.
-				*/
-
-				this.$dispatch(
-					'passage-position',
-					this.passage,
-					{ ignoreSelected: true }
-				);
-			}
-
-			/*
-			Tell our menu that our position has changed, so that it in turn can
-			change its position.
-			*/
-
-			this.$broadcast('drop-down-reposition');
-		}
 	},
 
 	components: {
 		'passage-menu': passagemenu,
 	},
 
-	vuex: {
-		actions: {
-			createNewlyLinkedPassages,
-			selectPassages,
-			updatePassage,
-			deletePassage
-		}
-	},
+	// vuex: {
+	// 	actions: {
+	// 		createNewlyLinkedPassages,
+	// 		selectPassages,
+	// 		updatePassage,
+	// 		deletePassage
+	// 	}
+	// },
 
 	mixins: [domEvents]
 });

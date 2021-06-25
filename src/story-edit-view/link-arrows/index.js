@@ -56,8 +56,6 @@ export default Vue.extend({
 		*/
 
 		links() {
-			console.log("in links");
-			console.log(this.positions);
 			return this.passages.reduce(
 				(result, passage) => {
 					result[passage.name] = uniq(linkParser(passage.text, true));
