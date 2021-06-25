@@ -1,7 +1,8 @@
 import Vue from 'vue';
-const without = require('lodash.without');
+import without from 'lodash.without';
 const { setTagColorInStory } = require('../../../../data/actions/story');
-const { updatePassage } = require('../../../../data/actions/passage');
+import passageActions from '../../../../data/actions/passage';
+import dropdown from '../../../../ui/drop-down';
 
 require('./index.less');
 
@@ -25,7 +26,8 @@ export default Vue.extend({
 
 	methods: {
 		remove() {
-			this.updatePassage(
+			passageActions.updatePassage(
+				this.$store,
 				this.storyId,
 				this.passage.id,
 				{ tags: without(this.passage.tags, this.tag) }
@@ -37,10 +39,10 @@ export default Vue.extend({
 	},
 
 	vuex: {
-		actions: { setTagColorInStory, updatePassage }
+		actions: { setTagColorInStory }
 	},
 
 	components: {
-		'drop-down': require('../../../../ui/drop-down')
+		'drop-down': dropdown,
 	}
 });

@@ -34,7 +34,6 @@ export default {
 	},
 
 	selectPassages(store, storyId, filter) {
-		console.log("In selectPassages. Store is " + store);
 		const story = store.state.story.stories.find(
 			story => story.id == storyId
 		);
@@ -50,7 +49,6 @@ export default {
 			/* Only dispatch updates where there are changes. */
 
 			if (wantSelect !== current) {
-				console.log("Update happening?");
 				store.commit(
 					'UPDATE_PASSAGE_IN_STORY',
 					{

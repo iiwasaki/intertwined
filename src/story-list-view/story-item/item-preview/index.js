@@ -77,7 +77,6 @@ export default Vue.extend({
 			let maxY = Number.NEGATIVE_INFINITY;
 			
 			this.passages.forEach(p => {
-				console.log("in pass");
 				const x = p.left + passageCenterOffset;
 				const y = p.top + passageCenterOffset;
 				const radius = passageRadius(

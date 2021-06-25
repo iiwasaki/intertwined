@@ -79,7 +79,7 @@ export default Vue.extend({
 
 	watch: {
 		expanded() {
-			this.$broadcast('drop-down-reposition');
+			eventHub.$emit('drop-down-reposition');
 		}
 	},
 
@@ -95,11 +95,11 @@ export default Vue.extend({
 		},
 
 		edit() {
-			this.$dispatch('passage-edit');
+			eventHub.$emit('passage-edit', this.passage.id);
 		},
 
 		deletePassage(e) {
-			this.$dispatch('passage-delete', e.shiftKey);
+			eventHub.$emit('passage-delete', e.shiftKey);
 		},
 
 		test() {
@@ -152,10 +152,6 @@ export default Vue.extend({
 
 			this.$dispatch('passage-position', this.passage, {});
 		},
-	},
-
-	events: {
-		
 	},
 
 	components: {

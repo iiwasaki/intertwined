@@ -1,8 +1,11 @@
 /* An editor for adding and removing tags from a passage. */
 
 import Vue from 'vue';
-const { updatePassage } = require('../../../data/actions/passage');
-const uniq = require('lodash.uniq');
+import passageActions from '../../../data/actions/passage';
+import uniq from 'lodash.uniq';
+import { mapGetters } from 'vuex';
+import tagmenu from './tag-menu';
+import locale from '../../../locale';
 
 export default Vue.extend({
 	data: () => ({
@@ -10,9 +13,7 @@ export default Vue.extend({
 	}),
 
 	computed: {
-		tagColors() {
-			return this.allStories.find(s => s.id === this.storyId).tagColors;
-		}
+		...mapGetters(["allStories"]),
 	},
 
 	props: {
@@ -26,9 +27,20 @@ export default Vue.extend({
 		}
 	},
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	template: require('./index.html'),
 
 	methods: {
+		tagColors() {
+			console.log("In tagcolors");
+			let thisColor = this.allStories.find(s => s.id === this.storyId).tagColors;
+			return "tag label label-info " + thisColor;
+		},
 		showNew() {
 			this.newVisible = true;
 			this.$nextTick(() => this.$els.newName.focus());
@@ -45,7 +57,7 @@ export default Vue.extend({
 
 			this.$els.newName.value = '';
 
-			this.updatePassage(
+			passageActions.updatePassage(
 				this.storyId,
 				this.passage.id,
 				{
@@ -56,15 +68,7 @@ export default Vue.extend({
 			this.hideNew();
 		}
 	},
-
-	vuex: {
-		getters: {
-			allStories: state => state.story.stories
-		},
-		actions: { updatePassage }
-	},
-
 	components: {
-		'tag-menu': require('./tag-menu')
+		'tag-menu': tagmenu,
 	}
 });

@@ -69,9 +69,6 @@ const storyStore = {
 			let storyId = payload.storyId;
 			let passageId = payload.passageId;
 			let props = payload.props;
-			console.log(storyId);
-			console.log(passageId);
-			console.log(props);
 
 			try {
 				story = getStoryById(state, storyId);

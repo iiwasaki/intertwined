@@ -5,7 +5,7 @@ A single passage in the story map.
 import escape from'lodash.escape';
 import Vue from 'vue';
 import PassageEditor from '../../editors/passage';
-const { confirm } = require('../../dialogs/confirm');
+import confirmation from '../../dialogs/confirm';
 import domEvents from '../../vue/mixins/dom-events';
 import locale from '../../locale';
 import ui from '../../ui';
@@ -77,10 +77,14 @@ export default Vue.extend({
 	// New way of doing events in Vue 2
 	created() {
 		eventHub.$on('passage-drag-complete-child', this.passageDragCompleteChild);
+		eventHub.$on('passage-edit', this.editFromDropdown);
+		eventHub.$on('passage-delete', this.passageDelete);
 	},
 
 	beforeDestroy() {
 		eventHub.$off('passage-drag-complete-child', this.passageDragCompleteChild);
+		eventHub.$off('passage-edit', this.editFromDropdown);
+		eventHub.$off('passage-delete', this.passageDelete);
 	},
 
 	computed: {
@@ -157,6 +161,40 @@ export default Vue.extend({
 	},
 
 	methods: {
+		/* Allow the editing to occur only if the dropdown for the appropriate passage was clicked */
+		editFromDropdown: function(clickedId){
+			if (clickedId === this.passage.id){
+				this.edit();
+			}
+		},
+		passageDelete: function (skipConfirmation) {
+			if (skipConfirmation) {
+				this.delete();
+			}
+			else {
+				let message = locale.say(
+					'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
+					'This cannot be undone.',
+					escape(this.passage.name)
+				);
+
+				if (!hasPrimaryTouchUI()) {
+					message += '<br><br>' + locale.say(
+						'(Hold the Shift key when deleting to skip this message.)'
+					);
+				}
+
+				confirmation.confirm({
+					message,
+					buttonLabel:
+						'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
+					buttonClass:
+						'danger',
+				})
+				.then(() => this.delete());
+			}
+		},
+
 		passageDragCompleteChild: function(xOffset, yOffset, emitter) {
 			/*
 			We have to check whether we originally emitted this event, as
@@ -222,17 +260,21 @@ export default Vue.extend({
 			user double-clicked.
 			*/
 
-			this.$broadcast('drop-down-close');
+			eventHub.$emit('drop-down-close');
 
 			const oldText = this.passage.text;
 			const afterEdit = () => {
 				passageActions.createNewlyLinkedPassages(
+					this.$store,
 					this.parentStory.id,
 					this.passage.id,
 					oldText,
 					this.gridSize
 				);
 			};
+
+			console.log(this.parentStory.storyFormat);
+			console.log(this.parentStory.storyFormatVersion);
 
 			/*
 			The promise below is rejected if the user clicks outside the editor,
@@ -258,8 +300,6 @@ export default Vue.extend({
 
 		startDrag(e) {
 			/* Only listen to the left mouse button. */
-
-			console.log("Start dragging");
 
 			if (e.type === 'mousedown' && e.which !== 1) {
 				return;
@@ -394,53 +434,9 @@ export default Vue.extend({
 		}
 	},
 
-	events: {
-		'passage-edit'() {
-			this.edit();
-		},
-
-		'passage-delete'(skipConfirmation) {
-			if (skipConfirmation) {
-				this.delete();
-			}
-			else {
-				let message = locale.say(
-					'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
-					'This cannot be undone.',
-					escape(this.passage.name)
-				);
-
-				if (!hasPrimaryTouchUI()) {
-					message += '<br><br>' + locale.say(
-						'(Hold the Shift key when deleting to skip this message.)'
-					);
-				}
-
-				confirm({
-					message,
-					buttonLabel:
-						'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
-					buttonClass:
-						'danger',
-				})
-				.then(() => this.delete());
-			}
-		},
-
-	},
-
 	components: {
 		'passage-menu': passagemenu,
 	},
-
-	// vuex: {
-	// 	actions: {
-	// 		createNewlyLinkedPassages,
-	// 		selectPassages,
-	// 		updatePassage,
-	// 		deletePassage
-	// 	}
-	// },
 
 	mixins: [domEvents]
 });

@@ -3,8 +3,12 @@ Preference-related actions.
 */
 
 export default {
-	setPref({ dispatch }, name, value) {
+	setPref(store, name, value) {
 		console.log("In setPref in actions/pref.js");
-		dispatch('UPDATE_PREF', name, value);
+		store.commit('UPDATE_PREF',
+		{
+			name: name,
+			value: value,
+		});
 	}
 };

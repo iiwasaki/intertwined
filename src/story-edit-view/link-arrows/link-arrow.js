@@ -20,9 +20,6 @@ function arc(props) {
 export default Vue.extend({
 	template: '<path :d="pathString" v-bind:class="markerType"></path>',
 
-	beforeCreate(){
-		console.log("Before create link-arrow singular");
-	},
 
 	props: {
 		/*

@@ -29,22 +29,6 @@ export default Vue.extend({
 		}
 	},
 
-	mounted(){
-		console.log("Link arrows mounted");
-	},
-
-	beforeCreate(){
-		console.log("Before create link arrows");
-	},
-
-	created(){
-		console.log("Link arrows created");
-	},
-
-	beforeMount(){
-		console.log("Link arrows before Mount");
-	},
-
 	computed: {
 		/*
 		A list of distinct links between passages, indexed by passage name.
@@ -59,7 +43,6 @@ export default Vue.extend({
 			return this.passages.reduce(
 				(result, passage) => {
 					result[passage.name] = uniq(linkParser(passage.text, true));
-					console.log(result);
 					return result;
 				},
 

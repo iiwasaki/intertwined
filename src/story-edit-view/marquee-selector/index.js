@@ -1,17 +1,14 @@
 // A marquee selection tool for passage items.
 
 import Vue from 'vue';
-const domEvents = require('../../vue/mixins/dom-events');
-const rect = require('../../common/rect');
-const { selectPassages } = require('../../data/actions/passage');
+import domEvents from '../../vue/mixins/dom-events';
+import rect from '../../common/rect';
+import passageActions from '../../data/actions/passage';
 
 require('../../ui/ie-mouse-event-polyfill');
 require('./index.less');
 
 export default Vue.extend({
-	beforeCreate() {
-		console.log("marquee-selector create");
-	},
 	template: require('./index.html'),
 
 	props: {
@@ -177,7 +174,7 @@ export default Vue.extend({
 			this.currentX = e.clientX + window.pageXOffset;
 			this.currentY = e.clientY + window.pageYOffset;
 
-			this.selectPassages(this.story.id, p => {
+			passageActions.selectPassages(this.$store, this.story.id, p => {
 				if (this.additive &&
 					this.originallySelected.indexOf(p) !== -1) {
 					return true;
@@ -201,7 +198,7 @@ export default Vue.extend({
 
 			if (this.screenRect && this.screenRect.width === 0 &&
 				this.screenRect.height === 0) {
-				this.selectPassages(this.story.id, () => false);
+				passageActions.selectPassages(this.$store, this.story.id, () => false);
 			}
 
 			this.visible = false;
@@ -226,10 +223,6 @@ export default Vue.extend({
 
 	ready() {
 		this.on(this.$el.parentNode, 'mousedown', this.startDrag);
-	},
-
-	vuex: {
-		actions: { selectPassages }
 	},
 
 	mixins: [domEvents]

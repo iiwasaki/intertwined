@@ -129,8 +129,6 @@ export default function(store) {
 
 			case 'UPDATE_PASSAGE_IN_STORY': {
 				/* Is this a significant update? */
-				console.log("in Update Passage in Story Local Storage plugin mutation: ");
-				console.log(mutation.payload);
 
 				if (Object.keys(mutation.payload.props).some(key => key !== 'selected')) {
 					const parentStory = state.story.stories.find(
@@ -167,7 +165,6 @@ export default function(store) {
 			}
 
 			case 'UPDATE_PREF':
-				console.log("Updating preference - delete me, I'm in local-storage index.js");
 				pref.save(store);
 				break;
 

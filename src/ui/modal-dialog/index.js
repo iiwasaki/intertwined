@@ -20,8 +20,8 @@ const ModalDialog = Vue.extend({
 	template: require('./index.html'),
 
 	props: {
-		class: '',
-		title: '',
+		classProp: '',
+		titleProp: '',
 		origin: null,
 		canWiden: false,
 		canClose: {
@@ -36,7 +36,7 @@ const ModalDialog = Vue.extend({
 
 	computed: {
 		classes() {
-			return this.class + (this.wide ? ' wide' : '');
+			return this.classProp + (this.wide ? ' wide' : '');
 		}
 	},
 

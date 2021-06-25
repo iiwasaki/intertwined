@@ -2,13 +2,18 @@
 A modal dialog for editing a single passage.
 */
 
-const CodeMirror = require('codemirror');
+import CodeMirror from 'codemirror';
 import Vue from 'vue';
-const locale = require('../../locale');
 import {thenable} from '../../vue/mixins/thenable';
-const { changeLinksInStory, updatePassage } = require('../../data/actions/passage');
-const { loadFormat } = require('../../data/actions/story-format');
-const { passageDefaults } = require('../../data/store/story');
+import passageActions from '../../data/actions/passage';
+import formatActions from '../../data/actions/story-format';
+import storyStore from '../../data/store/story';
+import locale from '../../locale';
+import { mapGetters } from 'vuex';
+import codemirrorcomponent from '../../vue/codemirror';
+import modaldialog from '../../ui/modal-dialog';
+import tageditor from './tag-editor';
+
 
 require('codemirror/addon/display/placeholder');
 require('codemirror/addon/hint/show-hint');
@@ -34,7 +39,14 @@ export default Vue.extend({
 		origin: null
 	}),
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	computed: {
+		...mapGetters(["allStories"]),
 		cmOptions() {
 			return {
 				placeholder: locale.say(
@@ -133,7 +145,8 @@ export default Vue.extend({
 		},
 
 		saveText(text) {
-			this.updatePassage(
+			passageActions.updatePassage(
+				this.$store,
 				this.parentStory.id,
 				this.passage.id,
 				{ text: text }
@@ -141,7 +154,8 @@ export default Vue.extend({
 		},
 
 		saveTags(tags) {
-			this.updatePassage(
+			passageActions.updatePassage(
+				this.$store,
 				this.parentStory.id,
 				this.passage.id,
 				{ tags: tags }
@@ -155,13 +169,15 @@ export default Vue.extend({
 		canClose() {
 			if (this.userPassageNameValid) {
 				if (this.userPassageName !== this.passage.name) {
-					this.changeLinksInStory(
+					passageActions.changeLinksInStory(
+						this.$store,
 						this.parentStory.id,
 						this.passage.name,
 						this.userPassageName
 					);
 
-					this.updatePassage(
+					passageActions.updatePassage(
+						this.$store,
 						this.parentStory.id,
 						this.passage.id,
 						{ name: this.userPassageName }
@@ -175,7 +191,7 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		this.userPassageName = this.passage.name;
 
 		/* Update the window title. */
@@ -188,7 +204,8 @@ export default Vue.extend({
 		*/
 
 		if (this.$options.storyFormat) {
-			this.loadFormat(
+			formatActions.loadFormat(
+				this.$store,
 				this.$options.storyFormat.name,
 				this.$options.storyFormat.version
 			).then(format => {
@@ -231,7 +248,7 @@ export default Vue.extend({
 		on whether this passage has only default text in it.
 		*/
 
-		if (this.passage.text === passageDefaults.text) {
+		if (this.passage.text === storyStore.passageDefaults.text) {
 			this.$refs.codemirror.$cm.execCommand('selectAll');
 		}
 		else {
@@ -244,22 +261,9 @@ export default Vue.extend({
 	},
 
 	components: {
-		'code-mirror': require('../../vue/codemirror'),
-		'modal-dialog': require('../../ui/modal-dialog'),
-		'tag-editor': require('./tag-editor')
+		'code-mirror': codemirrorcomponent,
+		'modal-dialog': modaldialog,
+		'tag-editor': tageditor,
 	},
-
-	vuex: {
-		actions: {
-			changeLinksInStory,
-			updatePassage,
-			loadFormat
-		},
-
-		getters: {
-			allStories: state => state.story.stories
-		}
-	},
-
 	mixins: [thenable]
 });

@@ -2,23 +2,23 @@
 Story format-related actions.
 */
 
-const jsonp = require('../jsonp');
-const semverUtils = require('semver-utils');
-const latestFormatVersions = require('../latest-format-versions');
-const locale = require('../../locale');
-const {setPref} = require('./pref');
+import jsonp from '../jsonp';
+import semverUtils from 'semver-utils';
+import latestFormatVersions from '../latest-format-versions';
+import locale from '../../locale';
+import prefActions from './pref';
 
-const actions = (module.exports = {
-	createFormat({dispatch}, props) {
-		dispatch('CREATE_FORMAT', props);
+export default {
+	createFormat(store, props) {
+		store.commit('CREATE_FORMAT', props);
 	},
 
-	updateFormat({dispatch}, id, props) {
-		dispatch('UPDATE_FORMAT', id, props);
+	updateFormat(store, id, props) {
+		store.commit('UPDATE_FORMAT', id, props);
 	},
 
-	deleteFormat({dispatch}, id) {
-		dispatch('DELETE_FORMAT', id);
+	deleteFormat(store, id) {
+		store.commit('DELETE_FORMAT', id);
 	},
 
 	createFormatFromUrl(store, url) {
@@ -145,7 +145,11 @@ const actions = (module.exports = {
 						return;
 					}
 
-					store.dispatch('LOAD_FORMAT', format.id, data);
+					store.commit('LOAD_FORMAT',
+					{
+						id:format.id,
+						props: data,
+					});
 					resolve(format);
 				}
 			);
@@ -167,7 +171,7 @@ const actions = (module.exports = {
 				console.warn(
 					`Deleting unversioned story format ${format.name}`
 				);
-				actions.deleteFormat(store, format.id);
+				this.deleteFormat(store, format.id);
 			}
 		});
 
@@ -240,7 +244,7 @@ const actions = (module.exports = {
 						format.version === builtin.version
 				)
 			) {
-				actions.createFormat(store, builtin);
+				this.createFormat(store, builtin);
 			}
 		});
 
@@ -250,14 +254,14 @@ const actions = (module.exports = {
 		*/
 
 		if (typeof store.state.pref.defaultFormat !== 'object') {
-			setPref(store, 'defaultFormat', {
+			prefActions.setPref(store, 'defaultFormat', {
 				name: 'Harlowe',
 				version: '3.2.1'
 			});
 		}
 
 		if (typeof store.state.pref.proofingFormat !== 'object') {
-			setPref(store, 'proofingFormat', {
+			prefActions.setPref(store, 'proofingFormat', {
 				name: 'Paperthin',
 				version: '1.0.0'
 			});
@@ -303,17 +307,17 @@ const actions = (module.exports = {
 		const latestProofing = latestVersions[proofingFormat.name];
 
 		if (latestDefault && latestDefault[defaultFormatVersion.major]) {
-			setPref(store, 'defaultFormat', {
+			prefActions.setPref(store, 'defaultFormat', {
 				name: defaultFormat.name,
 				version: latestDefault[defaultFormatVersion.major].semver
 			});
 		}
 
 		if (latestProofing && latestProofing[proofingFormatVersion.major]) {
-			setPref(store, 'proofingFormat', {
+			prefActions.setPref(store, 'proofingFormat', {
 				name: proofingFormat.name,
 				version: latestProofing[proofingFormatVersion.major].semver
 			});
 		}
 	}
-});
+};

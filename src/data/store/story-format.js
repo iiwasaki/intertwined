@@ -22,7 +22,7 @@ export default {
 		}
 	},
 
-	actions: {
+	mutations: {
 		CREATE_FORMAT(state, props) {
 			let newFormat = Object.assign({}, formatDefaults, props);
 
@@ -41,7 +41,11 @@ export default {
 			state.formats = state.formats.filter(format => format.id !== id);
 		},
 
-		LOAD_FORMAT(state, id, props) {
+		LOAD_FORMAT(state, payload) {
+			let id = payload.id;
+			let props = payload.props;
+			console.log(id);
+			console.log(props);
 			let format = state.formats.find(format => format.id === id);
 
 			format.properties = props;

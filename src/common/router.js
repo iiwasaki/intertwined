@@ -80,6 +80,7 @@ let router = new VueRouter({
 
 		{path: '/stories/:id/test', component: {
 			ready() {
+				console.log("Testing");
 				getStoryTestHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
@@ -98,6 +99,9 @@ let router = new VueRouter({
 		}},
 
 		{path: '/stories/:stodyId/test/:passageId', component:{
+			beforeCreate(){
+				console.log("Testing story - in router");
+			},
 			ready() {
 				getStoryTestHtml(
 					this.$store,
