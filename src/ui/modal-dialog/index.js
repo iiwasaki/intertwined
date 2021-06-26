@@ -6,6 +6,7 @@ resolves itself when it is closed.
 import Vue from 'vue';
 import domEvents from '../../vue/mixins/dom-events';
 import {thenable, symbols} from '../../vue/mixins/thenable';
+import eventHub from '../../vue/eventhub';
 
 const animationEndEvents = [
 	'animationend',
@@ -21,7 +22,7 @@ const ModalDialog = Vue.extend({
 
 	props: {
 		classProp: '',
-		titleProp: '',
+		title: '',
 		origin: null,
 		canWiden: false,
 		canClose: {
@@ -40,7 +41,17 @@ const ModalDialog = Vue.extend({
 		}
 	},
 
-	ready() {
+	created(){
+		this.$on('close', this.closeEvent);
+		this.$on('reject', this.rejectEvent);
+	},
+
+	beforeDestroy(){
+		this.$on('close', this.closeEvent);
+		this.$on('reject', this.rejectEvent);
+	},
+
+	mounted() {
 		const dialog = this.$el.querySelector('.modal-dialog');
 
 		/*
@@ -72,7 +83,7 @@ const ModalDialog = Vue.extend({
 			This event is currently only listened to by <code-mirror> child
 			components.
 			*/
-			this.$broadcast('transition-entered');
+			eventHub.$emit('transition-entered');
 			animationEndEvents.forEach(event =>
 				dialog.removeEventListener(event, notifier)
 			);
@@ -84,6 +95,7 @@ const ModalDialog = Vue.extend({
 	},
 
 	destroyed() {
+		console.log("In Destroyed of modal-dialog");
 		let body = document.querySelector('body');
 
 		body.classList.remove('modalOpen');
@@ -96,7 +108,7 @@ const ModalDialog = Vue.extend({
 				return;
 			}
 
-			this.$emit('close', message);
+			this.closeEvent(message)
 		},
 
 		toggleWide() {
@@ -108,7 +120,7 @@ const ModalDialog = Vue.extend({
 				return;
 			}
 
-			this.$emit('reject', message);
+			this.rejectEvent(message);
 		},
 
 		escapeCloser(e) {
@@ -118,51 +130,53 @@ const ModalDialog = Vue.extend({
 			}
 		},
 
-		beforeEnter: function(el) {
-			let overlay = el.querySelector('#modal-overlay');
-			let dialog = el.querySelector('.modal-dialog');
-
-			overlay.classList.add('fade-in-out-transition', 'fade-in-out-enter');
-			dialog.classList.add('grow-in-out-enter');
-
-			dialog.addEventListener('animationend', function() {
-				dialog.classList.remove('grow-in-out-enter');
-			});
-		},
-
-		enter: function(el, done) {
-			let overlay = el.querySelector('#modal-overlay');
-
-			Vue.nextTick(() => {
-				overlay.classList.remove('fade-in-out-enter');
-				overlay.addEventListener('transitionend', done);
-			});
-		},
-
-		leave: function(el, done) {
-			let overlay = el.querySelector('#modal-overlay');
-			let dialog = el.querySelector('.modal-dialog');
-
-			dialog.classList.add('grow-in-out-leave');
-			overlay.classList.add('fade-in-out-leave');
-			overlay.addEventListener('transitionend', done);
-		}
-	},
-
-	events: {
-		close(message) {
+		closeEvent(message){
+			console.log("In closeEvent");
 			this[symbols.resolve](message);
-			this.$destroy(true);
+			this.$destroy();
+			this.$el.parentNode.removeChild(this.$el);
 		},
-
-		reject(message) {
+		rejectEvent(message){
 			this[symbols.reject](message);
-			this.$destroy(true);
+			this.$destroy();
+			this.$el.parentNode.removeChild(this.$el);
 		}
 	},
 
 	mixins: [domEvents, thenable]
 });
 
-
 export default ModalDialog;
+
+// Huge animation change in Vue 2 - no fancy animations for now.
+// ModalDialog.transition('modal-dialog', {
+// 	beforeEnter: function(el) {
+// 		let overlay = el.querySelector('#modal-overlay');
+// 		let dialog = el.querySelector('.modal-dialog');
+
+// 		overlay.classList.add('fade-in-out-transition', 'fade-in-out-enter');
+// 		dialog.classList.add('grow-in-out-enter');
+
+// 		dialog.addEventListener('animationend', function() {
+// 			dialog.classList.remove('grow-in-out-enter');
+// 		});
+// 	},
+
+// 	enter: function(el, done) {
+// 		let overlay = el.querySelector('#modal-overlay');
+
+// 		Vue.nextTick(() => {
+// 			overlay.classList.remove('fade-in-out-enter');
+// 			overlay.addEventListener('transitionend', done);
+// 		});
+// 	},
+
+// 	leave: function(el, done) {
+// 		let overlay = el.querySelector('#modal-overlay');
+// 		let dialog = el.querySelector('.modal-dialog');
+
+// 		dialog.classList.add('grow-in-out-leave');
+// 		overlay.classList.add('fade-in-out-leave');
+// 		overlay.addEventListener('transitionend', done);
+// 	}
+// });

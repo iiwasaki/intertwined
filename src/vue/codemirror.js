@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 import CodeMirror from 'codemirror';
+import eventHub from '../vue/eventhub';
 
 require('./codemirror-theme.less');
 
@@ -21,6 +22,14 @@ export default Vue.extend({
 		}
 	},
 
+	creeated() {
+		eventHub.$on('transition-entered', this.transitionEntered);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('transition-entered', this.transitionEntered);
+	},
+
 	mounted() {
 		this.$cm = CodeMirror(this.$el, this.options);
 		this.$cm.setValue((this.text || '') + '');
@@ -33,20 +42,20 @@ export default Vue.extend({
 		this.$cm.clearHistory();
 
 		this.$cm.on('change', () => {
-			this.text = this.$cm.getValue();
-			this.$dispatch('cm-change', this.text);
+			let newText = this.$cm.getValue();
+			this.$emit('cm-change', newText);
 		});
 
 		this.$nextTick (function () {
 			this.$cm.focus();
-		})
+		});
 	},
 
-	events: {
+	methods: {
 		// Since CodeMirror initialises incorrectly when special CSS such as
 		// scaleY is present on its containing element, it should be
 		// refreshed once transition is finished - hence, this event.
-		'transition-entered'() {
+		transitionEntered() {
 			this.$cm.refresh();
 		}
 	}
