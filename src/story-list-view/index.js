@@ -13,6 +13,7 @@ import ImportDialog from '../dialogs/story-import';
 import listToolbar from './list-toolbar';
 import storyitem from './story-item';
 import filedragndrop from '../ui/file-drag-n-drop';
+import eventHub from '../vue/eventhub';
 
 require('./index.less');
 
@@ -166,7 +167,7 @@ export default Vue.extend({
 		*/
 
 		if (this.previouslyEditing) {
-			this.$broadcast('previously-editing', this.previouslyEditing);
+			eventHub.$emit('previously-editing', this.previouslyEditing);
 		}
 	},
 

@@ -3,6 +3,8 @@
 import Vue from 'vue';
 import locale from '../../locale';
 import {thenable} from '../../vue/mixins/thenable';
+import modaldialog from '../../ui/modal-dialog';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
@@ -19,14 +21,15 @@ const prompter = {
 			modalClass: '',
 			isValid: true,
 			validationError: '',
+			responseEvent:'',
 			validator: function() {},
 
 			origin: null
 		}),
 
-		ready() {
-			this.$els.response.focus();
-			this.$els.response.select();
+		mounted() {
+			this.$refs.response.focus();
+			this.$refs.response.select();
 		},
 
 		methods: {
@@ -39,17 +42,24 @@ const prompter = {
 				}
 				else {
 					this.isValid = true;
-					this.$broadcast('close', this.response);
+					switch(this.responseEvent){
+						case "newStory":
+							eventHub.$emit('newStory', this.response);
+							break;
+						default:
+							break;
+					}
+					eventHub.$emit('close', this.response);
 				}
 			},
 
 			cancel() {
-				this.$broadcast('close', false);
+				eventHub.$emit('close', false);
 			}
 		},
 
 		components: {
-			'modal-dialog': require('../../ui/modal-dialog')
+			'modal-dialog': modaldialog,
 		},
 
 		mixins: [thenable]

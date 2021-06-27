@@ -34,14 +34,15 @@ export default function(store) {
 				console.log("In local storage add story - we don't need anymore. This is not doing anything. Will clean later.");
 				break;
 			case 'CREATE_STORY':
-				story.update(transaction => {
-					story.saveStory(
-						transaction,
-						state.story.stories.find(
-							s => s.name === mutation.payload[0].name
-						)
-					);
-				});
+				// story.update(transaction => {
+				// 	story.saveStory(
+				// 		transaction,
+				// 		state.story.stories.find(
+				// 			s => s.name === mutation.payload.name
+				// 		)
+				// 	);
+				// });
+				console.log("in local storage create story - we don't need anymore I don't think?");
 				break;
 
 			case 'UPDATE_STORY':

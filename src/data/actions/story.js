@@ -2,12 +2,12 @@
 Story-related actions.
 */
 
-const semverUtils = require('semver-utils');
-const latestFormatVersions = require('../latest-format-versions');
+import semverUtils from 'semver-utils';
+import latestFormatVersions from '../latest-format-versions';
 
-const actions = (module.exports = {
+export default {
 	createStory(store, props) {
-		console.log("in story actions");
+		console.log(props);
 		let normalizedProps = Object.assign({}, props);
 
 		/* If a format isn't specified, use the default one. */
@@ -18,23 +18,25 @@ const actions = (module.exports = {
 				store.state.pref.defaultFormat.version;
 		}
 
-		store.dispatch('CREATE_STORY', normalizedProps);
+		console.log(normalizedProps);
+
+		store.commit('CREATE_STORY', normalizedProps);
 	},
 
-	updateStory({dispatch}, id, props) {
-		dispatch('UPDATE_STORY', id, props);
+	updateStory(store, id, props) {
+		store.commit('UPDATE_STORY', id, props);
 	},
 
-	deleteStory({dispatch}, id) {
-		dispatch('DELETE_STORY', id);
+	deleteStory(store, id) {
+		store.commit('DELETE_STORY', id);
 	},
 
-	duplicateStory({dispatch}, id, newName) {
-		dispatch('DUPLICATE_STORY', id, newName);
+	duplicateStory(store, id, newName) {
+		store.commit('DUPLICATE_STORY', id, newName);
 	},
 
-	importStory({dispatch}, toImport) {
-		dispatch('IMPORT_STORY', toImport);
+	importStory(store, toImport) {
+		store.commit('IMPORT_STORY', toImport);
 	},
 
 	setTagColorInStory(store, storyId, tagName, tagColor) {
@@ -49,7 +51,7 @@ const actions = (module.exports = {
 			throw new Error(`No story exists with id ${storyId}`);
 		}
 
-		store.dispatch('UPDATE_STORY', storyId, {
+		store.commit('UPDATE_STORY', storyId, {
 			tagColors: Object.assign({}, story.tagColors, toMerge)
 		});
 	},
@@ -158,4 +160,4 @@ const actions = (module.exports = {
 			}
 		});
 	}
-});
+};

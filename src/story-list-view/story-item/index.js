@@ -8,6 +8,7 @@ import Vue from 'vue';
 import ZoomTransition from '../zoom-transition';
 import itempreview from './item-preview';
 import itemmenu from './item-menu';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
@@ -26,6 +27,16 @@ export default Vue.extend({
 		'item-menu': itemmenu,
 	},
 
+	created() {
+		eventHub.$on('previously-editing', this.previouslyEditing);
+		eventHub.$on('story-edit', this.storyEdit);
+	},
+
+	beforeDestroy() {
+		eventHub.$off('previously-editing', this.previouslyEditing);
+		eventHub.$off('story-edit', this.storyEdit);
+	},
+
 	computed: {
 		lastUpdateFormatted() {
 			return moment(this.story.lastUpdate).format('lll');
@@ -41,38 +52,6 @@ export default Vue.extend({
 			}
 
 			return (result % 40) * 90;
-		}
-	},
-
-	events: {
-		// If our parent wants to edit our own model, then we do so. This is
-		// done this level so that we animate the transition correctly.
-
-		'story-edit'(id) {
-			if (this.story.id === id) {
-				this.edit();
-			}
-		},
-
-		// if we were previously editing a story, show a zoom shrinking back
-		// into us. The signature is a little bit different to save time; we
-		// know the ID of the story from the route, but don't have an object.
-
-		'previously-editing'(id) {
-			if (id === this.story.id) {
-				// The method for grabbing the page position of our element is
-				// cribbed from http://youmightnotneedjquery.com/.
-
-				let rect = this.$el.getBoundingClientRect();
-
-				new ZoomTransition({
-					data: {
-						reverse: true,
-						x: rect.left + (rect.right - rect.left) / 2,
-						y: rect.top + (rect.bottom - rect.top) / 2
-					}
-				}).$mountTo(document.body);
-			}
 		}
 	},
 
@@ -94,6 +73,35 @@ export default Vue.extend({
 			.then(
 				() => (this.$router.push('/stories/' + this.story.id))
 			);
+		},
+		// If our parent wants to edit our own model, then we do so. This is
+		// done this level so that we animate the transition correctly.
+
+		storyEdit(id) {
+			if (this.story.id === id) {
+				this.edit();
+			}
+		},
+
+		// if we were previously editing a story, show a zoom shrinking back
+		// into us. The signature is a little bit different to save time; we
+		// know the ID of the story from the route, but don't have an object.
+
+		previouslyEditing(id) {
+			if (id === this.story.id) {
+				// The method for grabbing the page position of our element is
+				// cribbed from http://youmightnotneedjquery.com/.
+
+				let rect = this.$el.getBoundingClientRect();
+
+				new ZoomTransition({
+					data: {
+						reverse: true,
+						x: rect.left + (rect.right - rect.left) / 2,
+						y: rect.top + (rect.bottom - rect.top) / 2
+					}
+				}).$mountTo(document.body);
+			}
 		}
 	}
 });

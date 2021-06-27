@@ -4,23 +4,43 @@ import Vue from 'vue';
 import AboutDialog from '../../dialogs/about';
 const FormatsDialog = require('../../dialogs/formats');
 const ImportDialog = require('../../dialogs/story-import');
-const {createStory} = require('../../data/actions/story');
-const isElectron = require('../../electron/is-electron');
+import storyActions from '../../data/actions/story';
 import locale from '../../locale';
-const {prompt} = require('../../dialogs/prompt');
+import prompter from '../../dialogs/prompt';
 const {publishArchive} = require('../../data/publish');
 const saveFile = require('../../file/save');
 import {mapGetters} from 'vuex';
 import themeswitcher from './theme-switcher';
+import eventHub from '../../vue/eventhub';
 
 export default Vue.extend({
 	template: require('./index.html'),
 
+	created(){
+		eventHub.$on('newStory', this.createNewStory);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('newStory', this.createNewStory);
+	},
+
 	methods: {
+		createNewStory(name){
+			storyActions.createStory(this.$store, {name: name});
+			/* Allow the appearance animation to complete. */
+
+			window.setTimeout(() => {
+				eventHub.$emit(
+					'story-edit',
+					this.existingStories.find(story => story.name === name)
+						.id
+				);
+			}, 300);
+		},
 		createStoryPrompt(e) {
 			// Prompt for the new story name.
 
-			prompt({
+			prompter.prompt({
 				message: locale.say(
 					'What should your story be named?<br>(You can change this later.)'
 				),
@@ -35,20 +55,8 @@ export default Vue.extend({
 						);
 					}
 				},
-
+				responseEvent: 'newStory',
 				origin: e.target
-			}).then(name => {
-				this.createStory({name});
-
-				/* Allow the appearance animation to complete. */
-
-				window.setTimeout(() => {
-					this.$dispatch(
-						'story-edit',
-						this.existingStories.find(story => story.name === name)
-							.id
-					);
-				}, 300);
 			});
 		},
 
@@ -95,7 +103,8 @@ export default Vue.extend({
 
 	computed: {
 		...mapGetters({
-			appInfo: 'appInfo'
+			appInfo: 'appInfo',
+			existingStories: 'stories',
 		}),
 		newStoryTitle() {
 			return locale.say('Create a brand-new story');
@@ -136,13 +145,4 @@ export default Vue.extend({
 		'theme-switcher': themeswitcher,
 	},
 
-	vuex: {
-		actions: {
-			createStory
-		},
-
-		getters: {
-			existingStories: state => state.story.stories
-		}
-	}
 });

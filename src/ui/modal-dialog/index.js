@@ -42,13 +42,20 @@ const ModalDialog = Vue.extend({
 	},
 
 	created(){
+		// These first two respond directly from children
 		this.$on('close', this.closeEvent);
 		this.$on('reject', this.rejectEvent);
+
+		// We need these two for prompts and other parents that may "broadcast" in the old way.
+		eventHub.$on('close', this.closeEvent);
+		eventHub.$on('reject', this.rejectEvent);
 	},
 
 	beforeDestroy(){
-		this.$on('close', this.closeEvent);
-		this.$on('reject', this.rejectEvent);
+		this.$off('close', this.closeEvent);
+		this.$off('reject', this.rejectEvent);
+		eventHub.$off('close', this.closeEvent);
+		eventHub.$off('reject', this.rejectEvent);
 	},
 
 	mounted() {
@@ -95,7 +102,6 @@ const ModalDialog = Vue.extend({
 	},
 
 	destroyed() {
-		console.log("In Destroyed of modal-dialog");
 		let body = document.querySelector('body');
 
 		body.classList.remove('modalOpen');
@@ -131,7 +137,6 @@ const ModalDialog = Vue.extend({
 		},
 
 		closeEvent(message){
-			console.log("In closeEvent");
 			this[symbols.resolve](message);
 			this.$destroy();
 			this.$el.parentNode.removeChild(this.$el);

@@ -8,7 +8,7 @@ import locale from '../../locale';
 import idFor from '../id';
 import ui from '../../ui';
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
-import db from "../firebase-handler";
+import FirebaseHandler from "../firebase-handler";
 
 /*
 A shorthand function for finding a particular story in the state, or a
@@ -45,6 +45,7 @@ const storyStore = {
 			state.stories.push(payload);
 		},
 		CREATE_STORY(state, props) {
+			console.log(props);
 			let story = Object.assign(
 				{
 					id: idFor(props.name),
@@ -62,6 +63,7 @@ const storyStore = {
 			}
 			console.log("Committing action to story?");
 			state.stories.push(story);
+			FirebaseHandler.saveStory(story);
 		},
 
 		UPDATE_PASSAGE_IN_STORY(state, payload) {
@@ -108,7 +110,7 @@ const storyStore = {
 		},
 		allStories: state => {
 			return state.stories;
-		}
+		},
 	},
 
 	actions: {
