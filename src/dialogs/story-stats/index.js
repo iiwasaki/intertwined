@@ -3,9 +3,11 @@ A modal which shows aggregrate statistics for a story.
 */
 
 import Vue from 'vue';
-const moment = require('moment');
-const linkParser = require('../../data/link-parser');
-const locale = require('../../locale');
+import moment from 'moment';
+import linkParser from '../../data/link-parser';
+import locale from '../../locale';
+import {mapGetters} from 'vuex';
+import modaldialog from  '../../ui/modal-dialog';
 
 require('./index.less');
 
@@ -17,7 +19,14 @@ export default Vue.extend({
 		origin: null
 	}),
 
+	filters: {
+		say: (message, args) => {
+			return locale.say(message, args);
+		}
+	},
+
 	computed: {
+		...mapGetters(["allStories"]),
 		story() {
 			return this.allStories.find(story => story.id === this.storyId);
 		},
@@ -125,13 +134,16 @@ export default Vue.extend({
 		}
 	},
 
-	vuex: {
-		getters: {
-			allStories: state => state.story.stories
+	methods: {
+		ifidSay(){
+			const parser = new DOMParser();
+			let text = locale.say('The IFID for this story is &lt;span class="ifid"&gt;%s&lt;/span&gt;. (&lt;a href="http:\/\/ifdb.tads.org/help-ifid" target="_blank"&gt;What\'s an IFID?&lt;/a&gt;)', this.story.ifid);
+			const ret = parser.parseFromString(text, "text/html");
+			return ret.body.firstChild.textContent;
 		}
 	},
 
 	components: {
-		'modal-dialog': require('../../ui/modal-dialog')
+		'modal-dialog': modaldialog,
 	}
 });

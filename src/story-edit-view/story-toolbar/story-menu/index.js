@@ -2,19 +2,21 @@
 
 import escape from 'lodash.escape';
 import Vue from 'vue';
+import {mapGetters} from 'vuex';
 const FormatDialog = require('../../../dialogs/story-format');
 const JavaScriptEditor = require('../../../editors/javascript');
-const StatsDialog = require('../../../dialogs/story-stats');
+import StatsDialog from '../../../dialogs/story-stats';
 const StylesheetEditor = require('../../../editors/stylesheet');
-const {loadFormat} = require('../../../data/actions/story-format');
+import formatActions from '../../../data/actions/story-format';
 import locale from '../../../locale';
 const {proofStory} = require('../../../common/launch-story');
-const {prompt} = require('../../../dialogs/prompt');
+import prompter from '../../../dialogs/prompt';
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
-const {selectPassages} = require('../../../data/actions/passage');
-const {updateStory} = require('../../../data/actions/story');
+import passageActions from '../../../data/actions/passage';
+import storyActions from '../../../data/actions/story';
 import dropdown from '../../../ui/drop-down';
+import eventHub from '../../../vue/eventhub';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -24,6 +26,22 @@ export default Vue.extend({
 			type: Object,
 			required: true
 		}
+	},
+
+	created(){
+		//eventHub.$on('deleteStory', this.deleteStoryPost);
+		eventHub.$on('renameStory', this.renameStoryPost);
+		//eventHub.$on('duplicateStory', this.duplicateStoryPost);
+	},
+
+	beforeDestroy(){
+		//eventHub.$off('deleteStory', this.deleteStoryPost);
+		eventHub.$off('renameStory', this.renameStoryPost);
+		//eventHub.$off('renameStory', this.duplicateStoryPost);
+	},
+
+	computed: {
+		...mapGetters(["allFormats", "appInfo", "defaultFormatName"]),
 	},
 
 	methods: {
@@ -47,7 +65,7 @@ export default Vue.extend({
 		},
 
 		renameStory(e) {
-			prompt({
+			prompter.prompt({
 				message: locale.say(
 					'What should &ldquo;%s&rdquo; be renamed to?',
 					escape(this.story.name)
@@ -55,20 +73,33 @@ export default Vue.extend({
 				buttonLabel: '<i class="fa fa-ok"></i> ' + locale.say('Rename'),
 				response: this.story.name,
 				blankTextError: locale.say('Please enter a name.'),
-				origin: e.target
-			}).then(text => this.updateStory(this.story.id, {name: text}));
+				origin: e.target,
+				responseEvent: "renameStory",
+				targetStoryId: this.story.id,
+			});
+		},
+
+		/**
+		 * This event/method will be fired by the prompt popup if they accept the
+		 * story rename.
+		 */
+		 renameStoryPost(toRenameId, newName){
+			if (toRenameId === this.story.id){
+				storyActions.updateStory(this.$store, this.story.id, {name: newName});
+			}
 		},
 
 		selectAll() {
-			this.selectPassages(this.story.id, () => true);
+			passageActions.selectPassages(this.$store, this.story.id, () => true);
 		},
 
 		proofStory() {
-			proofStory(this.$store, this.story.id);
+			proofStory(this.story.id);
 		},
 
 		publishStory() {
-			this.loadFormat(
+			formatActions.loadFormat(
+				this.$store,
 				this.story.storyFormat,
 				this.story.storyFormatVersion
 			).then(format => {
@@ -94,7 +125,7 @@ export default Vue.extend({
 		},
 
 		toggleSnap() {
-			this.updateStory(this.story.id, {
+			storyActions.updateStory(this.$store, this.story.id, {
 				snapToGrid: !this.story.snapToGrid
 			});
 		}
@@ -104,17 +135,4 @@ export default Vue.extend({
 		'drop-down': dropdown,
 	},
 
-	vuex: {
-		actions: {
-			loadFormat,
-			selectPassages,
-			updateStory
-		},
-
-		getters: {
-			allFormats: state => state.storyFormat.formats,
-			appInfo: state => state.appInfo,
-			defaultFormatName: state => state.pref.defaultFormat
-		}
-	}
 });

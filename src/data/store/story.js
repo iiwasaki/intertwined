@@ -167,6 +167,7 @@ const storyStore = {
 			let story = getStoryById(state, id);
 
 			Object.assign(story, props);
+			console.log(story);
 			story.lastUpdate = new Date();
 			FirebaseHandler.saveStory(story);
 		},

@@ -2,11 +2,12 @@
 
 import Vue from 'vue';
 import locale from '../../locale';
-const zoomMappings = require('../zoom-settings');
+import zoomMappings from '../zoom-settings';
 const {playStory, testStory} = require('../../common/launch-story');
-const {updateStory} = require('../../data/actions/story');
+import storyActions from '../../data/actions/story';
 import storymenu from './story-menu';
 import storysearch from './story-search';
+import eventHub from '../../vue/eventhub';
 
 
 require('./index.less');
@@ -39,25 +40,20 @@ export default Vue.extend({
 
 	methods: {
 		setZoom(description) {
-			this.updateStory(this.story.id, {zoom: zoomMappings[description]});
+			storyActions.updateStory(this.$store, this.story.id, {zoom: zoomMappings[description]});
 		},
 
 		test() {
-			testStory(this.$store, this.story.id);
+			testStory(this.story.id);
 		},
 
 		play() {
-			playStory(this.$store, this.story.id);
+			playStory(this.story.id);
 		},
 
 		addPassage() {
-			this.$dispatch('passage-create');
+			this.$emit('passage-create');
 		}
 	},
 
-	vuex: {
-		actions: {
-			updateStory
-		}
-	}
 });

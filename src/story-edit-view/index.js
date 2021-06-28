@@ -511,20 +511,20 @@ export default Vue.extend({
 		}
 	},
 
-	events: {
+	// events: {
 		
 		
-		/*
-		A hook into our createPassage() method for child components.
-		*/
+	// 	/*
+	// 	A hook into our createPassage() method for child components.
+	// 	*/
 
-		'passage-create'(name, left, top) {
-			this.createPassageAt(name, left, top);
-		},
+	// 	'passage-create'(name, left, top) {
+	// 		this.createPassageAt(name, left, top);
+	// 	},
 		
 
 		
-	},
+	// },
 
 	components: {
 		'link-arrows': linkarrows,
