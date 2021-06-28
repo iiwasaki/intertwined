@@ -7,11 +7,11 @@
 **/
 
 'use strict';
-const ui = require('./index.js');
+import ui from './index.js';
 
-module.exports = html => {
+export default function(html){
 	// remove our UI hooks
-
+	console.log("in replace.js");
 	ui.destroy();
 
 	// blast the last of our JS globals

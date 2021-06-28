@@ -7,8 +7,8 @@ import StoryEditView from '../story-edit-view';
 import StoryListView from '../story-list-view';
 import WelcomeView from '../welcome';
 import locale from '../locale';
-const { getStoryPlayHtml, getStoryProofingHtml, getStoryTestHtml } = require('./story-html');
-const replaceUI = require('../ui/replace');
+import storyHTMLActions from './story-html';
+import replaceUI from '../ui/replace';
 import store from '../data/store';
 const FirebaseHandler = require('../data/firebase-handler').default;
 
@@ -43,7 +43,7 @@ let router = new VueRouter({
 		}},
 		{path: '/stories/:id/play', component: {
 			mounted() {
-				getStoryPlayHtml(this.$store, this.$route.params.id)
+				storyHTMLActions.getStoryPlayHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
 						window.alert(
@@ -61,7 +61,7 @@ let router = new VueRouter({
 		}},
 		{path: '/stories/:id/proof', component: {
 			mounted() {
-				getStoryProofingHtml(this.$store, this.$route.params.id)
+				storyHTMLActions.getStoryProofingHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
 						window.alert(
@@ -81,7 +81,7 @@ let router = new VueRouter({
 		{path: '/stories/:id/test', component: {
 			mounted() {
 				console.log("Testing");
-				getStoryTestHtml(this.$store, this.$route.params.id)
+				storyHTMLActions.getStoryTestHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
 						window.alert(
@@ -103,7 +103,7 @@ let router = new VueRouter({
 				console.log("Testing story - in router");
 			},
 			mounted() {
-				getStoryTestHtml(
+				storyHTMLActions.getStoryTestHtml(
 					this.$store,
 					this.$route.params.storyId,
 					this.$route.params.passageId

@@ -4,12 +4,12 @@ data/, these are Vuex-aware, work with IDs instead of direct data, and are
 asynchronous.
 */
 
-const {loadFormat} = require('../data/actions/story-format');
-const locale = require('../locale');
+import formatActions from '../data/actions/story-format';
+import locale from '../locale';
 const {publishStoryWithFormat} = require('../data/publish');
-const FirebaseHandler = require('../data/firebase-handler').default;
+import FirebaseHandler from '../data/firebase-handler';
 
-module.exports = {
+export default {
 	async getStoryPlayHtml(store, storyId) {
 		const story = await FirebaseHandler.loadStoryById(storyId);
 
@@ -19,7 +19,7 @@ module.exports = {
 			);
 		}
 		console.log("Format version update: ", story);
-		return loadFormat(
+		return formatActions.loadFormat(
 			store,
 			story.storyFormat,
 			story.storyFormatVersion
@@ -37,7 +37,7 @@ module.exports = {
 			);
 		}
 
-		return loadFormat(
+		return formatActions.loadFormat(
 			store,
 			store.state.pref.proofingFormat.name,
 			store.state.pref.proofingFormat.version
@@ -55,7 +55,7 @@ module.exports = {
 			);
 		}
 
-		return loadFormat(
+		return formatActions.loadFormat(
 			store,
 			story.storyFormat,
 			story.storyFormatVersion

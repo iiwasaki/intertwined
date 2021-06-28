@@ -14,6 +14,7 @@ const publish = module.exports = {
 	*/
 
 	publishStoryWithFormat(appInfo, story, format, formatOptions, startId) {
+		console.log("In publishStoryWithFormat");
 		if (!format.properties || !format.properties.source) {
 			throw new Error('Story format has no source property');
 		}
