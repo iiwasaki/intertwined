@@ -5,7 +5,7 @@ import Vue from 'vue';
 import {mapGetters} from 'vuex';
 import confirmer from '../../../dialogs/confirm';
 import storyActions from '../../../data/actions/story';
-const {loadFormat} = require('../../../data/actions/story-format');
+import formatActions from '../../../data/actions/story-format';
 const {playStory, testStory} = require('../../../common/launch-story');
 import prompter from '../../../dialogs/prompt';
 import locale from  '../../../locale';
@@ -72,7 +72,8 @@ export default Vue.extend({
 		**/
 
 		publish() {
-			this.loadFormat(
+			formatActions.loadFormat(
+				this.$store,
 				this.story.storyFormat,
 				this.story.storyFormatVersion
 			).then(format => {
@@ -174,10 +175,4 @@ export default Vue.extend({
 		},
 	},
 
-	vuex: {
-		actions: {
-			loadFormat,
-		},
-
-	}
 });

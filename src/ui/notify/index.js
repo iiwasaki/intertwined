@@ -1,4 +1,4 @@
-const NotificationList = require('./list');
+const NotificationList = require('./list').default;
 let notifications;
 
 module.exports = function(html, className = '') {

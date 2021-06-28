@@ -36,57 +36,18 @@ function openWindow(url) {
 
 module.exports = {
 	playStory(storyId) {
-		console.log(storyId);
 		openWindow(`#stories/${storyId}/play`);
 	},
 
-	proofStory(store, storyId) {
-		if (isElectron()) {
-			getStoryProofingHtml(store, storyId)
-				.then(html =>
-					window.twineElectron.ipcRenderer.send(
-						'open-with-temp-file',
-						html,
-						'.html'
-					)
-				)
-				.catch(e => {
-					window.alert(
-						locale.say(
-							'An error occurred while publishing your story. (%s)',
-							e.message
-						)
-					);
-				});
-		} else {
-			openWindow(`#stories/${storyId}/proof`);
-		}
+	proofStory(storyId) {
+		openWindow(`#stories/${storyId}/proof`);
 	},
 
-	testStory(store, storyId, startPassageId) {
-		if (isElectron()) {
-			getStoryTestHtml(store, storyId, startPassageId)
-				.then(html =>
-					window.twineElectron.ipcRenderer.send(
-						'open-with-temp-file',
-						html,
-						'.html'
-					)
-				)
-				.catch(e => {
-					window.alert(
-						locale.say(
-							'An error occurred while publishing your story. (%s)',
-							e.message
-						)
-					);
-				});
+	testStory(storyId, startPassageId) {
+		if (startPassageId) {
+			openWindow(`#stories/${storyId}/test/${startPassageId}`);
 		} else {
-			if (startPassageId) {
-				openWindow(`#stories/${storyId}/test/${startPassageId}`);
-			} else {
-				openWindow(`#stories/${storyId}/test`);
-			}
+			openWindow(`#stories/${storyId}/test`);
 		}
 	}
 };

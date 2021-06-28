@@ -10,7 +10,7 @@ import locale from '../locale';
 import storyHTMLActions from './story-html';
 import replaceUI from '../ui/replace';
 import store from '../data/store';
-const FirebaseHandler = require('../data/firebase-handler').default;
+import FirebaseHandler from '../data/firebase-handler';
 
 Vue.use(VueRouter);
 let router = new VueRouter({

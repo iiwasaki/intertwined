@@ -5,7 +5,7 @@ found at ../common/publish.js.
 */
 
 const escape = require('lodash.escape');
-const locale = require('../locale');
+const locale = require('../locale').default;
 
 const publish = module.exports = {
 	/*
