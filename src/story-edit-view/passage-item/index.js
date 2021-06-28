@@ -79,12 +79,14 @@ export default Vue.extend({
 		eventHub.$on('passage-drag-complete-child', this.passageDragCompleteChild);
 		eventHub.$on('passage-edit', this.editFromDropdown);
 		eventHub.$on('passage-delete', this.passageDelete);
+		eventHub.$on('new-links', this.afterEdit);
 	},
 
 	beforeDestroy() {
 		eventHub.$off('passage-drag-complete-child', this.passageDragCompleteChild);
 		eventHub.$off('passage-edit', this.editFromDropdown);
 		eventHub.$off('passage-delete', this.passageDelete);
+		eventHub.$off('new-links', this.afterEdit);
 	},
 
 	computed: {
@@ -254,6 +256,19 @@ export default Vue.extend({
 			passageActions.deletePassage(this.parentStory.id, this.passage.id);
 		},
 
+		afterEdit(targetPassageId, oldText){
+			console.log("After edit");
+			if (targetPassageId === this.passage.id){
+				passageActions.createNewlyLinkedPassages(
+					this.$store,
+					this.parentStory.id,
+					this.passage.id,
+					oldText,
+					this.gridSize
+				);
+			}
+		},
+
 		edit() {
 			/*
 			Close any existing passage menu -- it may still be visible if the
@@ -263,19 +278,6 @@ export default Vue.extend({
 			eventHub.$emit('drop-down-close');
 
 			const oldText = this.passage.text;
-			const afterEdit = () => {
-				passageActions.createNewlyLinkedPassages(
-					this.$store,
-					this.parentStory.id,
-					this.passage.id,
-					oldText,
-					this.gridSize
-				);
-			};
-
-			console.log(this.parentStory.storyFormat);
-			console.log(this.parentStory.storyFormatVersion);
-
 			/*
 			The promise below is rejected if the user clicks outside the editor,
 			so we need to handle both resolution and rejection of the promise.
@@ -285,7 +287,8 @@ export default Vue.extend({
 				data: {
 					passageId: this.passage.id,
 					storyId: this.parentStory.id,
-					origin: this.$el
+					origin: this.$el,
+					oldText: oldText,
 				},
 				store: this.$store,
 				storyFormat: {
@@ -294,8 +297,6 @@ export default Vue.extend({
 				}
 			})
 			.$mountTo(document.body)
-			.then(afterEdit)
-			.catch(afterEdit);
 		},
 
 		startDrag(e) {

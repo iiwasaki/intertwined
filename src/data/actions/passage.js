@@ -140,7 +140,7 @@ export default {
 		/* Save the change if we actually changed anything. */
 
 		if (passageRect.top !== oldTop || passageRect.left !== oldLeft) {
-			actions.updatePassage(
+			this.updatePassage(
 				store,
 				storyId,
 				passageId,
@@ -186,20 +186,22 @@ export default {
 		let newLeft = passage.left + (100 - totalWidth) / 2;
 
 		newLinks.forEach(link => {
-			store.dispatch(
+			store.commit(
 				'CREATE_PASSAGE_IN_STORY',
-				storyId,
 				{
-					name: link,
-					left: newLeft,
-					top: newTop
+					storyId: storyId,
+					props: {
+						name: link,
+						left: newLeft,
+						top: newTop
+					}
 				}
 			);
 
 			const newPassage = story.passages.find(p => p.name === link);
 
 			if (newPassage) {
-				actions.positionPassage(
+				this.positionPassage(
 					store,
 					storyId,
 					newPassage.id,
@@ -267,11 +269,15 @@ export default {
 					'[[' + newNameEscaped + '$1$2]]'
 				);
 
-				store.dispatch(
+				store.commit(
 					'UPDATE_PASSAGE_IN_STORY',
-					storyId,
-					passage.id,
-					{ text: newText }
+					{
+						storyId: storyId,
+						passageId: passage.id,
+						props: {
+							text: newText
+						}
+					}
 				);
 			}
 		});

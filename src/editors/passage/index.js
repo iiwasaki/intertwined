@@ -13,6 +13,7 @@ import { mapGetters } from 'vuex';
 import codemirrorcomponent from '../../vue/codemirror';
 import modaldialog from '../../ui/modal-dialog';
 import tageditor from './tag-editor';
+import eventHub from '../../vue/eventhub';
 
 
 require('codemirror/addon/display/placeholder');
@@ -36,7 +37,8 @@ export default Vue.extend({
 		oldWindowTitle: '',
 		userPassageName: '',
 		saveError: '',
-		origin: null
+		origin: null,
+		oldText: '',
 	}),
 
 	filters: {
@@ -184,6 +186,8 @@ export default Vue.extend({
 					);
 				}
 
+				// We handle updating new links here
+				eventHub.$emit("new-links", this.passage.id, this.oldText);
 				return true;
 			}
 
