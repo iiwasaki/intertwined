@@ -3,7 +3,9 @@ A component showing a single search result.
 */
 
 import Vue from 'vue';
-const { updatePassage } = require('../../data/actions/passage');
+import passageActions from '../../data/actions/passage';
+import locale from '../../locale';
+import eventHub from '../../vue/eventhub';
 
 require('./result.less');
 
@@ -41,6 +43,27 @@ export default Vue.extend({
 		expanded: false
 	}),
 
+	created(){
+		eventHub.$on("expand", this.expand);
+		eventHub.$on("collapse", this.collapse);
+		eventHub.$on("replace", this.replace);
+	},
+
+	beforeDestroy(){
+		eventHub.$on("expand", this.expand);
+		eventHub.$on("collapse", this.collapse);
+		eventHub.$on("replace", this.replace);
+	},
+
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		},
+		sayPlural: (sourceSingular, sourcePlural, count) => {
+			return locale.sayPlural(sourceSingular, sourcePlural, count);
+		}
+	},
+
 	methods: {
 		toggleExpanded() {
 			this.expanded = !this.expanded;
@@ -58,15 +81,14 @@ export default Vue.extend({
 				this.replaceWith
 			);
 
-			this.updatePassage(
+			passageActions.updatePassage(
+				this.$store,
 				this.story.id,
 				this.match.passage.id,
 				{ name, text }
 			);
-		}
-	},
+		},
 
-	events: {
 		/*
 		The parent sends these events when the user chooses to expand or
 		collapse all results.
@@ -82,14 +104,9 @@ export default Vue.extend({
 
 		/* The parent sends this event when the user clicks "Replace All". */
 
-		replace() {
+		replaceEvent() {
 			this.replace();
 		}
 	},
 
-	vuex: {
-		actions: {
-			updatePassage
-		}
-	}
 });

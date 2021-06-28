@@ -101,6 +101,7 @@ const storyStore = {
 
 			Object.assign(passage, props);
 			story.lastUpdate = new Date();
+			FirebaseHandler.saveStory(story);
 		},
 
 		CREATE_PASSAGE_IN_STORY(state, payload) {
@@ -144,8 +145,7 @@ const storyStore = {
 			}
 
 			story.lastUpdate = new Date();
-			console.log(story);
-			console.log(story.passages);
+			FirebaseHandler.saveStory(story);
 		},
 
 
@@ -158,6 +158,7 @@ const storyStore = {
 				passage => passage.id !== passageId
 			);
 			story.lastUpdate = new Date();
+			FirebaseHandler.saveStory(story);
 		},
 
 		UPDATE_STORY(state, payload) {

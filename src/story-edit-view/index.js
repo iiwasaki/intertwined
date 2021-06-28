@@ -201,15 +201,25 @@ export default Vue.extend({
 		eventHub.$on('passage-drag', this.passageDrag);
 		eventHub.$on('passage-drag-complete', this.passageDragComplete);
 		eventHub.$on('passage-position', this.passagePosition);
+		eventHub.$on('highlight-regexp-change', this.highlightRegexpChange);
 	},
 
 	beforeDestroy(){
 		eventHub.$off('passage-drag', this.passageDrag);
 		eventHub.$off('passage-drag-complete', this.passageDragComplete);
 		eventHub.$off('passage-position', this.passagePosition);
+		eventHub.$off('highlight-regexp-change', this.highlightRegexpChange);
 	},
 
 	methods: {
+		/*
+		Our children (e.g. the search field can tell us to change what the
+		highlight filter should be.
+		*/
+
+		highlightRegexpChange(value) {
+			this.highlightRegexp = value;
+		},
 
 		/*
 		A child will dispatch this event to us as it is dragged around. We
@@ -502,14 +512,7 @@ export default Vue.extend({
 	},
 
 	events: {
-		/*
-		Our children (e.g. the search field can tell us to change what the
-		highlight filter should be.
-		*/
-
-		'highlight-regexp-change'(value) {
-			this.highlightRegexp = value;
-		},
+		
 		
 		/*
 		A hook into our createPassage() method for child components.

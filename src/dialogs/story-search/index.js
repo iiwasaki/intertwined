@@ -4,7 +4,11 @@ passages.
 */
 
 import Vue from 'vue';
-const escapeRegexp = require('lodash.escaperegexp');
+import escapeRegexp from 'lodash.escaperegexp';
+import modaldialog from '../../ui/modal-dialog';
+import result from './result';
+import locale from '../../locale';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
@@ -21,6 +25,15 @@ export default Vue.extend({
 		working: false,
 		origin: null
 	}),
+
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		},
+		sayPlural: (sourceSingular, sourcePlural, count) => {
+			return locale.sayPlural(sourceSingular, sourcePlural, count);
+		}
+	},
 
 	computed: {
 		searchRegexp() {
@@ -54,6 +67,7 @@ export default Vue.extend({
 			let result = this.story.passages.reduce((matches, passage) => {
 				let numMatches = 0;
 				let passageName = passage.name;
+				let passageId = passage.id;
 				let passageText = passage.text;
 				let highlightedName = passageName;
 				let highlightedText = passageText;
@@ -82,6 +96,7 @@ export default Vue.extend({
 				if (numMatches > 0) {
 					matches.push({
 						passage,
+						passageId,
 						numMatches,
 						highlightedName,
 						highlightedText
@@ -90,7 +105,6 @@ export default Vue.extend({
 
 				return matches;
 			}, []);
-
 			this.working = false;
 			return result;
 		}
@@ -98,24 +112,24 @@ export default Vue.extend({
 
 	methods: {
 		expandAll() {
-			this.$broadcast('expand');
+			eventHub.$emit('expand');
 		},
 
 		collapseAll() {
-			this.$broadcast('collapse');
+			eventHub.$emit('collapse');
 		},
 
 		replaceAll() {
-			this.$broadcast('replace');
+			eventHub.$emit('replace');
 		}
 	},
 
-	ready() {
-		this.$els.search.focus();
+	mounted() {
+		this.$refs.search.focus();
 	},
 
 	components: {
-		'modal-dialog': require('../../ui/modal-dialog'),
-		'search-result': require('./result')
+		'modal-dialog': modaldialog,
+		'search-result': result,
 	}
 });

@@ -134,37 +134,37 @@ export default function(store) {
 			case 'UPDATE_PASSAGE_IN_STORY': {
 				/* Is this a significant update? */
 
-				if (Object.keys(mutation.payload.props).some(key => key !== 'selected')) {
-					const parentStory = state.story.stories.find(
-						s => s.id === mutation.payload.storyId
-					);
-					const passage = parentStory.passages.find(
-						p => p.id === mutation.payload.passageId
-					);
+				// if (Object.keys(mutation.payload.props).some(key => key !== 'selected')) {
+				// 	const parentStory = state.story.stories.find(
+				// 		s => s.id === mutation.payload.storyId
+				// 	);
+				// 	const passage = parentStory.passages.find(
+				// 		p => p.id === mutation.payload.passageId
+				// 	);
 
-					story.update(transaction => {
-						story.saveStory(transaction, parentStory);
-						story.savePassage(transaction, passage);
-					});
-				}
+				// 	story.update(transaction => {
+				// 		story.saveStory(transaction, parentStory);
+				// 		story.savePassage(transaction, passage);
+				// 	});
+				// }
 				break;
 			}
 				
 			case 'DELETE_PASSAGE_IN_STORY': {
-				const parentStory = state.story.stories.find(
-					s => s.id === mutation.payload[0]
-				);
+				// const parentStory = state.story.stories.find(
+				// 	s => s.id === mutation.payload[0]
+				// );
 
-				/*
-				We can't dig up the passage in question right now, because
-				previousStories is only a shallow copy, and it's gone there at
-				this point in time.
-				*/
+				// /*
+				// We can't dig up the passage in question right now, because
+				// previousStories is only a shallow copy, and it's gone there at
+				// this point in time.
+				// */
 
-				story.update(transaction => {
-					story.saveStory(transaction, parentStory);
-					story.deletePassageById(transaction, mutation.payload[1]);
-				});
+				// story.update(transaction => {
+				// 	story.saveStory(transaction, parentStory);
+				// 	story.deletePassageById(transaction, mutation.payload[1]);
+				// });
 				break;
 			}
 
