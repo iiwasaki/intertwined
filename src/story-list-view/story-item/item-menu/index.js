@@ -2,19 +2,17 @@
 
 import escape from 'lodash.escape';
 import Vue from 'vue';
-import confirm from '../../../dialogs/confirm';
-const {
-	deleteStory,
-	duplicateStory,
-	updateStory
-} = require('../../../data/actions/story');
+import {mapGetters} from 'vuex';
+import confirmer from '../../../dialogs/confirm';
+import storyActions from '../../../data/actions/story';
 const {loadFormat} = require('../../../data/actions/story-format');
 const {playStory, testStory} = require('../../../common/launch-story');
-const {prompt} = require('../../../dialogs/prompt');
+import prompter from '../../../dialogs/prompt';
 import locale from  '../../../locale';
 const {publishStoryWithFormat} = require('../../../data/publish');
 const save = require('../../../file/save');
 import dropdown from '../../../ui/drop-down';
+import eventHub from '../../../vue/eventhub';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -26,8 +24,24 @@ export default Vue.extend({
 		}
 	},
 
+	created(){
+		eventHub.$on('deleteStory', this.deleteStoryPost);
+		eventHub.$on('renameStory', this.renameStoryPost);
+		eventHub.$on('duplicateStory', this.duplicateStoryPost);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('deleteStory', this.deleteStoryPost);
+		eventHub.$off('renameStory', this.renameStoryPost);
+		eventHub.$off('renameStory', this.duplicateStoryPost);
+	},
+
 	components: {
 		'drop-down': dropdown,
+	},
+
+	computed: {
+		...mapGetters(["allFormats", "appInfo", "defaultFormat"]),
 	},
 
 	methods: {
@@ -76,7 +90,7 @@ export default Vue.extend({
 		**/
 
 		deleteStory() {
-			confirm({
+			confirmer.confirm({
 				message: locale.say(
 					'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
 						'This cannot be undone.',
@@ -85,8 +99,20 @@ export default Vue.extend({
 				buttonLabel:
 					'<i class="fa fa-trash-o"></i> ' +
 					locale.say('Delete Forever'),
-				buttonClass: 'danger'
-			}).then(() => this.deleteStory(this.story.id));
+				buttonClass: 'danger',
+				responseEvent: 'deleteStory',
+				targetStoryId: this.story.id,
+			});
+		},
+
+		/**
+		 * This event/method will be fired by the confirmation popup if they accept the
+		 * story deletion.
+		 */
+		deleteStoryPost(toDeleteId){
+			if (toDeleteId === this.story.id){
+				storyActions.deleteStory(this.$store, this.story.id);
+			}
 		},
 
 		/**
@@ -96,16 +122,29 @@ export default Vue.extend({
 		**/
 
 		rename() {
-			prompt({
+			prompter.prompt({
 				message: locale.say(
 					'What should &ldquo;%s&rdquo; be renamed to?',
 					escape(this.story.name)
 				),
 				buttonLabel: '<i class="fa fa-ok"></i> ' + locale.say('Rename'),
 				response: this.story.name,
-				blankTextError: locale.say('Please enter a name.')
-			}).then(name => this.updateStory(this.story.id, {name}));
+				blankTextError: locale.say('Please enter a name.'),
+				responseEvent: "renameStory",
+				targetStoryId: this.story.id,
+			});
 		},
+
+		/**
+		 * This event/method will be fired by the prompt popup if they accept the
+		 * story rename.
+		 */
+		 renameStoryPost(toRenameId, newName){
+			if (toRenameId === this.story.id){
+				storyActions.updateStory(this.$store, this.story.id, {name: newName});
+			}
+		},
+
 
 		/**
 		 Prompts the user for a name, then creates a duplicate version of this
@@ -113,30 +152,32 @@ export default Vue.extend({
 		**/
 
 		duplicate() {
-			prompt({
+			prompter.prompt({
 				message: locale.say('What should the duplicate be named?'),
 				buttonLabel:
 					'<i class="fa fa-copy"></i> ' + locale.say('Duplicate'),
 				response: locale.say('%s Copy', this.story.name),
-				blankTextError: locale.say('Please enter a name.')
-			}).then(name => {
-				this.duplicateStory(this.story.id, name);
+				blankTextError: locale.say('Please enter a name.'),
+				responseEvent: "duplicateStory",
+				targetStoryId: this.story.id,
 			});
-		}
+		},
+
+		/**
+		 * This event/method will be fired by the prompt popup if they accept the
+		 * story duplicate.
+		 */
+		 duplicateStoryPost(toRenameId, newName){
+			if (toRenameId === this.story.id){
+				storyActions.duplicateStory(this.$store, this.story.id, newName);
+			}
+		},
 	},
 
 	vuex: {
 		actions: {
-			deleteStory,
-			duplicateStory,
 			loadFormat,
-			updateStory
 		},
 
-		getters: {
-			allFormats: state => state.storyFormat.formats,
-			appInfo: state => state.appInfo,
-			defaultFormat: state => state.pref.defaultFormat
-		}
 	}
 });

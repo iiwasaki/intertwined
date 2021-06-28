@@ -24,19 +24,30 @@ export default {
 	},
 
 	updateStory(store, id, props) {
-		store.commit('UPDATE_STORY', id, props);
+		store.commit('UPDATE_STORY',
+		{
+			id: id,
+			props: props
+		});
 	},
 
 	deleteStory(store, id) {
-		store.commit('DELETE_STORY', id);
+		store.commit('DELETE_STORY',{
+			id: id
+		});
 	},
 
 	duplicateStory(store, id, newName) {
-		store.commit('DUPLICATE_STORY', id, newName);
+		store.commit('DUPLICATE_STORY', {
+			id: id,
+			newName: newName
+		});
 	},
 
 	importStory(store, toImport) {
-		store.commit('IMPORT_STORY', toImport);
+		store.commit('IMPORT_STORY', {
+			toImport: toImport,
+		});
 	},
 
 	setTagColorInStory(store, storyId, tagName, tagColor) {

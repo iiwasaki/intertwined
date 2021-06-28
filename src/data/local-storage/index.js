@@ -46,28 +46,29 @@ export default function(store) {
 				break;
 
 			case 'UPDATE_STORY':
-				story.update(transaction => {
-					story.saveStory(
-						transaction,
-						state.story.stories.find(
-							s => s.id === mutation.payload[0]
-						)
-					);
-				});
+				// story.update(transaction => {
+				// 	story.saveStory(
+				// 		transaction,
+				// 		state.story.stories.find(
+				// 			s => s.id === mutation.payload[0]
+				// 		)
+				// 	);
+				// });
+				console.log("in update-story of local storage");
 				break;
 
 			case 'DUPLICATE_STORY':
-				story.update(transaction => {
-					const dupe = state.story.stories.find(
-						s => s.name === mutation.payload[1]
-					);
+				// story.update(transaction => {
+				// 	const dupe = state.story.stories.find(
+				// 		s => s.name === mutation.payload[1]
+				// 	);
 
-					story.saveStory(transaction, dupe);
+				// 	story.saveStory(transaction, dupe);
 
-					dupe.passages.forEach(
-						passage => story.savePassage(transaction, passage)
-					);
-				});
+				// 	dupe.passages.forEach(
+				// 		passage => story.savePassage(transaction, passage)
+				// 	);
+				// });
 				break;
 
 			case 'IMPORT_STORY':
@@ -90,21 +91,22 @@ export default function(store) {
 				by now the deleted story is gone from the state.
 				*/
 
-				const toDelete = previousStories.find(
-					s => s.id === mutation.payload[0]
-				);
+				// const toDelete = previousStories.find(
+				// 	s => s.id === mutation.payload[0]
+				// );
 
-				story.update(transaction => {
-					/*
-					It's our responsibility to delete child passages first.
-					*/
+				// story.update(transaction => {
+				// 	/*
+				// 	It's our responsibility to delete child passages first.
+				// 	*/
 
-					toDelete.passages.forEach(
-						passage => story.deletePassage(transaction, passage)
-					);
+				// 	toDelete.passages.forEach(
+				// 		passage => story.deletePassage(transaction, passage)
+				// 	);
 
-					story.deleteStory(transaction, toDelete);
-				});
+				// 	story.deleteStory(transaction, toDelete);
+				// });
+				console.log("in local-storage delete story");
 				break;
 			}
 
@@ -114,17 +116,18 @@ export default function(store) {
 			*/
 
 			case 'CREATE_PASSAGE_IN_STORY': {
-				const parentStory = state.story.stories.find(
-					s => s.id === mutation.payload[0]
-				);
-				const passage = parentStory.passages.find(
-					p => p.name === mutation.payload[1].name
-				);
+				// const parentStory = state.story.stories.find(
+				// 	s => s.id === mutation.payload[0]
+				// );
+				// const passage = parentStory.passages.find(
+				// 	p => p.name === mutation.payload[1].name
+				// );
 
-				story.update(transaction => {
-					story.saveStory(transaction, parentStory);
-					story.savePassage(transaction, passage);
-				});
+				// story.update(transaction => {
+				// 	story.saveStory(transaction, parentStory);
+				// 	story.savePassage(transaction, passage);
+				// });
+				console.log("Create passage in story in local-storage index.js. Needed?");
 				break;
 			}
 
@@ -188,7 +191,7 @@ export default function(store) {
 		/*
 		We save a copy of the stories structure in aid of deleting, as above.
 		*/
-		
+
 		previousStories = state.story.stories;
 	});
 };

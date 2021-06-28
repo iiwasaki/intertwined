@@ -22,6 +22,7 @@ const prompter = {
 			isValid: true,
 			validationError: '',
 			responseEvent:'',
+			targetStoryId: '',
 			validator: function() {},
 
 			origin: null
@@ -45,6 +46,12 @@ const prompter = {
 					switch(this.responseEvent){
 						case "newStory":
 							eventHub.$emit('newStory', this.response);
+							break;
+						case "renameStory":
+							eventHub.$emit('renameStory', this.targetStoryId, this.response);
+							break;
+						case "duplicateStory":
+							eventHub.$emit('duplicateStory', this.targetStoryId, this.response);
 							break;
 						default:
 							break;

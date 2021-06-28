@@ -102,98 +102,18 @@ const storyStore = {
 			Object.assign(passage, props);
 			story.lastUpdate = new Date();
 		},
-	},
 
-	getters: {
-		stories: state => {
-			return state.stories;
-		},
-		allStories: state => {
-			return state.stories;
-		},
-	},
-
-	actions: {
-
-		UPDATE_STORY(state, id, props) {
-			let story = getStoryById(state, id);
-
-			Object.assign(story, props);
-			story.lastUpdate = new Date();
-		},
-
-		DUPLICATE_STORY(state, id, newName) {
-			const original = getStoryById(state, id);
-
-			let story = Object.assign({}, original, {
-				id: idFor(newName),
-				ifid: uuid().toUpperCase(),
-				name: newName
-			});
-
-			/* We need to do a deep copy of the passages. */
-
-			story.passages = [];
-
-			original.passages.forEach(originalPassage => {
-				const passage = Object.assign({}, originalPassage, {
-					id: idFor(newName + originalPassage.name),
-					story: story.id
-				});
-
-				if (passage.tags) {
-					passage.tags = passage.tags.slice(0);
-				}
-
-				if (original.startPassage === originalPassage.id) {
-					story.startPassage = passage.id;
-				}
-
-				story.passages.push(passage);
-			});
-
-			state.stories.push(story);
-		},
-
-		IMPORT_STORY(state, toImport) {
-			/*
-			See data/import.js for how the object that we receive is
-			structured.
-
-			Assign IDs to to everything, link passages to their story,
-			and set the story's startPassage property appropriately.
-			*/
-
-			toImport.id = idFor(toImport.name);
-
-			toImport.passages.forEach(p => {
-				p.id = idFor(toImport.name + p.name);
-				p.story = toImport.id;
-
-				if (p.pid === toImport.startPassagePid) {
-					toImport.startPassage = p.id;
-				}
-
-				delete p.pid;
-			});
-
-			delete toImport.startPassagePid;
-			state.stories.push(toImport);
-		},
-
-		DELETE_STORY(state, id) {
-			state.stories = state.stories.filter(story => story.id !== id);
-		},
-
-		CREATE_PASSAGE_IN_STORY(state, storyId, props) {
+		CREATE_PASSAGE_IN_STORY(state, payload) {
 			console.log("Create passage in story story.js");
+			let storyId = payload.storyId;
+			let props = payload.props;
 			/*
 			uuid is used here as a salt so that passages always contain unique
 			IDs in Electron (which otherwise uses deterministic IDs based on
 			name provided), even if you rename one to a name a previous one used
 			to have.
 			*/
-			
+
 			let story = getStoryById(state, storyId);
 			let newPassage = Object.assign(
 				{
@@ -229,16 +149,105 @@ const storyStore = {
 		},
 
 
-		DELETE_PASSAGE_IN_STORY(state, storyId, passageId) {
+		DELETE_PASSAGE_IN_STORY(state, payload) {
+			let storyId = payload.storyId;
+			let passageId = payload.passageId;
 			let story = getStoryById(state, storyId);
 
 			story.passages = story.passages.filter(
 				passage => passage.id !== passageId
 			);
 			story.lastUpdate = new Date();
-		}
+		},
+
+		UPDATE_STORY(state, payload) {
+			let id = payload.id;
+			let props = payload.props;
+			let story = getStoryById(state, id);
+
+			Object.assign(story, props);
+			story.lastUpdate = new Date();
+			FirebaseHandler.saveStory(story);
+		},
+
+		DUPLICATE_STORY(state, payload) {
+			let id = payload.id;
+			let newName = payload.newName;
+			const original = getStoryById(state, id);
+
+			let story = Object.assign({}, original, {
+				id: idFor(newName),
+				ifid: uuid().toUpperCase(),
+				name: newName
+			});
+
+			/* We need to do a deep copy of the passages. */
+
+			story.passages = [];
+
+			original.passages.forEach(originalPassage => {
+				const passage = Object.assign({}, originalPassage, {
+					id: idFor(newName + originalPassage.name),
+					story: story.id
+				});
+
+				if (passage.tags) {
+					passage.tags = passage.tags.slice(0);
+				}
+
+				if (original.startPassage === originalPassage.id) {
+					story.startPassage = passage.id;
+				}
+
+				story.passages.push(passage);
+			});
+
+			state.stories.push(story);
+			FirebaseHandler.saveStory(story);
+		},
+
+		IMPORT_STORY(state, payload) {
+			let toImport = payload.toImport;
+			/*
+			See data/import.js for how the object that we receive is
+			structured.
+
+			Assign IDs to to everything, link passages to their story,
+			and set the story's startPassage property appropriately.
+			*/
+
+			toImport.id = idFor(toImport.name);
+
+			toImport.passages.forEach(p => {
+				p.id = idFor(toImport.name + p.name);
+				p.story = toImport.id;
+
+				if (p.pid === toImport.startPassagePid) {
+					toImport.startPassage = p.id;
+				}
+
+				delete p.pid;
+			});
+
+			delete toImport.startPassagePid;
+			state.stories.push(toImport);
+		},
+
+		DELETE_STORY(state, payload) {
+			let id = payload.id;
+			state.stories = state.stories.filter(story => story.id !== id);
+			FirebaseHandler.deleteStory(id);
+		},
 	},
 
+	getters: {
+		stories: state => {
+			return state.stories;
+		},
+		allStories: state => {
+			return state.stories;
+		},
+	},
 	/* Defaults for newly-created objects. */
 
 	storyDefaults: {

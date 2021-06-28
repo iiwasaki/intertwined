@@ -9,6 +9,7 @@ import locale from '../../locale';
 import Vue from 'vue';
 import {thenable} from '../../vue/mixins/thenable';
 import modaldialog from '../../ui/modal-dialog';
+import eventHub from '../../vue/eventhub';
 
 require('./index.less');
 
@@ -33,16 +34,24 @@ const confirmation = {
 			cancelLabel: ('<i class="fa fa-times"></i> ' + locale.say('Cancel')),
 			buttonLabel: '',
 			modalClass: '',
-			buttonClass: 'primary'
+			buttonClass: 'primary',
+			responseEvent: '',
+			targetStoryId: '',
 		}),
 
 		methods: {
 			accept() {
-				this.$broadcast('close', true);
+				switch(this.responseEvent){
+					case "deleteStory":
+						eventHub.$emit('deleteStory', this.targetStoryId);
+					default:
+						break;
+				}
+				eventHub.$emit('close', true);
 			},
 
 			cancel() {
-				this.$broadcast('close', false);
+				eventHub.$emit('close', false);
 			},
 		},
 

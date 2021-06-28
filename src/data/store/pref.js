@@ -26,6 +26,9 @@ export default {
 		},
 		defaultFormatName: state => {
 			return state.defaultFormat;
+		},
+		defaultFormat: state => {
+			return state.defaultFormat;
 		}
 	},
 

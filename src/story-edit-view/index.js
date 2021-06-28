@@ -8,7 +8,7 @@ const { loadFormat } = require('../data/actions/story-format');
 const { updateStory } = require('../data/actions/story');
 import domEvents from '../vue/mixins/dom-events';
 import locale from '../locale';
-const { passageDefaults } = require('../data/store/story');
+import storyStore from '../data/store/story';
 import zoomSettings from './zoom-settings';
 import FirebaseHandler from '../data/firebase-handler';
 import { mapGetters } from 'vuex';
@@ -360,13 +360,13 @@ export default Vue.extend({
 			if (!left) {
 				left = (window.pageXOffset + window.innerWidth / 2)
 					/ this.story.zoom;
-				left -= passageDefaults.width;
+				left -= storyStore.passageDefaults.width;
 			}
 
 			if (!top) {
 				top = (window.pageYOffset + window.innerHeight / 2)
 					/ this.story.zoom;
-				top -= passageDefaults.height;
+				top -= storyStore.passageDefaults.height;
 			}
 
 			/*
@@ -391,14 +391,15 @@ export default Vue.extend({
 
 			/* Add it to our collection. */
 
-			passageActions.createPassage(this.story.id, { name, left, top });
+			passageActions.createPassage(this.$store,this.story.id, { name, left, top });
 
 			/*
 			Then position it so it doesn't overlap any others, and save it
 			again.
 			*/
-			
+
 			passageActions.positionPassage(
+				this.$store,
 				this.story.id,
 				this.story.passages.find(p => p.name === name).id,
 				this.gridSize
@@ -413,9 +414,9 @@ export default Vue.extend({
 		
 		onMouseForceDown(e) {
 			let top = (e.pageY / this.story.zoom) -
-				(passageDefaults.height / 2);
+				(storyStore.passageDefaults.height / 2);
 			let left = (e.pageX / this.story.zoom) -
-				(passageDefaults.width / 2);
+				(storyStore.passageDefaults.width / 2);
 			
 			passageActions.createPassage(null, top, left);
 		},

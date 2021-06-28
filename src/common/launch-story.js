@@ -35,27 +35,9 @@ function openWindow(url) {
 }
 
 module.exports = {
-	playStory(store, storyId) {
-		if (isElectron()) {
-			getStoryPlayHtml(store, storyId)
-				.then(html =>
-					window.twineElectron.ipcRenderer.send(
-						'open-with-temp-file',
-						html,
-						'.html'
-					)
-				)
-				.catch(e => {
-					window.alert(
-						locale.say(
-							'An error occurred while publishing your story. (%s)',
-							e.message
-						)
-					);
-				});
-		} else {
-			openWindow(`#stories/${storyId}/play`);
-		}
+	playStory(storyId) {
+		console.log(storyId);
+		openWindow(`#stories/${storyId}/play`);
 	},
 
 	proofStory(store, storyId) {

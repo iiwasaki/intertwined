@@ -6,7 +6,7 @@ const LocaleView = require('../locale/view');
 import StoryEditView from '../story-edit-view';
 import StoryListView from '../story-list-view';
 import WelcomeView from '../welcome';
-const locale = require('../locale');
+import locale from '../locale';
 const { getStoryPlayHtml, getStoryProofingHtml, getStoryTestHtml } = require('./story-html');
 const replaceUI = require('../ui/replace');
 import store from '../data/store';
@@ -42,13 +42,13 @@ let router = new VueRouter({
 			}
 		}},
 		{path: '/stories/:id/play', component: {
-			ready() {
+			mounted() {
 				getStoryPlayHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
 						window.alert(
 							locale.say(
-								'An error occurred while publishing your story. (%s)',
+								'An error occurred while publishing Your story. (%s)',
 								e.message
 							)
 						);
@@ -60,7 +60,7 @@ let router = new VueRouter({
 			}
 		}},
 		{path: '/stories/:id/proof', component: {
-			ready() {
+			mounted() {
 				getStoryProofingHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
 					.catch(e => {
@@ -79,7 +79,7 @@ let router = new VueRouter({
 		}},
 
 		{path: '/stories/:id/test', component: {
-			ready() {
+			mounted() {
 				console.log("Testing");
 				getStoryTestHtml(this.$store, this.$route.params.id)
 					.then(replaceUI)
@@ -102,7 +102,7 @@ let router = new VueRouter({
 			beforeCreate(){
 				console.log("Testing story - in router");
 			},
-			ready() {
+			mounted() {
 				getStoryTestHtml(
 					this.$store,
 					this.$route.params.storyId,

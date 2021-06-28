@@ -41,8 +41,8 @@ export default class {
     }
 
     // Delete an entire story object.
-    static deleteStory(story){
-        storyCollection.doc(story.id).delete().then(() => {
+    static deleteStory(storyId){
+        storyCollection.doc(storyId).delete().then(() => {
             console.log("Story successfully deleted.");
         })
         .catch((error) => {
