@@ -9,6 +9,7 @@ import idFor from '../id';
 import ui from '../../ui';
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
 import FirebaseHandler from "../firebase-handler";
+import {storyCollection} from "../firebase-handler";
 
 /*
 A shorthand function for finding a particular story in the state, or a
@@ -240,6 +241,14 @@ const storyStore = {
 			state.stories = state.stories.filter(story => story.id !== id);
 			FirebaseHandler.deleteStory(id);
 		},
+	},
+
+	actions:{
+		bindStories: firestoreAction(({ bindFirestoreRef }) => {
+			console.log("Binding");
+			console.log(storyCollection);
+			return bindFirestoreRef('stories', storyCollection)
+		}),
 	},
 
 	getters: {

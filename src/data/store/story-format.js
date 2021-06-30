@@ -46,6 +46,8 @@ export default {
 			let props = payload.props;
 			let format = state.formats.find(format => format.id === id);
 
+			console.log(format);
+
 			format.properties = props;
 			format.loaded = true;
 

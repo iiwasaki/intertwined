@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
-const storyCollection = db.collection("stories");
+export const storyCollection = db.collection("stories");
 
 export default class {
 
@@ -50,7 +50,7 @@ export default class {
         });
     }
 
-    // Load all of the stories stored in the stories collection
+    //Load all of the stories stored in the stories collection
     static loadStories(store){
         storyCollection.get().then((doc) => {
             doc.forEach((result) => {

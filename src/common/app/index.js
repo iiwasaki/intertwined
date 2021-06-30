@@ -14,6 +14,10 @@ export default new Vue({
 	router: router,
 	template: '<router-view></router-view>',
 
+	created(){
+
+	},
+
 	mounted() {
 		ui.init();
 		formatActions.repairFormats(this.$store);

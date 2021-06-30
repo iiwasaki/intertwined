@@ -19,7 +19,8 @@ let previousStories;
 export default function(store) {
 	enabled = false;
 	pref.load(store);
-	story.load(store);
+	//story.load(store);
+	store.dispatch('bindStories');
 	storyFormat.load(store);
 	previousStories = store.state.story.stories;
 	enabled = true;
@@ -183,7 +184,7 @@ export default function(store) {
 				break;
 
 			default:
-				throw new Error(
+				console.log(
 					`Don't know how to handle mutation ${mutation.type}`
 				);
 		}
