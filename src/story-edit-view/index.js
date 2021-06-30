@@ -72,7 +72,7 @@ export default Vue.extend({
 	}),
 
 	computed: {
-		...mapGetters(["allStories", "allFormats", "defaultFormatName"]),
+		...mapGetters(["allStories", "allFormats", "defaultFormatName", "story"]),
 		/* A human readable adjective for the story's zoom level. */
 
 		zoomDescClass(){
@@ -91,7 +91,7 @@ export default Vue.extend({
 		* the size of the browser window
 		* the minimum amount of space needed to enclose all existing
 		passages
-		
+
 		... whichever is bigger, plus 50% of the browser window's
 		width and height, so that there's always room for the story to
 		expand.
@@ -149,10 +149,10 @@ export default Vue.extend({
 			return this.$refs.passages.filter(p => p.passage.selected);
 		},
 
-		story() {
-			FirebaseHandler.listenToStory(this.storyId);
-			return this.allStories.find(story => story.id === this.storyId);
-		},
+		// story() { 
+		// 	FirebaseHandler.listenToStory(this.storyId);
+		// 	return this.allStories.find(story => story.id === this.storyId);
+		// },
 
 	},
 
@@ -185,16 +185,6 @@ export default Vue.extend({
 		}
 	},
 
-	mounted() {
-		this.resize();
-		this.on(window, 'resize', this.resize);
-		this.on(window, 'keyup', this.onKeyup);
-
-		if (this.story.passages.length === 0) {
-			this.createPassageAt();
-		}
-	},
-
 	// Replacement for the old way of doing events
 	created() {
 		eventHub.$on('passage-drag', this.passageDrag);
@@ -203,11 +193,24 @@ export default Vue.extend({
 		eventHub.$on('highlight-regexp-change', this.highlightRegexpChange);
 	},
 
+	// Stop listening to all the events, plus unbind the story from Vuex and Firebase.
+	// The actual binding of the story happens back in the story-item view upon clicking.
 	beforeDestroy(){
 		eventHub.$off('passage-drag', this.passageDrag);
 		eventHub.$off('passage-drag-complete', this.passageDragComplete);
 		eventHub.$off('passage-position', this.passagePosition);
 		eventHub.$off('highlight-regexp-change', this.highlightRegexpChange);
+		this.$store.dispatch('unbindStory');
+	},
+
+	mounted() {
+		this.resize();
+		this.on(window, 'resize', this.resize);
+		this.on(window, 'keyup', this.onKeyup);
+
+		if (this.story.passages.length === 0) {
+			this.createPassageAt();
+		}
 	},
 
 	methods: {

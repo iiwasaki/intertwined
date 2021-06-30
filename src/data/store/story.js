@@ -37,8 +37,14 @@ function getPassageInStory(story, id) {
 }
 
 const storyStore = {
+	/* These state objects are filled in by Vuexfire to keep the synchronization between
+	 * the Firebase cloud store database and the app.
+	 * 'stories' will have ALL stories.
+	 * 'story' will have the one story being actively edited.
+	 */
 	state: {
-		stories: []
+		stories: [],
+		story: Object,
 	},
 
 	mutations: {
@@ -247,6 +253,20 @@ const storyStore = {
 		bindStories: firestoreAction(({ bindFirestoreRef }) => {
 			return bindFirestoreRef('stories', storyCollection)
 		}),
+
+		unbindStories: firestoreAction (({ unbindFirestoreRef }) => {
+			unbindFirestoreRef('stories')
+		}),
+
+		bindStory: firestoreAction(({ bindFirestoreRef }, payload) => {
+			console.log("Binding individual story (in store -> story.js)");
+			return bindFirestoreRef('story', storyCollection.doc(payload.storyId))
+		}),
+
+		unbindStory: firestoreAction (({ unbindFirestoreRef }) => {
+			console.log("Unbinding individual story (in store -> story.js)");
+			unbindFirestoreRef('story');
+		})
 	},
 
 	getters: {
@@ -256,6 +276,9 @@ const storyStore = {
 		allStories: state => {
 			return state.stories;
 		},
+		story: state => {
+			return state.story;
+		}
 	},
 	/* Defaults for newly-created objects. */
 

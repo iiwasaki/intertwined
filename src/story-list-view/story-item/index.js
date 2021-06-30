@@ -64,6 +64,9 @@ export default Vue.extend({
 
 		edit() {
 			const pos = this.$el.getBoundingClientRect();
+			this.$store.dispatch('bindStory', {
+				storyId: this.story.id,
+			});
 			new ZoomTransition({
 				data: {
 					x: pos.left + pos.width / 2,

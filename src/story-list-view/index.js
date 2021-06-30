@@ -52,7 +52,7 @@ export default Vue.extend({
 	},
 
 	beforeDestroy(){
-		console.log("Story list being destroyed?");
+		this.$store.dispatch('unbindStories');
 	},
 
 	computed: {
