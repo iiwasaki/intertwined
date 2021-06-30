@@ -4,11 +4,13 @@ promise resolving to the stories that were imported, if any.
 */
 
 import Vue from 'vue';
-const { deleteStory, importStory } = require('../../data/actions/story');
+import {mapGetters} from 'vuex';
+import storyActions from '../../data/actions/story';
 const importHTML = require('../../data/import');
 const load = require('../../file/load');
 import locale from '../../locale';
 import {thenable} from '../../vue/mixins/thenable';
+import modaldialog from '../../ui/modal-dialog';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -43,6 +45,9 @@ export default Vue.extend({
 	}),
 
 	computed: {
+		...mapGetters({
+			existingStories: 'stories',
+		}),
 		confirmClass() {
 			if (this.toReplace.length === 0) {
 				return 'primary';
@@ -64,13 +69,16 @@ export default Vue.extend({
 		}
 	},
 	
-	ready() {
+	mounted() {
 		if (this.immediateImport) {
 			this.import(this.immediateImport);
 		}
 	},
 
 	methods: {
+		replaceName(name){
+			return 'replace-story-' + name;
+		},
 		close() {
 			if (this.$refs.modal) {
 				this.$refs.modal.close();
@@ -78,43 +86,44 @@ export default Vue.extend({
 		},
 
 		import(file) {
-			this.status = 'working';
+			console.log("Here");
+			// this.status = 'working';
 
-			load(file)
-			.then(source => {
-				this.toImport = importHTML(source);
+			// load(file)
+			// .then(source => {
+			// 	this.toImport = importHTML(source);
 
-				this.dupeNames = this.toImport.reduce(
-					(list, story) => {
-						if (this.existingStories.find(
-							orig => orig.name === story.name
-						)) {
-							list.push(story.name);
-						}
+			// 	this.dupeNames = this.toImport.reduce(
+			// 		(list, story) => {
+			// 			if (this.existingStories.find(
+			// 				orig => orig.name === story.name
+			// 			)) {
+			// 				list.push(story.name);
+			// 			}
 
-						return list;
-					},
+			// 			return list;
+			// 		},
 
-					[]
-				);
+			// 		[]
+			// 	);
 
-				if (this.dupeNames.length > 0) {
-					/* Ask the user to pick which ones to replace, if any. */
+			// 	if (this.dupeNames.length > 0) {
+			// 		/* Ask the user to pick which ones to replace, if any. */
 
-					this.status = 'choosing';
-				}
-				else {
-					/* Immediately run the import and close the dialog. */
+			// 		this.status = 'choosing';
+			// 	}
+			// 	else {
+			// 		/* Immediately run the import and close the dialog. */
 
-					this.toImport.forEach(story => this.importStory(story));
-					this.close();
-				}
-			});
+			// 		this.toImport.forEach(story => storyActions.importStory(this.$store, story));
+			// 		this.close();
+			// 	}
+			// });
 		},
 
 		replaceAndImport() {
 			this.toReplace.forEach(name => {
-				this.deleteStory(
+				storyActions.deleteStory( this.$store,
 					this.existingStories.find(story => story.name === name).id
 				);
 			});
@@ -126,28 +135,17 @@ export default Vue.extend({
 
 				if (this.toReplace.indexOf(story.name) !== -1 ||
 					!this.existingStories.find(story => story.name === name)) {
-					this.importStory(story);
+					storyActions.importStory(this.$store, story);
 				}
-				
+
 				this.close();
 			});
 		}
 	},
 
 	components: {
-		'modal-dialog': require('../../ui/modal-dialog')
+		'modal-dialog': modaldialog,
 	},
 
 	mixins: [thenable],
-
-	vuex: {
-		actions: {
-			deleteStory,
-			importStory
-		},
-
-		getters: {
-			existingStories: state => state.story.stories
-		}
-	}
 });

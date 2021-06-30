@@ -1,7 +1,13 @@
 import Vue from 'vue';
-const semverUtils = require('semver-utils');
-const { createFormatFromUrl, loadFormat, repairFormats } = require('../../data/actions/story-format');
-const locale = require('../../locale');
+import semverUtils from 'semver-utils';
+import formatActions from '../../data/actions/story-format';
+import locale from '../../locale';
+import {mapGetters} from 'vuex';
+import modaldialog from '../../ui/modal-dialog';
+import tabspanel from '../../ui/tab-panel';
+import tabitem from '../../ui/tab-panel/item';
+import formatitem from './item';
+import eventHub from '../../vue/eventhub';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -26,12 +32,68 @@ export default Vue.extend({
 		origin: null
 	}),
 
+	created(){
+		eventHub.$on('change-active', this.changeActive);
+	},
+
+	beforeDestroy(){
+		eventHub.$off('change-active', this.changeActive);
+	},
+
 	/*
 	These are linked to the Vuex formatNames, so that when a format is deleted
 	it will disappear from these properties.
 	*/
 
 	computed: {
+		...mapGetters(["allFormats", "defaultFormat", "proofingFormatPref"]),
+		allFormatsProc(){
+			let result = this.allFormats.map(
+				format => ({ name: format.name, version: format.version })
+			);
+
+			result.sort((a, b) => {
+				if (a.name < b.name) {
+					return -1;
+				}
+
+				if (a.name > b.name) {
+					return 1;
+				}
+
+				const aVersion = semverUtils.parse(a.version);
+				const bVersion = semverUtils.parse(b.version);
+
+				if (aVersion.major > bVersion.major) {
+					return -1;
+				}
+				else if (aVersion.major < bVersion.major) {
+					return 1;
+				}
+				else {
+					if (aVersion.minor > bVersion.minor) {
+						return -1;
+					}
+					else if (aVersion.minor < bVersion.minor) {
+						return 1;
+					}
+					else {
+						if (aVersion.patch > bVersion.patch) {
+							return -1;
+						}
+						else if (aVersion.patch < bVersion.patch) {
+							return 1;
+						}
+						else {
+							return 0;
+						}
+					}
+				}
+			});
+
+			return result;
+		},
+
 		proofingFormats() {
 			return this.loadedFormats.filter(
 				format => format.properties.proofing
@@ -46,11 +108,15 @@ export default Vue.extend({
 	},
 
 	methods: {
+		changeActive(newId){
+			this.$refs.tabs.active = newId;
+		},
 		// Loads the next pending format.
 
 		loadNext() {
 			if (this.loadIndex < this.allFormats.length) {
-				this.loadFormat(
+				formatActions.loadFormat(
+					this.$store,
 					this.allFormats[this.loadIndex].name,
 					this.allFormats[this.loadIndex].version
 				).then(format => {
@@ -100,18 +166,18 @@ export default Vue.extend({
 		addFormat() {
 			this.working = true;
 
-			this.createFormatFromUrl(this.newFormatUrl)
+			formatActions.createFormatFromUrl(this.$store, this.newFormatUrl)
 				.then(format => {
-					this.repairFormats();
+					formatActions.repairFormats(this.$store);
 					this.error = '';
 					this.working = false;
 					this.loadedFormats.push(format);
 
 					if (format.properties.proofing) {
-						this.$refs.tabs.active = 1;
+						this.$refs.tabs.active = "1";
 					}
 					else {
-						this.$refs.tabs.active = 0;
+						this.$refs.tabs.active = "0";
 					}
 				})
 				.catch(e => {
@@ -125,87 +191,28 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		// Move tabs into the dialog header.
+		this.$nextTick(function() {
+			const dialogTitle = this.$el.parentNode.querySelector(
+				'.modal-dialog > header .title'
+			);
+			const tabs = this.$el.parentNode.querySelectorAll(
+				'p.tabs-panel'
+			);
+			for (let i = 0; i < tabs.length; i++) {
+				dialogTitle.appendChild(tabs[i]);
+			}
 
-		const dialogTitle = this.$el.parentNode.querySelector(
-			'.modal-dialog > header .title'
-		);
-		const tabs = this.$el.parentNode.querySelectorAll(
-			'p.tabs-panel button'
-		);
+			this.loadNext();
+		});
 
-		for (let i = 0; i < tabs.length; i++) {
-			dialogTitle.appendChild(tabs[i]);
-		}
-
-		this.loadNext();
-	},
-
-	vuex: {
-		actions: {
-			createFormatFromUrl,
-			loadFormat,
-			repairFormats
-		},
-
-		getters: {
-			allFormats: state => {
-				let result = state.storyFormat.formats.map(
-					format => ({ name: format.name, version: format.version })
-				);
-				
-				result.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					}
-					
-					if (a.name > b.name) {
-						return 1;
-					}
-
-					const aVersion = semverUtils.parse(a.version);
-					const bVersion = semverUtils.parse(b.version);
-
-					if (aVersion.major > bVersion.major) {
-						return -1;
-					}
-					else if (aVersion.major < bVersion.major) {
-						return 1;
-					}
-					else {
-						if (aVersion.minor > bVersion.minor) {
-							return -1;
-						}
-						else if (aVersion.minor < bVersion.minor) {
-							return 1;
-						}
-						else {
-							if (aVersion.patch > bVersion.patch) {
-								return -1;
-							}
-							else if (aVersion.patch < bVersion.patch) {
-								return 1;
-							}
-							else {
-								return 0;
-							}
-						}
-					}
-				});
-
-				return result;
-			},
-
-			defaultFormatPref: state => state.pref.defaultFormat,
-			proofingFormatPref: state => state.pref.proofingFormat
-		}
 	},
 
 	components: {
-		'format-item': require('./item'),
-		'tab-item': require('../../ui/tab-panel/item'),
-		'tabs-panel': require('../../ui/tab-panel'),
-		'modal-dialog': require('../../ui/modal-dialog')
+		'format-item': formatitem,
+		'tab-item': tabitem,
+		'tabs-panel': tabspanel,
+		'modal-dialog': modaldialog,
 	}
 });

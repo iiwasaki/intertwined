@@ -2,7 +2,7 @@
 // choose it.
 
 import Vue from 'vue';
-const { updateStory } = require('../../data/actions/story');
+import storyActions from '../../data/actions/story';
 
 require('./item.less');
 
@@ -22,6 +22,13 @@ export default Vue.extend({
 	},
 
 	computed: {
+		author(){
+			return this.format.properties.author;
+		},
+		formId(){
+			return this.format.name - this.format.properties.version;
+		},
+
 		selected() {
 			return this.story.storyFormat === this.format.name &&
 				this.story.storyFormatVersion === this.format.version;
@@ -33,14 +40,15 @@ export default Vue.extend({
 
 		imageSrc() {
 			const path = this.format.url.replace(/\/[^\/]*?$/, '');
-			
+
 			return path + '/' + this.format.properties.image;
 		}
 	},
 
 	methods: {
 		select() {
-			this.updateStory(
+			storyActions.updateStory(
+				this.$store,
 				this.story.id,
 				{
 					storyFormat: this.format.name,
@@ -50,9 +58,4 @@ export default Vue.extend({
 		}
 	},
 
-	vuex: {
-		actions: {
-			updateStory
-		}
-	}
 });

@@ -2,8 +2,8 @@
 
 import Vue from 'vue';
 import AboutDialog from '../../dialogs/about';
-const FormatsDialog = require('../../dialogs/formats');
-const ImportDialog = require('../../dialogs/story-import');
+import FormatsDialog from '../../dialogs/formats';
+import ImportDialog from '../../dialogs/story-import';
 import storyActions from '../../data/actions/story';
 import locale from '../../locale';
 import prompter from '../../dialogs/prompt';
@@ -97,7 +97,7 @@ export default Vue.extend({
 		},
 
 		showLocale() {
-			window.location.hash = 'locale';
+			this.$router.push('/locale');
 		}
 	},
 

@@ -1,15 +1,14 @@
 <tr class="format-item">
 	<td class="selector">
-		<input type="radio" :checked="isDefault" :disabled="format.broken" @click="setDefaultFormat" title="{{ 'Set this format as default for stories' | say }}" id="{{format.name}}-{{format.properties.version}}">
+		<input type="radio" :checked="isDefault" :disabled="format.broken" @click="setDefaultFormat" :title="'Set this format as default for stories' | say" :id="formId">
 	</td>
 
 	<td>
 		<p>
-			<label for="{{format.name}}-{{format.properties.version}}">
+			<label :for="formId">
 				<i class="fa fa-warning" v-if="format.broken"></i>
 				<b>{{ format.name }} {{ format.properties.version }}</b>
-				<span v-if="author">
-					{{{ author }}}
+				<span v-if="author" v-html="author">
 				</span>
 			</label>
 		</p>
@@ -21,11 +20,11 @@
 
 			<div class="description">
 				<p v-if="format.properties.description">
-					{{{ format.properties.description }}}
+					<span v-html="format.properties.description"></span>
 				</p >
 
 				<p v-if="format.properties.license">
-					License: {{{ format.properties.license }}}
+					License: <span v-html="format.properties.license"></span>
 				</p>
 			</div>
 		</div>
@@ -35,6 +34,6 @@
 		</p>
 	</td>
 	<td>
-		<button v-if="format.userAdded && !isDefault" @click="removeFormat" title="{{ 'Remove this format' | say }}" class="link danger"><i class="fa fa-lg fa-trash-o"></i></button>
+		<button v-if="format.userAdded && !isDefault" @click="removeFormat" :title="'Remove this format' | say" class="link danger"><i class="fa fa-lg fa-trash-o"></i></button>
 	</td>
 </tr>

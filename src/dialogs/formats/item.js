@@ -1,9 +1,11 @@
 'use strict';
 import Vue from 'vue';
-const locale = require('../../locale');
-const { confirm } = require('../confirm');
-const { deleteFormat } = require('../../data/actions/story-format');
-const { setPref } = require('../../data/actions/pref');
+import {mapGetters} from 'vuex';
+import locale from '../../locale';
+import confirmer from '../confirm';
+import formatActions from '../../data/actions/story-format';
+import prefActions from '../../data/actions/pref';
+import eventHub from '../../vue/eventhub';
 
 require('./item.less');
 
@@ -15,15 +17,36 @@ export default Vue.extend({
 		format: Object
 	},
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
+	created(){
+		eventHub.$on("removeFormat", this.removeFormatPost);
+	},
+
+	beforeDestroy(){
+		eventHub.$off("removeFormat", this.removeFormatPost);
+	},
+
 	computed: {
+		...mapGetters(["allFormats", "defaultFormat", "proofingFormatPref"]),
+		author(){
+			return this.format.properties.author;
+		},
+		formId(){
+			return this.format.name - this.format.properties.version;
+		},
 		isDefault() {
 			if (this.format.properties.proofing) {
 				return this.proofingFormatPref.name === this.format.name &&
 					this.proofingFormatPref.version === this.format.version;
 			}
 
-			return this.defaultFormatPref.name === this.format.name &&
-				this.defaultFormatPref.version === this.format.version;
+			return this.defaultFormat.name === this.format.name &&
+				this.defaultFormat.version === this.format.version;
 		},
 
 		author() {
@@ -31,7 +54,7 @@ export default Vue.extend({
 				/* L10n: %s is the name of an author. */
 				return locale.say('by %s', this.format.properties.author);
 			}
-			
+
 			return '';
 		},
 
@@ -49,7 +72,7 @@ export default Vue.extend({
 	methods: {
 		removeFormat() {
 			if (this.isDefault) {
-				confirm({
+				confirmer.confirm({
 					message:
 						locale.say('You may not remove the default story format. Please choose another one first.'),
 					buttonLabel:
@@ -59,27 +82,35 @@ export default Vue.extend({
 				return;
 			}
 
-			confirm({
+			confirmer.confirm({
 				message:
 					locale.say('Are you sure?'),
 				buttonLabel:
 					'<i class="fa fa-lg fa-trash-o"></i> ' + locale.say('Remove'),
 				buttonClass:
 					'danger',
-			}).then(() => {
-				this.deleteFormat(this.format.id);
+				responseEvent: "removeFormat",
+				targetStoryId: this.format.id,
 			});
+		},
+
+		removeFormatPost(targetFormatId){
+			if (targetFormatId === this.format.id){
+				formatActions.deleteFormat(this.$store, this.format.id);
+			}
 		},
 
 		setDefaultFormat() {
 			if (this.format.properties.proofing) {
-				this.setPref(
+				prefActions.setPref(
+					this.$store,
 					'proofingFormat',
 					{ name: this.format.name, version: this.format.version }
 				);
 			}
 			else {
-				this.setPref(
+				prefActions.setPref(
+					this.$store,
 					'defaultFormat',
 					{ name: this.format.name, version: this.format.version }
 				);
@@ -87,15 +118,4 @@ export default Vue.extend({
 		},
 	},
 
-	vuex: {
-		actions: {
-			deleteFormat,
-			setPref
-		},
-
-		getters: {
-			defaultFormatPref: state => state.pref.defaultFormat,
-			proofingFormatPref: state => state.pref.proofingFormat
-		}
-	}
 });

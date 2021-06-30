@@ -2,7 +2,7 @@
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-const LocaleView = require('../locale/view');
+import LocaleView from '../locale/view';
 import StoryEditView from '../story-edit-view';
 import StoryListView from '../story-list-view';
 import WelcomeView from '../welcome';

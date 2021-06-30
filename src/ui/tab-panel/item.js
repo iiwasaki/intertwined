@@ -8,6 +8,7 @@ export default Vue.extend({
 
 	props: {
 		name: String,
+		id: String,
 	},
 
 	data: () => ({}),
@@ -18,7 +19,7 @@ export default Vue.extend({
 		},
 
 		hidden() {
-			return (this.$parent.active !== this.index);
+			return (this.$parent.active !== this.id);
 		},
 	},
 });

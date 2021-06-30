@@ -1,8 +1,11 @@
 import Vue from 'vue';
-const { loadFormat } = require('../../data/actions/story-format');
-const locale = require('../../locale');
-const notify = require('../../ui/notify');
-const semverUtils = require('semver-utils');
+import {mapGetters} from 'vuex';
+import formatActions from '../../data/actions/story-format';
+import locale from '../../locale';
+import notify from '../../ui/notify';
+import semverUtils from 'semver-utils';
+import modaldialog from '../../ui/modal-dialog';
+import formatitem from './item';
 
 require('./index.less');
 
@@ -15,7 +18,60 @@ export default Vue.extend({
 		storyId: '',
 	}),
 
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	computed: {
+		...mapGetters(["allFormats", "allStories"]),
+		allFormatsProc(){
+			let result = this.allFormats.map(
+				format => ({ name: format.name, version: format.version })
+			);
+			
+			result.sort((a, b) => {
+				if (a.name < b.name) {
+					return -1;
+				}
+				
+				if (a.name > b.name) {
+					return 1;
+				}
+
+				const aVersion = semverUtils.parse(a.version);
+				const bVersion = semverUtils.parse(b.version);
+
+				if (aVersion.major > bVersion.major) {
+					return -1;
+				}
+				else if (aVersion.major < bVersion.major) {
+					return 1;
+				}
+				else {
+					if (aVersion.minor > bVersion.minor) {
+						return -1;
+					}
+					else if (aVersion.minor < bVersion.minor) {
+						return 1;
+					}
+					else {
+						if (aVersion.patch > bVersion.patch) {
+							return -1;
+						}
+						else if (aVersion.patch < bVersion.patch) {
+							return 1;
+						}
+						else {
+							return 0;
+						}
+					}
+				}
+			});
+
+			return result;
+		},
 		story() {
 			return this.allStories.find(story => story.id === this.storyId);
 		},
@@ -28,7 +84,7 @@ export default Vue.extend({
 		},
 
 		working() {
-			return this.loadIndex < this.allFormats.length;
+			return this.loadIndex < this.allFormatsProc.length;
 		}
 	},
 
@@ -38,9 +94,9 @@ export default Vue.extend({
 				return;
 			}
 
-			const nextFormat = this.allFormats[this.loadIndex];
+			const nextFormat = this.allFormatsProc[this.loadIndex];
 
-			this.loadFormat(nextFormat.name, nextFormat.version)
+			formatActions.loadFormat(this.$store, nextFormat.name, nextFormat.version)
 			.then(format => {
 				if (!format.properties.proofing) {
 					this.loadedFormats.push(format);
@@ -65,68 +121,12 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		this.loadNext();
 	},
 
-	vuex: {
-		actions: {
-			loadFormat,
-		},
-
-		getters: {
-			allStories: state => state.story.stories,
-			allFormats: state => {
-				var result = state.storyFormat.formats.map(
-					format => ({ name: format.name, version: format.version })
-				);
-				
-				result.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					}
-					
-					if (a.name > b.name) {
-						return 1;
-					}
-
-					const aVersion = semverUtils.parse(a.version);
-					const bVersion = semverUtils.parse(b.version);
-
-					if (aVersion.major > bVersion.major) {
-						return -1;
-					}
-					else if (aVersion.major < bVersion.major) {
-						return 1;
-					}
-					else {
-						if (aVersion.minor > bVersion.minor) {
-							return -1;
-						}
-						else if (aVersion.minor < bVersion.minor) {
-							return 1;
-						}
-						else {
-							if (aVersion.patch > bVersion.patch) {
-								return -1;
-							}
-							else if (aVersion.patch < bVersion.patch) {
-								return 1;
-							}
-							else {
-								return 0;
-							}
-						}
-					}
-				});
-
-				return result;
-			}
-		}
-	},
-
 	components: {
-		'format-item': require('./item'),
-		'modal-dialog': require('../../ui/modal-dialog')
+		'format-item': formatitem,
+		'modal-dialog': modaldialog,
 	}
 });

@@ -29,6 +29,12 @@ export default {
 		},
 		defaultFormat: state => {
 			return state.defaultFormat;
+		},
+		proofingFormatPref: state =>{
+			return state.proofingFormat;
+		},
+		localePref: state => {
+			return state.locale;
 		}
 	},
 

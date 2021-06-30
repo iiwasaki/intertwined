@@ -1,11 +1,11 @@
-<modal-dialog class="tabbed" :origin="origin">
+<modal-dialog classProp="tabbed" :origin="origin">
 
-<tabs-panel v-ref:tabs>
+<tabs-panel ref="tabs">
 	<!--
 	Unfortunately, putting {{'Story Formats' | say}} in component attributes doesn't work for some reason.
 	So, <tab-item>s pass their name attributes through locale.say by themselves.
 	-->
-	<tab-item name="Story Formats">
+	<tab-item name="Story Formats" id="0">
 		<p>
 		{{'Story formats control the appearance and behavior of stories during play.' | say}}
 		</p>
@@ -19,12 +19,12 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="format in storyFormats" is="format-item" :format="format" transition="fade-in-out" track-by="$index"></format-item>
+				<format-item v-for="format in storyFormats" v-bind:key="format.url" is="format-item" :format="format" transition="fade-in-out"></format-item>
 			</tbody>
 		</table>
 	</tab-item>
 
-	<tab-item name="Proofing Formats">
+	<tab-item name="Proofing Formats" id="1">
 		<p>
 		{{'Proofing formats create a versions of stories tailored for editing and proofreading.' | say}}
 		</p>
@@ -38,12 +38,12 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="format in proofingFormats" is="format-item" :format="format" transition="fade-in-out" track-by="$index"></format-item>
+				<format-item v-for="format in proofingFormats" is="format-item" v-bind:key="format.url" :format="format" transition="fade-in-out"></format-item>
 			</tbody>
 		</table>
 	</tab-item>
 
-	<tab-item name="Add a New Format">
+	<tab-item name="Add a New Format" id="3">
 		<p>
 		{{
 		/* L10n: Address in the sense of a URL. */
@@ -66,7 +66,7 @@
 </p>
 
 <p class="error" v-if="error">
-{{{ error }}}
+<span v-html="error"></span>
 </p>
 
 </modal-dialog>

@@ -3,8 +3,10 @@ Allows the user to pick what locale they would like to use.
 */
 
 import Vue from 'vue';
-const isElectron = require('../../electron/is-electron');
-const {setPref} = require('../../data/actions/pref');
+import prefActions from '../../data/actions/pref';
+import {mapGetters} from 'vuex';
+import locale from '../index.js';
+
 require('./index.less');
 
 export default Vue.extend({
@@ -35,6 +37,18 @@ export default Vue.extend({
 			{label: 'Українська (клясична)', code: 'uk'}
 		]
 	}),
+	computed: {
+		...mapGetters({
+			localePref: 'localePref',
+		}),
+	},
+
+	filters: {
+		say: (message) => {
+			return locale.say(message);
+		}
+	},
+
 	methods: {
 		/*
 		Sets the application locale and forces a window reload
@@ -42,18 +56,9 @@ export default Vue.extend({
 		*/
 
 		setLocale(userLocale) {
-			this.setPref('locale', userLocale);
-
-			if (isElectron()) {
-				window.twineElectron.ipcRenderer.send('app-relaunch');
-			} else {
-				window.location.hash = 'stories';
-				window.location.reload();
-			}
+			prefActions.setPref(this.$store, 'locale', userLocale);
+			this.$router.push('/stories');
+			window.location.reload(true);
 		}
 	},
-	vuex: {
-		actions: {setPref},
-		getters: {localePref: state => state.pref.locale}
-	}
 });

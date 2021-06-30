@@ -1,7 +1,10 @@
 // A component showing a modal dialog where a story's JavaSCript.
 
 import Vue from 'vue';
-const { updateStory } = require('../../data/actions/story');
+import {mapGetters} from 'vuex';
+import storyActions from '../../data/actions/story';
+import modaldialog from '../../ui/modal-dialog';
+import codemirrorcomponent from '../../vue/codemirror';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/display/placeholder');
@@ -15,6 +18,7 @@ export default Vue.extend({
 	}),
 
 	computed: {
+		...mapGetters(["allStories"]),
 		source() {
 			return this.allStories.find(
 				story => story.id === this.storyId
@@ -41,19 +45,17 @@ export default Vue.extend({
 		},
 
 		save(text) {
-			this.updateStory(this.storyId, { script: text });
+			storyActions.updateStory(this.$store, this.storyId, { script: text });
 		}
 	},
 	
 	components: {
-		'modal-dialog': require('../../ui/modal-dialog'),
-		'code-mirror': require('../../vue/codemirror')
+		'modal-dialog': modaldialog,
+		'code-mirror': codemirrorcomponent,
 	},
 
 	vuex: {
-		actions: {
-			updateStory
-		},
+		
 
 		getters: {
 			allStories: state => state.story.stories

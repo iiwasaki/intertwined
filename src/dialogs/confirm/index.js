@@ -44,6 +44,8 @@ const confirmation = {
 				switch(this.responseEvent){
 					case "deleteStory":
 						eventHub.$emit('deleteStory', this.targetStoryId);
+					case "removeFormat":
+						eventHub.$emit('deleteFormat', this.targetStoryId);
 					default:
 						break;
 				}

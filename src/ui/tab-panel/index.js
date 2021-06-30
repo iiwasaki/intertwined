@@ -1,14 +1,15 @@
 // A container for tabs.
 
 import Vue from 'vue';
+import eventHub from '../../vue/eventhub';
 
 export default Vue.extend({
 	template: require('./index.html'),
 
 	props: {
 		active: {
-			type: Number,
-			default: 0
+			type: String,
+			default: "0"
 		}
 	},
 
@@ -17,6 +18,13 @@ export default Vue.extend({
 	computed: {
 		singleWidthPercent() {
 			return 1 / this.$children.length * 100;
+		},
+	},
+
+	methods: {
+		changeActive(id){
+			let newActive = id;
+			eventHub.$emit('change-active', newActive);
 		}
 	}
 });
