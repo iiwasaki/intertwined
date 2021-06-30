@@ -20,7 +20,6 @@ export default function(store) {
 	enabled = false;
 	pref.load(store);
 	//story.load(store);
-	store.dispatch('bindStories');
 	storyFormat.load(store);
 	previousStories = store.state.story.stories;
 	enabled = true;

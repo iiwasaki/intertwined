@@ -245,8 +245,6 @@ const storyStore = {
 
 	actions:{
 		bindStories: firestoreAction(({ bindFirestoreRef }) => {
-			console.log("Binding");
-			console.log(storyCollection);
 			return bindFirestoreRef('stories', storyCollection)
 		}),
 	},

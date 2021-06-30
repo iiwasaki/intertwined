@@ -4,8 +4,7 @@ import values from 'lodash.values';
 import Vue from 'vue';
 import confirm from '../dialogs/confirm';
 import passageActions from '../data/actions/passage';
-const { loadFormat } = require('../data/actions/story-format');
-const { updateStory } = require('../data/actions/story');
+import storyActions from '../data/actions/story';
 import domEvents from '../vue/mixins/dom-events';
 import locale from '../locale';
 import storyStore from '../data/store/story';
@@ -319,14 +318,16 @@ export default Vue.extend({
 
 			if (zoomIndex === 0) {
 				if (wraparound) {
-					this.updateStory(
+					storyActions.updateStory(
+						this.$store,
 						this.story.id,
 						{ zoom: zoomLevels[zoomIndex.length - 1] }
 					);
 				}
 			}
 			else {
-				this.updateStory(
+				storyActions.updateStory(
+					this.$store,
 					this.story.id,
 					{ zoom: zoomLevels[zoomIndex - 1] }
 				);
@@ -338,14 +339,16 @@ export default Vue.extend({
 
 			if (zoomIndex === zoomLevels.length - 1) {
 				if (wraparound) {
-					this.updateStory(
+					storyActions.updateStory(
+						this.$store,
 						this.story.id,
 						{ zoom: zoomLevels[0] }
 					);
 				}
 			}
 			else {
-				this.updateStory(
+				storyActions.updateStory(
+					this.$store,
 					this.story.id,
 					{ zoom: zoomLevels[zoomIndex + 1] }
 				);
@@ -531,13 +534,6 @@ export default Vue.extend({
 		'passage-item': passageitem,
 		'story-toolbar': storytoolbar,
 		'marquee-selector': marqueeselector,
-	},
-
-	vuex: {
-		actions: {
-			loadFormat,
-			updateStory
-		},
 	},
 
 	mixins: [domEvents]

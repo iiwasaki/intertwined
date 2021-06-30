@@ -47,6 +47,14 @@ export default Vue.extend({
 		}
 	},
 
+	beforeCreate(){
+		this.$store.dispatch('bindStories');
+	},
+
+	beforeDestroy(){
+		console.log("Story list being destroyed?");
+	},
+
 	computed: {
 		...mapGetters(["stories"]),
 		byDateClass() {
