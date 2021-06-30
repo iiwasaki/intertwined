@@ -273,7 +273,7 @@ export default Vue.extend({
 		passagePosition(passage, options) {
 			passageActions.positionPassage(
 				this.$store,
-				this.story.id,
+				this.story,
 				passage.id,
 				this.gridSize,
 				options.ignoreSelected && (otherPassage =>

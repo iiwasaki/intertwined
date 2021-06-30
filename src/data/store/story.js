@@ -74,15 +74,12 @@ const storyStore = {
 		},
 
 		UPDATE_PASSAGE_IN_STORY(state, payload) {
-			let story;
-			let storyId = payload.storyId;
+			let story = payload.story;
 			let passageId = payload.passageId;
 			let props = payload.props;
 
-			try {
-				story = getStoryById(state, storyId);
-			} catch (e) {
-				return;
+			if (!story){
+				throw new Error("Unable to update passage: Story is undefined.");
 			}
 
 			/*

@@ -33,15 +33,10 @@ export default {
 		);
 	},
 
-	selectPassages(store, storyId, filter) {
-		const story = store.state.story.stories.find(
-			story => story.id == storyId
-		);
-
+	selectPassages(store, story, filter) {
 		if (!story) {
-			throw new Error(`No story exists with id ${storyId}`);
+			throw new Error(`Passage action selectPassages: Target story for selection is undefined.`);
 		}
-
 		story.passages.forEach(p => {
 			const current = p.selected;
 			const wantSelect = filter(p);
@@ -52,7 +47,7 @@ export default {
 				store.commit(
 					'UPDATE_PASSAGE_IN_STORY',
 					{
-						storyId: storyId,
+						story: story,
 						passageId: p.id,
 						props: {selected: wantSelect}
 					}
@@ -66,17 +61,13 @@ export default {
 	snaps to a grid.
 	*/
 
-	positionPassage(store, storyId, passageId, gridSize, filter) {
+	positionPassage(store, story, passageId, gridSize, filter) {
 		if (gridSize && typeof gridSize !== 'number') {
 			throw new Error('Asked to snap to a non-numeric grid size: ' + gridSize);
 		}
 
-		const story = store.state.story.stories.find(
-			story => story.id == storyId
-		);
-
 		if (!story) {
-			throw new Error(`No story exists with id ${storyId}`);
+			throw new Error(`Position passage failed: Story is undefined.`);
 		}
 
 		const passage = story.passages.find(

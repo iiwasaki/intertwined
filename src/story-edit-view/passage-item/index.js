@@ -4,6 +4,7 @@ A single passage in the story map.
 
 import escape from'lodash.escape';
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import PassageEditor from '../../editors/passage';
 import confirmation from '../../dialogs/confirm';
 import domEvents from '../../vue/mixins/dom-events';
@@ -20,11 +21,6 @@ export default Vue.extend({
 
 	props: {
 		passage: {
-			type: Object,
-			required: true
-		},
-		
-		parentStory: {
 			type: Object,
 			required: true
 		},
@@ -90,6 +86,7 @@ export default Vue.extend({
 	},
 
 	computed: {
+		...mapGetters({parentStory: "story"}),
 		/*
 		The position to use when drawing link arrows to this passage. This does
 		*not* factor in the story's zoom level, as the link arrow component
@@ -313,7 +310,7 @@ export default Vue.extend({
 				or control key was not held down, select only ourselves.
 				*/
 
-				passageActions.selectPassages(this.$store, this.parentStory.id, p => {
+				passageActions.selectPassages(this.$store, this.parentStory, p => {
 					if (p === this.passage) {
 						return !p.selected;
 					}
@@ -331,7 +328,7 @@ export default Vue.extend({
 				*/
 
 				passageActions.selectPassages(this.$store,
-					this.parentStory.id,
+					this.parentStory,
 					p => p === this.passage
 				);
 			}
