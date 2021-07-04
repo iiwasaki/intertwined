@@ -14,6 +14,8 @@ import codemirrorcomponent from '../../vue/codemirror';
 import modaldialog from '../../ui/modal-dialog';
 import tageditor from './tag-editor';
 import eventHub from '../../vue/eventhub';
+import { firepadRef } from '../../data/firebase-handler';
+
 
 
 require('codemirror/addon/display/placeholder');
@@ -172,21 +174,35 @@ export default Vue.extend({
 				if (this.userPassageName !== this.passage.name) {
 					passageActions.changeLinksInStory(
 						this.$store,
-						this.parentStory.id,
+						this.parentStory,
 						this.passage.name,
 						this.userPassageName
 					);
 
 					passageActions.updatePassage(
 						this.$store,
-						this.parentStory.id,
+						this.parentStory,
 						this.passage.id,
 						{ name: this.userPassageName }
 					);
 				}
 
-				// We handle updating new links here
-				eventHub.$emit("new-links", this.passage.id, this.oldText);
+				const Firepad = require('firepad');
+				const storyRef = firepadRef.child(this.storyId).child(this.passageId);
+				var headless = new Firepad.Headless(storyRef);
+				const newText = headless.getText(text => {
+					this.$store.dispatch("updatePassageInStory", {
+						story: this.parentStory,
+						passageId: this.passageId,
+						props: {
+							text: text
+						}
+					}).then(() => {
+						// We handle updating new links here
+						eventHub.$emit("new-links", this.passage.id, this.oldText);
+						headless.dispose();
+					})
+				})
 				return true;
 			}
 

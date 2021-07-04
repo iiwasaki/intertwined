@@ -133,7 +133,7 @@ export default {
 		if (passageRect.top !== oldTop || passageRect.left !== oldLeft) {
 			this.updatePassage(
 				store,
-				storyId,
+				story,
 				passageId,
 				{
 					top: passageRect.top,
@@ -147,10 +147,10 @@ export default {
 	Adds new passages to a story based on new links added in a passage's text.
 	*/
 
-	createNewlyLinkedPassages(store, storyId, passageId, oldText, gridSize) {
-		const story = store.state.story.stories.find(
-			story => story.id === storyId
-		);
+	createNewlyLinkedPassages(store, story, passageId, oldText, gridSize) {
+		if (!story){
+			throw new Error ("Position passage failed; story not defined");
+		}
 		const passage = story.passages.find(
 			passage => passage.id === passageId
 		);
@@ -177,10 +177,10 @@ export default {
 		let newLeft = passage.left + (100 - totalWidth) / 2;
 
 		newLinks.forEach(link => {
-			store.commit(
-				'CREATE_PASSAGE_IN_STORY',
+			store.dispatch(
+				'createPassageInStory',
 				{
-					storyId: storyId,
+					story: story,
 					props: {
 						name: link,
 						left: newLeft,
@@ -194,7 +194,7 @@ export default {
 			if (newPassage) {
 				this.positionPassage(
 					store,
-					storyId,
+					story,
 					newPassage.id,
 					gridSize
 				);
@@ -209,12 +209,8 @@ export default {
 
 	/* Updates links to a passage in a story to a new name. */
 
-	changeLinksInStory(store, storyId, oldName, newName) {
+	changeLinksInStory(store, story, oldName, newName) {
 		// TODO: add hook for story formats to be more sophisticated
-
-		const story = store.state.story.stories.find(
-			story => story.id === storyId
-		);
 
 		if (!story) {
 			throw new Error(`No story exists with id ${storyId}`);
@@ -261,9 +257,9 @@ export default {
 				);
 
 				store.commit(
-					'UPDATE_PASSAGE_IN_STORY',
+					'updatePassageInStory',
 					{
-						storyId: storyId,
+						story: story,
 						passageId: passage.id,
 						props: {
 							text: newText

@@ -10,6 +10,7 @@ import locale from '../locale';
 require('./codemirror-theme.less');
 
 var storyRef;
+var firepad;
 
 export default Vue.extend({
 	template: '<div></div>',
@@ -41,12 +42,8 @@ export default Vue.extend({
 	},
 
 	beforeDestroy(){
-		const Firepad = require('firepad');
-		var headless = new Firepad.Headless(storyRef);
-		headless.getText(function(text) {
-			console.log("Contents of firepad: " + text);
-		});
 		eventHub.$off('transition-entered', this.transitionEntered);
+		firepad.dispose();
 	},
 
 	mounted() {
@@ -65,7 +62,7 @@ export default Vue.extend({
 			this.$cm = CodeMirror(this.$el, this.options);
 			storyRef = firepadRef.child(this.storyId).child(this.passageId);
 			const Firepad = require("firepad");
-			var firepad = Firepad.fromCodeMirror(storyRef, this.$cm, {
+			firepad = Firepad.fromCodeMirror(storyRef, this.$cm, {
 				defaultText: locale.say(
 						'Enter the body text of your passage here. To link to another ' +
 						'passage, put two square brackets around its name, [[like ' +

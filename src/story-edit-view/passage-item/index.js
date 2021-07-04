@@ -257,7 +257,7 @@ export default Vue.extend({
 			if (targetPassageId === this.passage.id){
 				passageActions.createNewlyLinkedPassages(
 					this.$store,
-					this.parentStory.id,
+					this.parentStory,
 					this.passage.id,
 					oldText,
 					this.gridSize
