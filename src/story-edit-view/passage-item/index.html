@@ -1,5 +1,5 @@
 <div class="passage" :style="cssPosition" :class="cssClasses" @mousedown.stop="startDrag"
-	@touchstart.stop="startDrag" @dblclick.stop="edit" @mouseover="needsMenu = true">
+	@touchstart.stop="startDrag" @dblclick.stop="doubleClickEdit" @mouseover="needsMenu = true">
 	<div class="frame">
 		<div class="tags">
 			<div v-for="color in tagColors" v-bind:class="color"></div>

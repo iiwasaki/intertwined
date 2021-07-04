@@ -214,7 +214,7 @@ export default Vue.extend({
 				if (this.passage.top !== top || this.passage.left !== left) {
 					passageActions.updatePassage(
 						this.$store,
-						this.parentStory.id,
+						this.parentStory,
 						this.passage.id,
 						{ top, left }
 					);
@@ -250,11 +250,10 @@ export default Vue.extend({
 			return escape(this.passage.text.substr(0, 99)) + '&hellip;';
 		},
 		delete() {
-			passageActions.deletePassage(this.parentStory.id, this.passage.id);
+			passageActions.deletePassage(this.parentStory, this.passage.id);
 		},
 
 		afterEdit(targetPassageId, oldText){
-			console.log("After edit");
 			if (targetPassageId === this.passage.id){
 				passageActions.createNewlyLinkedPassages(
 					this.$store,
@@ -296,13 +295,17 @@ export default Vue.extend({
 			.$mountTo(document.body)
 		},
 
+		doubleClickEdit(){
+			this.edit();
+		},
+
 		startDrag(e) {
 			/* Only listen to the left mouse button. */
 
 			if (e.type === 'mousedown' && e.which !== 1) {
 				return;
 			}
-			
+
 			if (e.shiftKey || e.ctrlKey) {
 				/*
 				Shift- or control-clicking toggles our selected status, but
@@ -403,7 +406,7 @@ export default Vue.extend({
 			
 			if (this.dragXOffset === 0 && this.dragYOffset === 0) {
 				if (!(e.ctrlKey || e.shiftKey)) {
-					passageActions.selectPassages(this.parentStory.id, p => p !== this);
+					passageActions.selectPassages(this.$store, this.parentStory, p => p !== this);
 				}
 			}
 			else {

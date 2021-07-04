@@ -5,6 +5,7 @@ import Vue from 'vue';
 import confirm from '../dialogs/confirm';
 import passageActions from '../data/actions/passage';
 import storyActions from '../data/actions/story';
+import formatActions from '../data/actions/story-format';
 import domEvents from '../vue/mixins/dom-events';
 import locale from '../locale';
 import storyStore from '../data/store/story';
@@ -16,6 +17,7 @@ import marqueeselector from './marquee-selector';
 import storytoolbar from './story-toolbar';
 import linkarrows from './link-arrows';
 import eventHub from '../vue/eventhub';
+import story from '../data/actions/story';
 
 require('./index.less');
 
@@ -98,39 +100,41 @@ export default Vue.extend({
 		*/
 
 		cssDimensions() {
-			let width = this.winWidth;
-			let height = this.winHeight;
-			let passagesWidth = 0;
-			let passagesHeight = 0;
+			if (this.story.passages) {
+				let width = this.winWidth;
+				let height = this.winHeight;
+				let passagesWidth = 0;
+				let passagesHeight = 0;
 
-			this.story.passages.forEach(p => {
-				const right = p.left + p.width;
-				const bottom = p.top + p.height;
+				this.story.passages.forEach(p => {
+					const right = p.left + p.width;
+					const bottom = p.top + p.height;
 
-				if (right > passagesWidth) {
-					passagesWidth = right;
-				}
+					if (right > passagesWidth) {
+						passagesWidth = right;
+					}
 
-				if (bottom > passagesHeight) {
-					passagesHeight = bottom;
-				}
-			});
+					if (bottom > passagesHeight) {
+						passagesHeight = bottom;
+					}
+				});
 
-			width = Math.max(passagesWidth * this.story.zoom, this.winWidth);
-			height = Math.max(passagesHeight * this.story.zoom, this.winHeight);
+				width = Math.max(passagesWidth * this.story.zoom, this.winWidth);
+				height = Math.max(passagesHeight * this.story.zoom, this.winHeight);
 
-			/*
-			Give some space below and to the right for the user to add
-			passages.
-			*/
+				/*
+				Give some space below and to the right for the user to add
+				passages.
+				*/
 
-			width += this.winWidth / 2;
-			height += this.winHeight / 2;
+				width += this.winWidth / 2;
+				height += this.winHeight / 2;
 
-			return {
-				width: width + 'px',
-				height: height + 'px'
-			};
+				return {
+					width: width + 'px',
+					height: height + 'px'
+				};
+			}
 		},
 
 		/* Our grid size -- for now, constant. */
@@ -148,11 +152,6 @@ export default Vue.extend({
 		selectedChildren() {
 			return this.$refs.passages.filter(p => p.passage.selected);
 		},
-
-		// story() { 
-		// 	FirebaseHandler.listenToStory(this.storyId);
-		// 	return this.allStories.find(story => story.id === this.storyId);
-		// },
 
 	},
 
@@ -184,7 +183,6 @@ export default Vue.extend({
 			}
 		}
 	},
-
 	// Replacement for the old way of doing events
 	created() {
 		eventHub.$on('passage-drag', this.passageDrag);
@@ -203,7 +201,7 @@ export default Vue.extend({
 		this.$store.dispatch('unbindStory');
 	},
 
-	mounted() {
+	async mounted() {
 		this.resize();
 		this.on(window, 'resize', this.resize);
 		this.on(window, 'keyup', this.onKeyup);
@@ -211,6 +209,7 @@ export default Vue.extend({
 		if (this.story.passages.length === 0) {
 			this.createPassageAt();
 		}
+		await formatActions.loadFormat(this.$store, this.story.storyFormat, this.story.storyFormatVersion);
 	},
 
 	methods: {
@@ -407,7 +406,7 @@ export default Vue.extend({
 
 			/* Add it to our collection. */
 
-			passageActions.createPassage(this.$store,this.story.id, { name, left, top });
+			passageActions.createPassage(this.$store,this.story, { name, left, top });
 
 			/*
 			Then position it so it doesn't overlap any others, and save it
@@ -416,7 +415,7 @@ export default Vue.extend({
 
 			passageActions.positionPassage(
 				this.$store,
-				this.story.id,
+				this.story,
 				this.story.passages.find(p => p.name === name).id,
 				this.gridSize
 			);
@@ -427,13 +426,13 @@ export default Vue.extend({
 		webkitmouseforcedown event. At the time of writing, this is a
 		Mac-specific feature, but can be extended once standards catch up.
 		*/
-		
+
 		onMouseForceDown(e) {
 			let top = (e.pageY / this.story.zoom) -
 				(storyStore.passageDefaults.height / 2);
 			let left = (e.pageX / this.story.zoom) -
 				(storyStore.passageDefaults.width / 2);
-			
+
 			passageActions.createPassage(null, top, left);
 		},
 

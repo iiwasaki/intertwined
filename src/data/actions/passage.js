@@ -2,32 +2,32 @@ import linkParser from '../link-parser';
 import rect from '../../common/rect';
 
 export default {
-	createPassage(store, storyId, props) {
-		store.commit(
-			'CREATE_PASSAGE_IN_STORY',
+	createPassage(store, story, props) {
+		store.dispatch(
+			'createPassageInStory',
 			{
-				storyId: storyId,
+				story: story,
 				props: props
 			}
 		);
 	},
 
-	updatePassage(store, storyId, passageId, props) {
-		store.commit(
-			'UPDATE_PASSAGE_IN_STORY',
+	updatePassage(store, story, passageId, props) {
+		store.dispatch(
+			'updatePassageInStory',
 			{
-				storyId: storyId,
+				story: story,
 				passageId: passageId,
 				props: props
 			}
 		);
 	},
 
-	deletePassage(store, storyId, passageId) {
-		store.commit(
-			'DELETE_PASSAGE_IN_STORY',
+	deletePassage(store, story, passageId) {
+		store.dispatch(
+			'deletePassageInStory',
 			{
-				storyId: storyId,
+				story: story,
 				passageId: passageId,
 			}
 		);
@@ -44,8 +44,8 @@ export default {
 			/* Only dispatch updates where there are changes. */
 
 			if (wantSelect !== current) {
-				store.commit(
-					'UPDATE_PASSAGE_IN_STORY',
+				store.dispatch(
+					'updatePassageInStory',
 					{
 						story: story,
 						passageId: p.id,

@@ -47,12 +47,12 @@ export default Vue.extend({
 		}
 	},
 
-	beforeCreate(){
-		this.$store.dispatch('bindStories');
+	async beforeCreate(){
+		await this.$store.dispatch('bindStories', {order: 'name', dir: 'asc'});
 	},
 
-	beforeDestroy(){
-		this.$store.dispatch('unbindStories');
+	async beforeDestroy(){
+		await this.$store.dispatch('unbindStories');
 	},
 
 	computed: {
@@ -96,52 +96,6 @@ export default Vue.extend({
 			return (navigator.standalone !== undefined);
 		},
 
-		sortedStories() {
-			/*
-			If we have no stories to sort, don't worry about it.
-			*/
-
-			if (this.stories.length === 0) {
-				return this.stories;
-			}
-
-			switch (this.storyOrder) {
-				case 'name':
-					return this.stories.sort((a, b) => {
-						if (a.name > b.name) {
-							return this.storyOrderDir === 'asc' ? 1 : -1;
-						}
-
-						if (a.name < b.name) {
-							return this.storyOrderDir === 'asc' ? -1 : 1;
-						}
-
-						return 0;
-					});
-
-				case 'lastUpdate':
-					return this.stories.sort((a, b) => {
-						const aTime = a.lastUpdate.getTime();
-						const bTime = b.lastUpdate.getTime();
-
-						if (aTime > bTime) {
-							return this.storyOrderDir === 'asc' ? 1 : -1;
-						}
-
-						if (aTime < bTime) {
-							return this.storyOrderDir === 'asc' ? -1 : 1;
-						}
-
-						return 0;
-					});
-
-				default:
-					throw new Error(
-						`Don't know how to sort by "${this.storyOrder}"`
-					);
-			}
-		},
-
 		storyCountDesc() {
 			return locale.sayPlural(
 				'%d Story',
@@ -180,7 +134,7 @@ export default Vue.extend({
 	},
 
 	methods: {
-		sortByDate() {
+		async sortByDate() {
 			/*
 			If the last story order was 'lastUpdate', toggle the story order
 			direction.  Elsewise, default to 'desc' (i.e. newest -> oldest).
@@ -194,9 +148,10 @@ export default Vue.extend({
 			}
 
 			this.storyOrder = 'lastUpdate';
+			await this.$store.dispatch('bindStories', {order: this.storyOrder, dir: this.storyOrderDir});
 		},
 
-		sortByName() {
+		async sortByName() {
 			/*
 			If the last story order was 'name', toggle the story order
 			direction. Elsewise, default to 'asc' (i.e. A -> Z).
@@ -210,6 +165,7 @@ export default Vue.extend({
 			}
 
 			this.storyOrder = 'name';
+			await this.$store.dispatch('bindStories', {order: this.storyOrder, dir: this.storyOrderDir});
 		}
 	},
 

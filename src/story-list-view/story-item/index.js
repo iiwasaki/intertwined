@@ -39,7 +39,12 @@ export default Vue.extend({
 
 	computed: {
 		lastUpdateFormatted() {
-			return moment(this.story.lastUpdate).format('lll');
+			if (this.story.lastUpdate) {
+				return moment(this.story.lastUpdate.toDate()).format('lll');
+			}
+			else {
+				return moment(new Date()).format('lll');
+			}
 		},
 
 		hue() {
@@ -64,15 +69,17 @@ export default Vue.extend({
 
 		edit() {
 			const pos = this.$el.getBoundingClientRect();
-			this.$store.dispatch('bindStory', {
-				storyId: this.story.id,
-			});
 			new ZoomTransition({
 				data: {
 					x: pos.left + pos.width / 2,
 					y: pos.top,
 				},
 			}).$mountTo(this.$el)
+			.then(
+				() => (this.$store.dispatch('bindStory', {
+					storyId: this.story.id,
+				}))
+			)
 			.then(
 				() => (this.$router.push('/stories/' + this.story.id))
 			);

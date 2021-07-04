@@ -221,7 +221,7 @@ export default Vue.extend({
 		}
 	},
 
-	ready() {
+	mounted() {
 		this.on(this.$el.parentNode, 'mousedown', this.startDrag);
 	},
 

@@ -5,6 +5,8 @@ import locale from '../../locale';
 import {thenable} from '../../vue/mixins/thenable';
 import modaldialog from '../../ui/modal-dialog';
 import eventHub from '../../vue/eventhub';
+import storyActions from '../../data/actions/story';
+import store from '../../data/store/index.js';
 
 require('./index.less');
 

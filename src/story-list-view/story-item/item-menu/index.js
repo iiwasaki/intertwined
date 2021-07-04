@@ -112,7 +112,7 @@ export default Vue.extend({
 		 */
 		deleteStoryPost(toDeleteId){
 			if (toDeleteId === this.story.id){
-				storyActions.deleteStory(this.$store, this.story.id);
+				storyActions.deleteStory(this.$store, toDeleteId);
 			}
 		},
 
@@ -140,9 +140,9 @@ export default Vue.extend({
 		 * This event/method will be fired by the prompt popup if they accept the
 		 * story rename.
 		 */
-		 renameStoryPost(toRenameId, newName){
+		 async renameStoryPost(toRenameId, newName){
 			if (toRenameId === this.story.id){
-				storyActions.updateStory(this.$store, this.story.id, {name: newName});
+				await storyActions.updateStory(this.$store, this.story.id, {name: newName, lastUpdate: new Date() });
 			}
 		},
 
@@ -168,9 +168,9 @@ export default Vue.extend({
 		 * This event/method will be fired by the prompt popup if they accept the
 		 * story duplicate.
 		 */
-		 duplicateStoryPost(toRenameId, newName){
+		 async duplicateStoryPost(toRenameId, newName){
 			if (toRenameId === this.story.id){
-				storyActions.duplicateStory(this.$store, this.story.id, newName);
+				await storyActions.duplicateStory(this.$store, this.story.id, newName);
 			}
 		},
 	},

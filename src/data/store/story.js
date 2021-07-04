@@ -8,7 +8,7 @@ import locale from '../../locale';
 import idFor from '../id';
 import ui from '../../ui';
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
-import FirebaseHandler from "../firebase-handler";
+import FirebaseHandler, { firepadRef } from "../firebase-handler";
 import {storyCollection} from "../firebase-handler";
 
 /*
@@ -52,7 +52,6 @@ const storyStore = {
 			state.stories.push(payload);
 		},
 		CREATE_STORY(state, props) {
-			console.log(props);
 			let story = Object.assign(
 				{
 					id: idFor(props.name),
@@ -68,12 +67,143 @@ const storyStore = {
 			if (story.passages) {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
-			console.log("Committing action to story?");
-			state.stories.push(story);
 			FirebaseHandler.saveStory(story);
 		},
 
 		UPDATE_PASSAGE_IN_STORY(state, payload) {
+			
+		},
+
+		CREATE_PASSAGE_IN_STORY(state, payload) {
+			
+		},
+
+
+		DELETE_PASSAGE_IN_STORY(state, payload) {
+			
+		},
+
+
+		IMPORT_STORY(state, payload) {
+			let toImport = payload.toImport;
+			/*
+			See data/import.js for how the object that we receive is
+			structured.
+
+			Assign IDs to to everything, link passages to their story,
+			and set the story's startPassage property appropriately.
+			*/
+
+			toImport.id = idFor(toImport.name);
+
+			toImport.passages.forEach(p => {
+				p.id = idFor(toImport.name + p.name);
+				p.story = toImport.id;
+
+				if (p.pid === toImport.startPassagePid) {
+					toImport.startPassage = p.id;
+				}
+
+				delete p.pid;
+			});
+
+			delete toImport.startPassagePid;
+			state.stories.push(toImport);
+		},
+
+	},
+
+	actions:{
+		bindStories: firestoreAction(({ bindFirestoreRef }, payload) => {
+			console.log("Binding all stories");
+			return bindFirestoreRef('stories', storyCollection.orderBy(payload.order, payload.dir));
+		}),
+
+		unbindStories: firestoreAction (({ unbindFirestoreRef }) => {
+			console.log("Unbinding all stories");
+			unbindFirestoreRef('stories')
+		}),
+
+		bindStory: firestoreAction(({ bindFirestoreRef }, payload) => {
+			console.log("Binding individual story (in store -> story.js)");
+			return bindFirestoreRef('story', storyCollection.doc(payload.storyId));
+		}),
+
+		unbindStory: firestoreAction (({ unbindFirestoreRef }) => {
+			console.log("Unbinding individual story (in store -> story.js)");
+			unbindFirestoreRef('story');
+		}),
+
+		deleteStory: firestoreAction ((context, storyId) => {
+			console.log("in delete story vuexfire action");
+			return storyCollection.doc(storyId).delete();
+		}),
+
+		updateStory: firestoreAction(({ state }, payload) => {
+			let id = payload.id;
+			console.log("Id is: ");
+			console.log(id);
+			let props = payload.props;
+			return storyCollection.doc(id).update(props).then(() => {
+				console.log("Story updating with vuex!");
+			});
+		}),
+
+		duplicateStory: firestoreAction(({state}, payload) => {
+			console.log("in duplicate story vuex");
+			let id = payload.id;
+			let newName = payload.newName;
+			const original = getStoryById(state, id);
+
+			let story = Object.assign({}, original, {
+				id: idFor(newName),
+				ifid: uuid().toUpperCase(),
+				name: newName
+			});
+
+			/* We need to do a deep copy of the passages. */
+
+			story.passages = [];
+
+			original.passages.forEach(originalPassage => {
+				const passage = Object.assign({}, originalPassage, {
+					id: idFor(newName + originalPassage.name),
+					story: story.id
+				});
+
+				if (passage.tags) {
+					passage.tags = passage.tags.slice(0);
+				}
+
+				if (original.startPassage === originalPassage.id) {
+					story.startPassage = passage.id;
+				}
+
+				story.passages.push(passage);
+			});
+			return storyCollection.add(story).then("Duplicated story via vuex");
+		}),
+
+		createStory: firestoreAction(({ state }, props) => {
+			let story = Object.assign(
+				{
+					id: idFor(props.name),
+					lastUpdate: new Date(),
+					ifid: uuid().toUpperCase(),
+					tagColors: {},
+					passages: []
+				},
+				storyStore.storyDefaults,
+				props
+			);
+
+			if (story.passages) {
+				story.passages.forEach(passage => (passage.story = story.id));
+			}
+			return storyCollection.add(story).then("Added story via vuex");
+		}),
+
+		updatePassageInStory: firestoreAction(( { state }, payload) => {
 			let story = payload.story;
 			let passageId = payload.passageId;
 			let props = payload.props;
@@ -105,12 +235,26 @@ const storyStore = {
 
 			Object.assign(passage, props);
 			story.lastUpdate = new Date();
-			FirebaseHandler.saveStory(story);
-		},
+			return storyCollection.doc(story.id).set(story);
+		}),
 
-		CREATE_PASSAGE_IN_STORY(state, payload) {
+		deletePassageInStory: firestoreAction(({ state }, payload) => {
+			let story = payload.story;
+			let passageId = payload.passageId;
+			if (!story){
+				throw new Error("Unable to delete passage; story is undefined.");
+			}
+
+			story.passages = story.passages.filter(
+				passage => passage.id !== passageId
+			);
+			story.lastUpdate = new Date();
+			return storyCollection.doc(story.id).set(story);
+		}),
+
+		createPassageInStory: firestoreAction(({ state }, payload) => {
 			console.log("Create passage in story story.js");
-			let storyId = payload.storyId;
+			let story = payload.story;
 			let props = payload.props;
 			/*
 			uuid is used here as a salt so that passages always contain unique
@@ -119,7 +263,9 @@ const storyStore = {
 			to have.
 			*/
 
-			let story = getStoryById(state, storyId);
+			if (!story){
+				throw new Error("Creating passage failed; story undefined.");
+			}
 			let newPassage = Object.assign(
 				{
 					id: idFor(story.name + uuid())
@@ -149,120 +295,7 @@ const storyStore = {
 			}
 
 			story.lastUpdate = new Date();
-			FirebaseHandler.saveStory(story);
-		},
-
-
-		DELETE_PASSAGE_IN_STORY(state, payload) {
-			let storyId = payload.storyId;
-			let passageId = payload.passageId;
-			let story = getStoryById(state, storyId);
-
-			story.passages = story.passages.filter(
-				passage => passage.id !== passageId
-			);
-			story.lastUpdate = new Date();
-			FirebaseHandler.saveStory(story);
-		},
-
-		UPDATE_STORY(state, payload) {
-			let id = payload.id;
-			let props = payload.props;
-			let story = getStoryById(state, id);
-
-			Object.assign(story, props);
-			console.log(story);
-			story.lastUpdate = new Date();
-			FirebaseHandler.saveStory(story);
-		},
-
-		DUPLICATE_STORY(state, payload) {
-			let id = payload.id;
-			let newName = payload.newName;
-			const original = getStoryById(state, id);
-
-			let story = Object.assign({}, original, {
-				id: idFor(newName),
-				ifid: uuid().toUpperCase(),
-				name: newName
-			});
-
-			/* We need to do a deep copy of the passages. */
-
-			story.passages = [];
-
-			original.passages.forEach(originalPassage => {
-				const passage = Object.assign({}, originalPassage, {
-					id: idFor(newName + originalPassage.name),
-					story: story.id
-				});
-
-				if (passage.tags) {
-					passage.tags = passage.tags.slice(0);
-				}
-
-				if (original.startPassage === originalPassage.id) {
-					story.startPassage = passage.id;
-				}
-
-				story.passages.push(passage);
-			});
-
-			state.stories.push(story);
-			FirebaseHandler.saveStory(story);
-		},
-
-		IMPORT_STORY(state, payload) {
-			let toImport = payload.toImport;
-			/*
-			See data/import.js for how the object that we receive is
-			structured.
-
-			Assign IDs to to everything, link passages to their story,
-			and set the story's startPassage property appropriately.
-			*/
-
-			toImport.id = idFor(toImport.name);
-
-			toImport.passages.forEach(p => {
-				p.id = idFor(toImport.name + p.name);
-				p.story = toImport.id;
-
-				if (p.pid === toImport.startPassagePid) {
-					toImport.startPassage = p.id;
-				}
-
-				delete p.pid;
-			});
-
-			delete toImport.startPassagePid;
-			state.stories.push(toImport);
-		},
-
-		DELETE_STORY(state, payload) {
-			let id = payload.id;
-			state.stories = state.stories.filter(story => story.id !== id);
-			FirebaseHandler.deleteStory(id);
-		},
-	},
-
-	actions:{
-		bindStories: firestoreAction(({ bindFirestoreRef }) => {
-			return bindFirestoreRef('stories', storyCollection)
-		}),
-
-		unbindStories: firestoreAction (({ unbindFirestoreRef }) => {
-			unbindFirestoreRef('stories')
-		}),
-
-		bindStory: firestoreAction(({ bindFirestoreRef }, payload) => {
-			console.log("Binding individual story (in store -> story.js)");
-			return bindFirestoreRef('story', storyCollection.doc(payload.storyId))
-		}),
-
-		unbindStory: firestoreAction (({ unbindFirestoreRef }) => {
-			console.log("Unbinding individual story (in store -> story.js)");
-			unbindFirestoreRef('story');
+			return storyCollection.doc(story.id).set(story);
 		})
 	},
 

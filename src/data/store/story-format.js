@@ -40,13 +40,13 @@ export default {
 		DELETE_FORMAT(state, id) {
 			state.formats = state.formats.filter(format => format.id !== id);
 		},
+	},
 
-		LOAD_FORMAT(state, payload) {
+	actions: {
+		LOAD_FORMAT({state, commit, rootState}, payload) {
 			let id = payload.id;
 			let props = payload.props;
 			let format = state.formats.find(format => format.id === id);
-
-			console.log(format);
 
 			format.properties = props;
 			format.loaded = true;

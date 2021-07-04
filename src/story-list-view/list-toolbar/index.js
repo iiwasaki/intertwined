@@ -27,15 +27,6 @@ export default Vue.extend({
 	methods: {
 		createNewStory(name){
 			storyActions.createStory(this.$store, {name: name});
-			/* Allow the appearance animation to complete. */
-
-			window.setTimeout(() => {
-				eventHub.$emit(
-					'story-edit',
-					this.existingStories.find(story => story.name === name)
-						.id
-				);
-			}, 300);
 		},
 		createStoryPrompt(e) {
 			// Prompt for the new story name.

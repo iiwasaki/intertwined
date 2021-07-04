@@ -20,7 +20,7 @@ export default function(store) {
 	enabled = false;
 	pref.load(store);
 	//story.load(store);
-	storyFormat.load(store);
+	//storyFormat.load(store);
 	previousStories = store.state.story.stories;
 	enabled = true;
 
@@ -72,17 +72,17 @@ export default function(store) {
 				break;
 
 			case 'IMPORT_STORY':
-				story.update(transaction => {
-					const imported = state.story.stories.find(
-						s => s.name === mutation.payload[0].name
-					);
+				// story.update(transaction => {
+				// 	const imported = state.story.stories.find(
+				// 		s => s.name === mutation.payload[0].name
+				// 	);
 
-					story.saveStory(transaction, imported);
+				// 	story.saveStory(transaction, imported);
 
-					imported.passages.forEach(
-						passage => story.savePassage(transaction, passage)
-					);
-				});
+				// 	imported.passages.forEach(
+				// 		passage => story.savePassage(transaction, passage)
+				// 	);
+				// });
 				break;
 
 			case 'DELETE_STORY': {
@@ -192,6 +192,6 @@ export default function(store) {
 		We save a copy of the stories structure in aid of deleting, as above.
 		*/
 
-		previousStories = state.story.stories;
+		//previousStories = state.story.stories;
 	});
 };

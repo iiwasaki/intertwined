@@ -4,6 +4,7 @@ This should be imported by any file using Firebase (such as load/store stories) 
 import firebase from 'firebase/app';
 import "firebase/analytics";
 import "firebase/firestore";
+import "firebase/database";
 import actions, { createStory } from "./actions/story";
 import regeneratorRuntime from "regenerator-runtime";
 
@@ -11,6 +12,7 @@ import regeneratorRuntime from "regenerator-runtime";
 const firebaseConfig = {
     apiKey: "AIzaSyCuEgC7txr-xCnc54TKn3vG63QMhD4sonw",
     authDomain: "intertwined-73a5b.firebaseapp.com",
+    databaseURL: "https://intertwined-73a5b-default-rtdb.firebaseio.com",
     projectId: "intertwined-73a5b",
     storageBucket: "intertwined-73a5b.appspot.com",
     messagingSenderId: "299315239520",
@@ -20,6 +22,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
+export const firepadRef = firebase.database().ref();
 export const storyCollection = db.collection("stories");
 
 export default class {
@@ -32,6 +35,7 @@ export default class {
     // Saves an entire story object; could grow to be pretty huge if the story gets big.
     // Should think about deconstructing story to be story + references to passages
     static saveStory(story){
+        console.log("in savestory firebase handler");
         storyCollection.doc(story.id).set(story).then(() => {
             console.log("Story successfully saved.");
         })
@@ -42,6 +46,7 @@ export default class {
 
     // Delete an entire story object.
     static deleteStory(storyId){
+        console.log("in delete story firebase handler");
         storyCollection.doc(storyId).delete().then(() => {
             console.log("Story successfully deleted.");
         })
@@ -52,6 +57,7 @@ export default class {
 
     //Load all of the stories stored in the stories collection
     static loadStories(store){
+        console.log("in load story firebase handler");
         storyCollection.get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
@@ -71,6 +77,7 @@ export default class {
 
     // Grab and return a singular story based off of ID
     static async loadStoryById(id) {
+        console.log("in load story by ID firebase handler");
         try {
             const query = await storyCollection.doc(id).get().then((result) => {
                 return result.data();
@@ -82,10 +89,4 @@ export default class {
         }
     }
 
-    static listenToStory(id){
-        storyCollection.doc(id).onSnapshot((result) => {
-            console.log("Current story: ", result.data());
-            return result.data();
-        });
-    }
 }

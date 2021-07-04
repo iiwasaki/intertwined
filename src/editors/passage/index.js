@@ -48,14 +48,17 @@ export default Vue.extend({
 	},
 
 	computed: {
-		...mapGetters(["allStories"]),
+		...mapGetters({
+			allStories: "allStories",
+			parentStory: "story",
+		}),
 		cmOptions() {
 			return {
-				placeholder: locale.say(
-					'Enter the body text of your passage here. To link to another ' +
-					'passage, put two square brackets around its name, [[like ' +
-					'this]].'
-				),
+				// placeholder: locale.say(
+				// 	'Enter the body text of your passage here. To link to another ' +
+				// 	'passage, put two square brackets around its name, [[like ' +
+				// 	'this]].'
+				// ),
 				prefixTrigger: {
 					prefixes: ['[[', '->'],
 					callback: this.autocomplete.bind(this)
@@ -70,10 +73,6 @@ export default Vue.extend({
 			};
 		},
 
-		parentStory() {
-			return this.allStories.find(story => story.id === this.storyId);
-		},
-
 		passage() {
 			return this.parentStory.passages.find(
 				passage => passage.id === this.passageId
@@ -86,7 +85,7 @@ export default Vue.extend({
 					passage.id !== this.passage.id
 			));
 		},
-		
+
 		autocompletions() {
 			return this.parentStory.passages.map(passage => passage.name);
 		}
@@ -192,72 +191,75 @@ export default Vue.extend({
 			}
 
 			return false;
+		},
+
+		setupCodeMirror() {
+			this.userPassageName = this.passage.name;
+
+			/* Update the window title. */
+
+			this.oldWindowTitle = document.title;
+			document.title = locale.say('Editing \u201c%s\u201d', this.passage.name);
+
+			/*
+			Load the story's format and see if it offers a CodeMirror mode.
+			*/
+
+			if (this.$options.storyFormat) {
+				formatActions.loadFormat(
+					this.$store,
+					this.$options.storyFormat.name,
+					this.$options.storyFormat.version
+				).then(format => {
+					let modeName = format.name.toLowerCase();
+					/* TODO: Resolve this special case with PR #118 */
+
+					if (modeName === 'harlowe') {
+						modeName += `-${/^\d+/.exec(format.version)}`;
+					}
+
+					if (modeName in CodeMirror.modes) {
+						/*
+						This is a small hack to allow modes such as Harlowe to
+						access the full text of the textarea, permitting its lexer
+						to grow a syntax tree by itself.
+						*/
+
+						CodeMirror.modes[modeName].cm = this.$refs.codemirror.$cm;
+
+						/*
+						Now that's done, we can assign the mode and trigger a
+						re-render.
+						*/
+
+						this.$refs.codemirror.$cm.setOption('mode', modeName);
+					}
+				});
+			}
+
+			/*
+			Set the mode to the default, 'text'. The above promise will reset it if
+			it fulfils.
+			*/
+
+			this.$refs.codemirror.$cm.setOption('mode', 'text');
+
+			/*
+			Either move the cursor to the end or select the existing text, depending
+			on whether this passage has only default text in it.
+			*/
+
+			if (this.passage.text === storyStore.passageDefaults.text) {
+				this.$refs.codemirror.$cm.execCommand('selectAll');
+			}
+			else {
+				this.$refs.codemirror.$cm.execCommand('goDocEnd');
+			}
 		}
 	},
 
 	mounted() {
-		this.userPassageName = this.passage.name;
-
-		/* Update the window title. */
-
-		this.oldWindowTitle = document.title;
-		document.title = locale.say('Editing \u201c%s\u201d', this.passage.name);
-
-		/*
-		Load the story's format and see if it offers a CodeMirror mode.
-		*/
-
-		if (this.$options.storyFormat) {
-			formatActions.loadFormat(
-				this.$store,
-				this.$options.storyFormat.name,
-				this.$options.storyFormat.version
-			).then(format => {
-				let modeName = format.name.toLowerCase();
-
-				/* TODO: Resolve this special case with PR #118 */
-
-				if (modeName === 'harlowe') {
-					modeName += `-${/^\d+/.exec(format.version)}`;
-				}
-
-				if (modeName in CodeMirror.modes) {
-					/*
-					This is a small hack to allow modes such as Harlowe to
-					access the full text of the textarea, permitting its lexer
-					to grow a syntax tree by itself.
-					*/
-
-					CodeMirror.modes[modeName].cm = this.$refs.codemirror.$cm;
-
-					/*
-					Now that's done, we can assign the mode and trigger a
-					re-render.
-					*/
-
-					this.$refs.codemirror.$cm.setOption('mode', modeName);
-				}
-			});
-		}
-
-		/*
-		Set the mode to the default, 'text'. The above promise will reset it if
-		it fulfils.
-		*/
-
-		this.$refs.codemirror.$cm.setOption('mode', 'text');
-
-		/*
-		Either move the cursor to the end or select the existing text, depending
-		on whether this passage has only default text in it.
-		*/
-
-		if (this.passage.text === storyStore.passageDefaults.text) {
-			this.$refs.codemirror.$cm.execCommand('selectAll');
-		}
-		else {
-			this.$refs.codemirror.$cm.execCommand('goDocEnd');
-		}
+		this.setupCodeMirror();
 	},
 
 	destroyed() {

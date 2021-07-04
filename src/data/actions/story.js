@@ -7,7 +7,6 @@ import latestFormatVersions from '../latest-format-versions';
 
 export default {
 	createStory(store, props) {
-		console.log(props);
 		let normalizedProps = Object.assign({}, props);
 
 		/* If a format isn't specified, use the default one. */
@@ -18,13 +17,11 @@ export default {
 				store.state.pref.defaultFormat.version;
 		}
 
-		console.log(normalizedProps);
-
-		store.commit('CREATE_STORY', normalizedProps);
+		store.dispatch('createStory', normalizedProps);
 	},
 
 	updateStory(store, id, props) {
-		store.commit('UPDATE_STORY',
+		store.dispatch('updateStory',
 		{
 			id: id,
 			props: props
@@ -32,13 +29,11 @@ export default {
 	},
 
 	deleteStory(store, id) {
-		store.commit('DELETE_STORY',{
-			id: id
-		});
+		store.dispatch('deleteStory',id);
 	},
 
 	duplicateStory(store, id, newName) {
-		store.commit('DUPLICATE_STORY', {
+		store.dispatch('duplicateStory', {
 			id: id,
 			newName: newName
 		});

@@ -2,7 +2,7 @@
 Story format-related actions.
 */
 
-import jsonp from '../jsonp';
+import jsonp from '../jsonp.js';
 import semverUtils from 'semver-utils';
 import latestFormatVersions from '../latest-format-versions';
 import locale from '../../locale';
@@ -100,6 +100,7 @@ export default {
 		string (e.g. if we ask for version 2.0.8, we may get 2.6.1).
 		*/
 
+
 		const majorVersion = semverUtils.parse(version).major;
 		const formats = store.state.storyFormat.formats.filter(
 			format =>
@@ -135,7 +136,6 @@ export default {
 				resolve(format);
 				return;
 			}
-
 			jsonp(
 				format.url,
 				{name: 'storyFormat', timeout: 2000},
@@ -145,7 +145,7 @@ export default {
 						return;
 					}
 
-					store.commit('LOAD_FORMAT',
+					store.dispatch('LOAD_FORMAT',
 					{
 						id:format.id,
 						props: data,
