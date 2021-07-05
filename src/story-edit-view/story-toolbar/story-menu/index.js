@@ -83,14 +83,14 @@ export default Vue.extend({
 		 * This event/method will be fired by the prompt popup if they accept the
 		 * story rename.
 		 */
-		 renameStoryPost(toRenameId, newName){
+		 async renameStoryPost(toRenameId, newName){
 			if (toRenameId === this.story.id){
-				storyActions.updateStory(this.$store, this.story.id, {name: newName});
+				await storyActions.updateStory(this.$store, this.story.id, {name: newName, lastUpdate: new Date()});
 			}
 		},
 
 		selectAll() {
-			passageActions.selectPassages(this.$store, this.story.id, () => true);
+			passageActions.selectPassages(this.$store, this.story, () => true);
 		},
 
 		proofStory() {

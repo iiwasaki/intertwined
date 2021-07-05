@@ -25,12 +25,12 @@ export default Vue.extend({
 	},
 
 	computed: {
-		...mapGetters(["allFormats", "allStories"]),
+		...mapGetters(["allFormats", "allStories", "story"]),
 		allFormatsProc(){
 			let result = this.allFormats.map(
 				format => ({ name: format.name, version: format.version })
 			);
-			
+			6
 			result.sort((a, b) => {
 				if (a.name < b.name) {
 					return -1;
@@ -71,9 +71,6 @@ export default Vue.extend({
 			});
 
 			return result;
-		},
-		story() {
-			return this.allStories.find(story => story.id === this.storyId);
 		},
 
 		selectedFormat() {

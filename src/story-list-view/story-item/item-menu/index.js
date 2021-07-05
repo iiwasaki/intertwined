@@ -163,16 +163,6 @@ export default Vue.extend({
 				targetStoryId: this.story.id,
 			});
 		},
-
-		/**
-		 * This event/method will be fired by the prompt popup if they accept the
-		 * story duplicate.
-		 */
-		 async duplicateStoryPost(toRenameId, newName){
-			if (toRenameId === this.story.id){
-				await storyActions.duplicateStory(this.$store, this.story.id, newName);
-			}
-		},
 	},
 
 });

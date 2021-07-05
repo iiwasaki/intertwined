@@ -48,41 +48,6 @@ const storyStore = {
 	},
 
 	mutations: {
-		ADD_STORY_TO_LIST(state, payload){
-			state.stories.push(payload);
-		},
-		CREATE_STORY(state, props) {
-			let story = Object.assign(
-				{
-					id: idFor(props.name),
-					lastUpdate: new Date(),
-					ifid: uuid().toUpperCase(),
-					tagColors: {},
-					passages: []
-				},
-				storyStore.storyDefaults,
-				props
-			);
-
-			if (story.passages) {
-				story.passages.forEach(passage => (passage.story = story.id));
-			}
-			FirebaseHandler.saveStory(story);
-		},
-
-		UPDATE_PASSAGE_IN_STORY(state, payload) {
-			
-		},
-
-		CREATE_PASSAGE_IN_STORY(state, payload) {
-			
-		},
-
-
-		DELETE_PASSAGE_IN_STORY(state, payload) {
-			
-		},
-
 
 		IMPORT_STORY(state, payload) {
 			let toImport = payload.toImport;
@@ -136,6 +101,8 @@ const storyStore = {
 
 		deleteStory: firestoreAction ((context, storyId) => {
 			console.log("in delete story vuexfire action");
+			const Firepad = require('firepad');
+			var storyRef = firepadRef.child(storyId).remove();
 			return storyCollection.doc(storyId).delete();
 		}),
 
@@ -154,6 +121,7 @@ const storyStore = {
 			let id = payload.id;
 			let newName = payload.newName;
 			const original = getStoryById(state, id);
+			console.log(original);
 
 			let story = Object.assign({}, original, {
 				id: idFor(newName),
@@ -164,7 +132,6 @@ const storyStore = {
 			/* We need to do a deep copy of the passages. */
 
 			story.passages = [];
-
 			original.passages.forEach(originalPassage => {
 				const passage = Object.assign({}, originalPassage, {
 					id: idFor(newName + originalPassage.name),
@@ -181,7 +148,7 @@ const storyStore = {
 
 				story.passages.push(passage);
 			});
-			return storyCollection.add(story).then("Duplicated story via vuex");
+			return storyCollection.add(story);
 		}),
 
 		createStory: firestoreAction(({ state }, props) => {
@@ -200,7 +167,7 @@ const storyStore = {
 			if (story.passages) {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
-			return storyCollection.add(story).then("Added story via vuex");
+			return storyCollection.add(story).then( () => {console.log("Added story via vuex")});
 		}),
 
 		updatePassageInStory: firestoreAction(( { state }, payload) => {
@@ -248,6 +215,7 @@ const storyStore = {
 			story.passages = story.passages.filter(
 				passage => passage.id !== passageId
 			);
+			firepadRef.child(story.id).child("passagetext").child(passageId).remove();
 			story.lastUpdate = new Date();
 			return storyCollection.doc(story.id).set(story);
 		}),
@@ -296,6 +264,40 @@ const storyStore = {
 
 			story.lastUpdate = new Date();
 			return storyCollection.doc(story.id).set(story);
+		}),
+
+		// Takes the passage text and assigns it to the RTDB.
+		duplicatePassagesInStory: firestoreAction(({ state }, payload) => {
+			console.log("Hi");
+			const newStory = getStoryById(state, payload.newId);
+			console.log(newStory);
+			const Firepad = require('firepad');
+			newStory.passages.forEach( individualPassage => {
+				var storyRef = firepadRef.child(newStory.id).child("passagetext").child(individualPassage.id);
+				var headless = new Firepad.Headless(storyRef);
+				return headless.setText(individualPassage.text, (err, committed) => {
+					if (err) {
+						throw new Error ("Error in copying passage texts when duplicating.");
+					}
+					headless.dispose();
+				})
+			});
+			var storyRef = firepadRef.child(newStory.id).child("stylesheet");
+			var headless = new Firepad.Headless(storyRef);
+			headless.setText(newStory.stylesheet, (err, committed) => {
+				if (err) {
+					throw new Error ("Error in copying stylesheet when duplicating story.");
+				}
+				headless.dispose();
+			})
+			storyRef = firepadRef.child(newStory.id).child("javascript");
+			headless = new Firepad.Headless(storyRef);
+			headless.setText(newStory.script, (err, committed) => {
+				if (err) {
+					throw new Error ("Error in copying stylesheet when duplicating story.");
+				}
+				headless.dispose();
+			})
 		})
 	},
 

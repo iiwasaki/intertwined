@@ -1,4 +1,4 @@
-<modal-dialog classProp="editor" :origin="origin" :can-widen="true" @transition-entered="resetCm">
+<modal-dialog classProp="editor" :origin="origin" :can-close="canClose" :can-widen="true" @transition-entered="resetCm">
 	<span slot="title">
 	{{ 'Stylesheet' | say }}
 	</span>
@@ -12,6 +12,6 @@
 	</p>
 
 	<div class="expand">
-		<code-mirror :options="cmOptions" :text="source" @cm-change="save" ref="codemirror"></code-mirror>
+		<code-mirror :options="cmOptions" :storyId="storyId" editType="stylesheet" ref="codemirror"></code-mirror>
 	</div>
 </modal-dialog>

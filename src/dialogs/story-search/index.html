@@ -1,6 +1,6 @@
 <modal-dialog id="searchModal" classProp="wide" :origin="origin">
 	<span slot="title">
-		{{ 'Find and Replace' | say }}
+		{{ 'Find' | say }}
 	</span>
 
 	<p>
@@ -24,12 +24,12 @@
 			{{ 'Regular expression' | say }}
 		</label>
 	</p>
-
+	<!-- No replacing right now, as it's very hard to keep everything in sync with each other 
 	<p>
 		<label for="replaceWith">{{ 'Replace With' | say }}</label>
 		<textarea id="replaceWith" v-model="replace"></textarea>
 	</p>
-
+	-->
 	<p class="resultSummary" v-if="passageMatches.length > 0">
 		<span class="controls">
 			<button class="subtle" :title="'Expand all search results' | say" @click="expandAll">
@@ -39,10 +39,11 @@
 			<button class="subtle" :title="'Collapse all search results' | say" @click="collapseAll">
 				<i class="fa fa-compress"></i>
 			</button>
-
+			<!-- No replacing right now - hard to synchronize with server
 			<button class="danger" @click="replaceAll">
 				<i class="fa fa-bolt"></i> {{ 'Replace All' | say }}
 			</button>
+			-->
 		</span>
 
 		<span class="matches">

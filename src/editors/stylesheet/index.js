@@ -7,7 +7,7 @@ import storyActions from '../../data/actions/story';
 import {mapGetters} from 'vuex';
 import modaldialog from '../../ui/modal-dialog';
 import codemirrorcomponent from '../../vue/codemirror';
-
+import { firepadRef } from '../../data/firebase-handler';
 
 require('codemirror/mode/css/css');
 require('codemirror/addon/display/placeholder');
@@ -22,11 +22,9 @@ export default Vue.extend({
 	}),
 
 	computed: {
-		...mapGetters(["allStories"]),
+		...mapGetters(["story"]),
 		source() {
-			return this.allStories.find(
-				story => story.id === this.storyId
-			).stylesheet;
+			return this.story.stylesheet;
 		},
 
 		cmOptions: () => ({
@@ -48,9 +46,23 @@ export default Vue.extend({
 			this.$refs.codemirror.reset();
 		},
 
-		save(text) {
-			storyActions.updateStory(this.$store, this.storyId, { stylesheet: text });
+		canClose() {
+			const Firepad = require('firepad');
+			const storyRef = firepadRef.child(this.storyId).child("stylesheet");
+			var headless = new Firepad.Headless(storyRef);
+			const newText = headless.getText(text => {
+				this.$store.dispatch("updateStory", {
+					id: this.storyId,
+					props: {
+						stylesheet: text
+					}
+				}).then(() => {
+					headless.dispose();
+				})
+			})
+			return true;
 		}
+
 	},
 
 	components: {

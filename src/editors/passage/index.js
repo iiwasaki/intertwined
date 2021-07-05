@@ -188,7 +188,7 @@ export default Vue.extend({
 				}
 
 				const Firepad = require('firepad');
-				const storyRef = firepadRef.child(this.storyId).child(this.passageId);
+				const storyRef = firepadRef.child(this.storyId).child("passagetext").child(this.passageId);
 				var headless = new Firepad.Headless(storyRef);
 				const newText = headless.getText(text => {
 					this.$store.dispatch("updatePassageInStory", {

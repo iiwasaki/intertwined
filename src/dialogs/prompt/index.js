@@ -53,7 +53,14 @@ const prompter = {
 							eventHub.$emit('renameStory', this.targetStoryId, this.response);
 							break;
 						case "duplicateStory":
-							eventHub.$emit('duplicateStory', this.targetStoryId, this.response);
+							store.dispatch("duplicateStory", {
+								id: this.targetStoryId,
+								newName: this.response,
+							}).then((ret) => {
+								store.dispatch("duplicatePassagesInStory", {
+									newId: ret.id,
+								})
+							})
 							break;
 						default:
 							break;

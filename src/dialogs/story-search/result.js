@@ -6,6 +6,7 @@ import Vue from 'vue';
 import passageActions from '../../data/actions/passage';
 import locale from '../../locale';
 import eventHub from '../../vue/eventhub';
+import { firepadRef } from '../../data/firebase-handler';
 
 require('./result.less');
 
@@ -69,7 +70,9 @@ export default Vue.extend({
 			this.expanded = !this.expanded;
 		},
 
+		// Replace function is currently disabled.
 		replace() {
+			console.log("replace");
 			const name = this.searchNames ?
 				this.match.passage.name.replace(
 					this.searchRegexp,
@@ -81,12 +84,22 @@ export default Vue.extend({
 				this.replaceWith
 			);
 
-			passageActions.updatePassage(
-				this.$store,
-				this.story.id,
-				this.match.passage.id,
-				{ name, text }
-			);
+			const Firepad = require('firepad');
+			const storyRef = firepadRef.child(this.story.id).child("passagetext").child(this.match.passage.id);
+			var headless = new Firepad.Headless(storyRef);
+			console.log(name);
+			console.log(text);
+			this.$store.dispatch(
+				'updatePassageInStory',
+				{
+					story: this.story,
+					passageId: this.match.passage.id,
+					props: {
+						name,
+						text,
+					}
+				}
+			)
 		},
 
 		/*

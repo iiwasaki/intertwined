@@ -15,26 +15,10 @@ var firepad;
 export default Vue.extend({
 	template: '<div></div>',
 
-	props: ['options', 'text', 'storyId', 'passageId'],
-
-	watch: {
-		// text() {
-		// 	// Only change CodeMirror if it's actually a meaningful change,
-		// 	// e.g. not the result of CodeMirror itself changing.
-
-		// 	if (this.text !== this.$cm.getValue()) {
-		// 		this.$cm.setValue(this.text);
-		// 	}
-		// }
-	},
+	props: ['options', 'storyId', 'passageId', 'editType'],
 
 	computed: {
 		...mapGetters({parentStory: "story"}),
-		passage() {
-			return this.parentStory.passages.find(
-				passage => passage.id === this.passageId
-			);
-		},
 	},
 
 	created() {
@@ -47,7 +31,7 @@ export default Vue.extend({
 	},
 
 	mounted() {
-		this.setupFirepad();
+		this.setupFirepad(this.editType);
 	},
 
 	methods: {
@@ -58,18 +42,31 @@ export default Vue.extend({
 			this.$cm.refresh();
 		},
 
-		setupFirepad(){
+		setupFirepad(editType){
 			this.$cm = CodeMirror(this.$el, this.options);
-			storyRef = firepadRef.child(this.storyId).child(this.passageId);
 			const Firepad = require("firepad");
-			firepad = Firepad.fromCodeMirror(storyRef, this.$cm, {
-				defaultText: locale.say(
-						'Enter the body text of your passage here. To link to another ' +
-						'passage, put two square brackets around its name, [[like ' +
-						'this]].'
-						),
-			});
-			//this.$cm.setValue((this.text || '') + '');
+			switch(editType){
+				case "javascript":
+					storyRef = firepadRef.child(this.storyId).child("javascript");
+					firepad = Firepad.fromCodeMirror(storyRef, this.$cm);
+					break;
+				case "passagetext":
+					storyRef = firepadRef.child(this.storyId).child("passagetext").child(this.passageId);
+					firepad = Firepad.fromCodeMirror(storyRef, this.$cm, {
+						defaultText: locale.say(
+								'Enter the body text of your passage here. To link to another ' +
+								'passage, put two square brackets around its name, [[like ' +
+								'this]].'
+								),
+					});
+					break;
+				case "stylesheet":
+					storyRef = firepadRef.child(this.storyId).child("stylesheet");
+					firepad = Firepad.fromCodeMirror(storyRef, this.$cm);
+					break;
+				default:
+					break;
+			}
 
 			/*
 			Remove the empty state from existing in undo history, e.g. so if the

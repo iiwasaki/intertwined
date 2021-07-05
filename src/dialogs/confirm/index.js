@@ -37,6 +37,7 @@ const confirmation = {
 			buttonClass: 'primary',
 			responseEvent: '',
 			targetStoryId: '',
+			targetPassageId: '',
 		}),
 
 		methods: {
@@ -44,8 +45,13 @@ const confirmation = {
 				switch(this.responseEvent){
 					case "deleteStory":
 						eventHub.$emit('deleteStory', this.targetStoryId);
+						break;
 					case "removeFormat":
 						eventHub.$emit('deleteFormat', this.targetStoryId);
+						break;
+					case "deletePassage":
+						eventHub.$emit('passage-delete', this.targetPassageId);
+						break;
 					default:
 						break;
 				}

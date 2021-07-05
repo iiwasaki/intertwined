@@ -2,8 +2,8 @@
 
 import Vue from 'vue';
 const {testStory} = require('../../../common/launch-story');
-const {updatePassage, default: passage} = require('../../../data/actions/passage');
-const {updateStory} = require('../../../data/actions/story');
+import passageActions from '../../../data/actions/passage';
+import  storyActions from '../../../data/actions/story';
 import dropdown from '../../../ui/drop-down';
 import locale from '../../../locale';
 import eventHub from '../../../vue/eventhub';
@@ -111,7 +111,7 @@ export default Vue.extend({
 		},
 
 		setAsStart() {
-			this.updateStory(this.parentStory.id, {
+				storyActions.updateStory(this.$store, this.parentStory.id, {
 				startPassage: this.passage.id
 			});
 		},
@@ -119,28 +119,28 @@ export default Vue.extend({
 		setSize(value) {
 			switch (value) {
 				case 'small':
-					this.updatePassage(this.parentStory.id, this.passage.id, {
+					passageActions.updatePassage(this.$store, this.parentStory, this.passage.id, {
 						width: 100,
 						height: 100
 					});
 					break;
 
 				case 'wide':
-					this.updatePassage(this.parentStory.id, this.passage.id, {
+					passageActions.updatePassage(this.$store, this.parentStory, this.passage.id, {
 						width: 200,
 						height: 100
 					});
 					break;
 
 				case 'tall':
-					this.updatePassage(this.parentStory.id, this.passage.id, {
+					passageActions.updatePassage(this.$store, this.parentStory, this.passage.id, {
 						width: 100,
 						height: 200
 					});
 					break;
 
 				case 'large':
-					this.updatePassage(this.parentStory.id, this.passage.id, {
+					passageActions.updatePassage(this.$store, this.parentStory, this.passage.id, {
 						width: 200,
 						height: 200
 					});
@@ -150,7 +150,7 @@ export default Vue.extend({
 					throw new Error(`Don't know how to set size ${value}`);
 			}
 
-			this.$dispatch('passage-position', this.passage, {});
+			eventHub.$emit('passage-position', this.passage, {});
 		},
 	},
 
@@ -158,7 +158,4 @@ export default Vue.extend({
 		'drop-down': dropdown,
 	},
 
-	vuex: {
-		actions: {updatePassage, updateStory}
-	}
 });

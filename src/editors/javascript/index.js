@@ -5,6 +5,7 @@ import {mapGetters} from 'vuex';
 import storyActions from '../../data/actions/story';
 import modaldialog from '../../ui/modal-dialog';
 import codemirrorcomponent from '../../vue/codemirror';
+import { firepadRef } from '../../data/firebase-handler';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/addon/display/placeholder');
@@ -18,11 +19,9 @@ export default Vue.extend({
 	}),
 
 	computed: {
-		...mapGetters(["allStories"]),
+		...mapGetters(["story"]),
 		source() {
-			return this.allStories.find(
-				story => story.id === this.storyId
-			).script;
+			return this.story.script;
 		},
 
 		cmOptions: () => ({
@@ -44,21 +43,27 @@ export default Vue.extend({
 			this.$refs.codemirror.reset();
 		},
 
-		save(text) {
-			storyActions.updateStory(this.$store, this.storyId, { script: text });
+		canClose() {
+			const Firepad = require('firepad');
+			const storyRef = firepadRef.child(this.storyId).child("javascript");
+			var headless = new Firepad.Headless(storyRef);
+			const newText = headless.getText(text => {
+				this.$store.dispatch("updateStory", {
+					id: this.storyId,
+					props: {
+						script: text
+					}
+				}).then(() => {
+					headless.dispose();
+				})
+			})
+			return true;
 		}
 	},
-	
+
 	components: {
 		'modal-dialog': modaldialog,
 		'code-mirror': codemirrorcomponent,
 	},
 
-	vuex: {
-		
-
-		getters: {
-			allStories: state => state.story.stories
-		}
-	}
 });

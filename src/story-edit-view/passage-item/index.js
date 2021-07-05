@@ -76,6 +76,7 @@ export default Vue.extend({
 		eventHub.$on('passage-edit', this.editFromDropdown);
 		eventHub.$on('passage-delete', this.passageDelete);
 		eventHub.$on('new-links', this.afterEdit);
+		eventHub.$on('passage-delete', this.delete);
 	},
 
 	beforeDestroy() {
@@ -83,6 +84,7 @@ export default Vue.extend({
 		eventHub.$off('passage-edit', this.editFromDropdown);
 		eventHub.$off('passage-delete', this.passageDelete);
 		eventHub.$off('new-links', this.afterEdit);
+		eventHub.$off('passage-delete', this.delete)
 	},
 
 	computed: {
@@ -177,7 +179,7 @@ export default Vue.extend({
 					escape(this.passage.name)
 				);
 
-				if (!hasPrimaryTouchUI()) {
+				if (!ui.hasPrimaryTouchUI()) {
 					message += '<br><br>' + locale.say(
 						'(Hold the Shift key when deleting to skip this message.)'
 					);
@@ -189,8 +191,10 @@ export default Vue.extend({
 						'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
 					buttonClass:
 						'danger',
-				})
-				.then(() => this.delete());
+					responseEvent: 'deletePassage',
+					targetStoryId: this.parentStory.id,
+					targetPassageId: this.passage.id
+				});
 			}
 		},
 
@@ -249,8 +253,11 @@ export default Vue.extend({
 
 			return escape(this.passage.text.substr(0, 99)) + '&hellip;';
 		},
-		delete() {
-			passageActions.deletePassage(this.parentStory, this.passage.id);
+
+		delete(toDeleteId) {
+			if (toDeleteId === this.passage.id){
+				passageActions.deletePassage(this.$store, this.parentStory, this.passage.id);
+			}
 		},
 
 		afterEdit(targetPassageId, oldText){

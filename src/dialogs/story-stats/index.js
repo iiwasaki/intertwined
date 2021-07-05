@@ -26,13 +26,10 @@ export default Vue.extend({
 	},
 
 	computed: {
-		...mapGetters(["allStories"]),
-		story() {
-			return this.allStories.find(story => story.id === this.storyId);
-		},
+		...mapGetters(["allStories", "story"]),
 
 		lastUpdate() {
-			return moment(this.story.lastUpdate).format('LLLL');
+			return moment(this.story.lastUpdate.toDate()).format('LLLL');
 		},
 
 		charCount() {
