@@ -47,7 +47,10 @@ export default {
 	},
 
 	async getStoryTestHtml(store, storyId, startPassageId) {
+		console.log("stody Id is " + storyId);
 		const story = await FirebaseHandler.loadStoryById(storyId);
+
+		console.log(story);
 
 		if (!story) {
 			throw new Error(

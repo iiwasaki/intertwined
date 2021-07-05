@@ -103,7 +103,7 @@ export default Vue.extend({
 		},
 
 		test() {
-			testStory(this.$store, this.parentStory.id, this.passage.id);
+			testStory(this.parentStory.id, this.passage.id);
 		},
 
 		toggleExpanded() {

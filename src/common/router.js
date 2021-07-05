@@ -98,7 +98,7 @@ let router = new VueRouter({
 			}
 		}},
 
-		{path: '/stories/:stodyId/test/:passageId', component:{
+		{path: '/stories/:storyId/test/:passageId', component:{
 			beforeCreate(){
 				console.log("Testing story - in router");
 			},
