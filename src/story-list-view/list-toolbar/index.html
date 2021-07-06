@@ -7,6 +7,12 @@
 				<i class="fa fa-plus"></i> {{ storySay }}
 			</button>
 		</li>
+
+		<li>
+			<button class="primary workshop block" @click="showWorkshop" title="Workshop Help">
+				<i class="fa fa-compass"></i> {{'CLS Workshop' | say}}
+			</button>
+		</li>
 		<!-- No imports currently
 		<li>
 			<button class="block" @click="importFile" v-bind:title="importStoryTitle">
@@ -43,7 +49,8 @@
 		<p>
 			{{'version' | say }} <button class="link" @click="showAbout">{{ appInfo.version }}</button>
 			<br>
-			<a href="https://twinery.org/2bugs" target="_blank"><i class="fa fa-bug"></i> {{'Report a bug' | say }}</a>
+			<!-- Workshop bugs will be reported in the workshop options -->
+			<!-- <a href="https://twinery.org/2bugs" target="_blank"><i class="fa fa-bug"></i> {{'Report a bug' | say }}</a> -->
 		</p>
 	</footer>
 </nav>

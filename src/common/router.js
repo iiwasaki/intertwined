@@ -5,18 +5,19 @@ import VueRouter from 'vue-router';
 import LocaleView from '../locale/view';
 import StoryEditView from '../story-edit-view';
 import StoryListView from '../story-list-view';
+import WorkshopView from '../workshop-view';
 import WelcomeView from '../welcome';
 import locale from '../locale';
 import storyHTMLActions from './story-html';
 import replaceUI from '../ui/replace';
 import store from '../data/store';
-import FirebaseHandler from '../data/firebase-handler';
 
 Vue.use(VueRouter);
 let router = new VueRouter({
 	routes: [
 		{path: '/locale', component: LocaleView},
 		{path: '/welcome', component: WelcomeView},
+		{path: '/workshop', component: WorkshopView},
 		{path: '/stories', component: {
 			template:
 				'<div><story-list ' +
@@ -154,7 +155,7 @@ router.beforeEach(function (to, from, next) {
 	*/
 
 	const welcomeSeen = store.state.pref.welcomeSeen;
-	if (to.path === '/welcome' || welcomeSeen) {
+	if (to.path === '/welcome' || welcomeSeen || to.path === '/workshop') {
 		next();
 	}
 	else {

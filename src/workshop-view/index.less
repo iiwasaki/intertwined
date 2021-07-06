@@ -6,7 +6,7 @@
 @toolbar-width: 13rem;
 @header-height: 4.5rem;
 
-#storyListView {
+#workshopView {
 	nav.listControls {
 		position: fixed;
 		top: 0;
@@ -49,7 +49,7 @@
 	}
 
 	> header {
-		position: fixed;
+		position: absolute;
 		top: 0;
 		left: 0;
 		right: @toolbar-width;
@@ -75,15 +75,14 @@
 		}
 	}
 
-	.stories {
-		position: absolute;
-		top: 0;
-		left: 0;
-		padding: @header-height 0 @len-extra-large @len-extra-large;
-		right: @toolbar-width;
-		min-height: 100%;
-		display: flex;
-		flex-wrap: wrap;
-		.shadow-large;
-	}
+    .contents {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: @toolbar-width;
+        padding: @header-height 0 @len-extra-large @len-extra-large;
+        background: @color-paper;
+        flex-wrap: wrap;
+    }
+
 }

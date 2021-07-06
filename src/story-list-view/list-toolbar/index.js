@@ -89,6 +89,11 @@ export default Vue.extend({
 
 		showLocale() {
 			this.$router.push('/locale');
+		},
+
+		showWorkshop() {
+			let routeData = this.$router.resolve({path: '/workshop'});
+			window.open(routeData.href, '_blank');
 		}
 	},
 
