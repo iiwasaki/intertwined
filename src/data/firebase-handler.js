@@ -1,7 +1,10 @@
 /* Base file for allowing use of Firebase throughout Twine for multi-user cases.
 This should be imported by any file using Firebase (such as load/store stories) */
 
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import "firebase/analytics";
+import "firebase/firestore";
+import "firebase/database";
 import actions, { createStory } from "./actions/story";
 import regeneratorRuntime from "regenerator-runtime";
 
@@ -19,8 +22,9 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
-export const firepadRef = firebase.database().ref();
 export const storyCollection = db.collection("stories");
+console.log(firebase);
+export const firepadRef = firebase.database().ref();
 
 export default class {
 
