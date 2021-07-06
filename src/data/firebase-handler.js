@@ -1,10 +1,7 @@
 /* Base file for allowing use of Firebase throughout Twine for multi-user cases.
 This should be imported by any file using Firebase (such as load/store stories) */
 
-import firebase from 'firebase/app';
-import "firebase/analytics";
-import "firebase/firestore";
-import "firebase/database";
+import firebase from 'firebase';
 import actions, { createStory } from "./actions/story";
 import regeneratorRuntime from "regenerator-runtime";
 
