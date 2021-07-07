@@ -9,7 +9,7 @@
 	<template v-for="tag in passage.tags" transition="fade-in-out">
 		<div :class="tagColors(tag)">{{ tag }}<button>
 			<i class="fa fa-caret-down"></i>
-			<tag-menu :tag="tag" :passage="passage" :story-id="storyId"></tag-menu>
+			<tag-menu :tag="tag" :passage="passage"></tag-menu>
 		</button></div>
 	</template>
 
@@ -17,7 +17,7 @@
 		<!-- Using a <form> allows the "required" attribute on the input to be usable. -->
 		<form @submit.prevent="addNew">
 			<!-- L10n: A noun, i.e. what a tag is named. -->
-			<input type="text" :placeholder="'Tag name' | say" ref=new-name>
+			<input type="text" :placeholder="'Tag name' | say" ref="newName">
 
 			<button type="button" @click="hideNew">Cancel</button>
 			<button type="submit" class="create"><i class="fa fa-check"></i> Add</button>

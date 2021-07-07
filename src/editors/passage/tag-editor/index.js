@@ -13,7 +13,7 @@ export default Vue.extend({
 	}),
 
 	computed: {
-		...mapGetters(["allStories"]),
+		...mapGetters(["allStories", "story"]),
 	},
 
 	props: {
@@ -21,10 +21,6 @@ export default Vue.extend({
 			type: Object,
 			required: true
 		},
-		storyId: {
-			type: String,
-			required: true
-		}
 	},
 
 	filters: {
@@ -36,14 +32,13 @@ export default Vue.extend({
 	template: require('./index.html'),
 
 	methods: {
-		tagColors() {
-			console.log("In tagcolors");
-			let thisColor = this.allStories.find(s => s.id === this.storyId).tagColors;
+		tagColors(tag) {
+			let thisColor = this.story.tagColors[tag];
 			return "tag label label-info " + thisColor;
 		},
 		showNew() {
 			this.newVisible = true;
-			this.$nextTick(() => this.$els.newName.focus());
+			this.$nextTick(() => this.$refs.newName.focus());
 		},
 
 		hideNew() {
@@ -51,14 +46,15 @@ export default Vue.extend({
 		},
 
 		addNew() {
-			const newName = this.$els.newName.value.replace(/\s/g, '-');
+			const newName = this.$refs.newName.value.replace(/\s/g, '-');
 
 			/* Clear the newName element while it's transitioning out. */
 
-			this.$els.newName.value = '';
+			this.$refs.newName.value = '';
 
 			passageActions.updatePassage(
-				this.storyId,
+				this.$store,
+				this.story,
 				this.passage.id,
 				{
 					tags: uniq([].concat(this.passage.tags, newName))

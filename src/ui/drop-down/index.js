@@ -116,7 +116,7 @@ export default Vue.extend({
 				}
 
 				target = target.parentNode;
-			} while (target.getAttribute);
+			} while (target && target.getAttribute);
 
 			this.$drop.close();
 		});

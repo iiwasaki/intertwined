@@ -4,6 +4,7 @@ Story-related actions.
 
 import semverUtils from 'semver-utils';
 import latestFormatVersions from '../latest-format-versions';
+import story from '../local-storage/story';
 
 export default {
 	createStory(store, props) {
@@ -45,20 +46,17 @@ export default {
 		});
 	},
 
-	setTagColorInStory(store, storyId, tagName, tagColor) {
-		const story = store.state.story.stories.find(
-			story => story.id == storyId
-		);
+	setTagColorInStory(store, story, tagName, tagColor) {
 		let toMerge = {};
 
 		toMerge[tagName] = tagColor;
 
-		if (!story) {
-			throw new Error(`No story exists with id ${storyId}`);
-		}
-
-		store.commit('UPDATE_STORY', storyId, {
-			tagColors: Object.assign({}, story.tagColors, toMerge)
+		store.dispatch('updateStory',
+		{
+			id: story.id,
+			props: {
+				tagColors: Object.assign({}, story.tagColors, toMerge)
+			}
 		});
 	},
 
