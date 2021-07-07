@@ -80,6 +80,7 @@ const config = (module.exports = {
 			{from: 'icons/ios-icon-180.png', to: 'rsrc/ios-icon-180.png'},
 			{from: 'story-formats/', to: 'story-formats/'},
 			{from: 'src/locale/view/img', to: 'rsrc/'},
+			{from: 'src/workshop-view/tutorial_images', to: 'rsrc/'},
 			{from: 'src/locale/po/*.js', to: 'locale/'}
 		]),
 		new HtmlPlugin({
