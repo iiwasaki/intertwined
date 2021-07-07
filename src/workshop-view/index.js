@@ -22,9 +22,5 @@ export default Vue.extend({
                 el.scrollIntoView({behavior: 'smooth'});
             }
         },
-
-        getImgUrl(pic){
-            return require('./tutorial_images/01_started.png');
-        },
     }
 });
