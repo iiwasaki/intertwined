@@ -7,9 +7,11 @@
 'use strict';
 import locale from '../../locale';
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import {thenable} from '../../vue/mixins/thenable';
 import modaldialog from '../../ui/modal-dialog';
 import eventHub from '../../vue/eventhub';
+import store from '../../data/store/index.js';
 
 require('./index.less');
 
@@ -28,6 +30,8 @@ const confirmation = {
 	component: Vue.extend({
 		template: require('./index.html'),
 
+		store: store,
+
 		data: () => ({
 			message: '',
 			coda: '',
@@ -39,6 +43,9 @@ const confirmation = {
 			targetStoryId: '',
 			targetPassageId: '',
 		}),
+		computed: {
+			...mapGetters({parentStory: "story"}),
+		},
 
 		methods: {
 			accept() {
@@ -50,7 +57,10 @@ const confirmation = {
 						eventHub.$emit('deleteFormat', this.targetStoryId);
 						break;
 					case "deletePassage":
-						eventHub.$emit('passage-delete', this.targetPassageId);
+						store.dispatch('deletePassageInStory', {
+							story: this.parentStory,
+							passageId: this.targetPassageId,
+						});
 						break;
 					default:
 						break;

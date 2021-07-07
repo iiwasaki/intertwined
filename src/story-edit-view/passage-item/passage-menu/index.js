@@ -7,6 +7,7 @@ import  storyActions from '../../../data/actions/story';
 import dropdown from '../../../ui/drop-down';
 import locale from '../../../locale';
 import eventHub from '../../../vue/eventhub';
+import confirmation from '../../../dialogs/confirm';
 
 require('./index.less');
 
@@ -98,8 +99,23 @@ export default Vue.extend({
 			eventHub.$emit('passage-edit', this.passage.id);
 		},
 
-		deletePassage(e) {
-			eventHub.$emit('passage-delete', e.shiftKey);
+		deletePassage() {
+			let message = locale.say(
+				'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
+				'This cannot be undone.',
+				escape(this.passage.name)
+			);
+
+			confirmation.confirm({
+				message,
+				buttonLabel:
+					'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
+				buttonClass:
+					'danger',
+				responseEvent: 'deletePassage',
+				targetStoryId: this.parentStory.id,
+				targetPassageId: this.passage.id
+			});
 		},
 
 		test() {

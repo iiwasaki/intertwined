@@ -74,7 +74,7 @@ export default Vue.extend({
 	created() {
 		eventHub.$on('passage-drag-complete-child', this.passageDragCompleteChild);
 		eventHub.$on('passage-edit', this.editFromDropdown);
-		eventHub.$on('passage-delete', this.passageDelete);
+		//eventHub.$on('passage-delete', this.passageDelete);
 		eventHub.$on('new-links', this.afterEdit);
 		eventHub.$on('passage-delete', this.delete);
 	},
@@ -82,7 +82,7 @@ export default Vue.extend({
 	beforeDestroy() {
 		eventHub.$off('passage-drag-complete-child', this.passageDragCompleteChild);
 		eventHub.$off('passage-edit', this.editFromDropdown);
-		eventHub.$off('passage-delete', this.passageDelete);
+		//eventHub.$off('passage-delete', this.passageDelete);
 		eventHub.$off('new-links', this.afterEdit);
 		eventHub.$off('passage-delete', this.delete)
 	},
@@ -168,35 +168,35 @@ export default Vue.extend({
 				this.edit();
 			}
 		},
-		passageDelete: function (skipConfirmation) {
-			if (skipConfirmation) {
-				this.delete();
-			}
-			else {
-				let message = locale.say(
-					'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
-					'This cannot be undone.',
-					escape(this.passage.name)
-				);
+		// passageDelete: function (skipConfirmation) {
+		// 	if (skipConfirmation) {
+		// 		this.delete();
+		// 	}
+		// 	else {
+		// 		let message = locale.say(
+		// 			'Are you sure you want to delete &ldquo;%s&rdquo;? ' +
+		// 			'This cannot be undone.',
+		// 			escape(this.passage.name)
+		// 		);
 
-				if (!ui.hasPrimaryTouchUI()) {
-					message += '<br><br>' + locale.say(
-						'(Hold the Shift key when deleting to skip this message.)'
-					);
-				}
+		// 		if (!ui.hasPrimaryTouchUI()) {
+		// 			message += '<br><br>' + locale.say(
+		// 				'(Hold the Shift key when deleting to skip this message.)'
+		// 			);
+		// 		}
 
-				confirmation.confirm({
-					message,
-					buttonLabel:
-						'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
-					buttonClass:
-						'danger',
-					responseEvent: 'deletePassage',
-					targetStoryId: this.parentStory.id,
-					targetPassageId: this.passage.id
-				});
-			}
-		},
+		// 		confirmation.confirm({
+		// 			message,
+		// 			buttonLabel:
+		// 				'<i class="fa fa-trash-o"></i> ' + locale.say('Delete'),
+		// 			buttonClass:
+		// 				'danger',
+		// 			responseEvent: 'deletePassage',
+		// 			targetStoryId: this.parentStory.id,
+		// 			targetPassageId: this.passage.id
+		// 		});
+		// 	}
+		// },
 
 		passageDragCompleteChild: function(xOffset, yOffset, emitter) {
 			/*
@@ -254,11 +254,11 @@ export default Vue.extend({
 			return escape(this.passage.text.substr(0, 99)) + '&hellip;';
 		},
 
-		delete(toDeleteId) {
-			if (toDeleteId === this.passage.id){
-				passageActions.deletePassage(this.$store, this.parentStory, this.passage.id);
-			}
-		},
+		// delete(toDeleteId) {
+		// 	if (toDeleteId === this.passage.id){
+		// 		passageActions.deletePassage(this.$store, this.parentStory, this.passage.id);
+		// 	}
+		// },
 
 		afterEdit(targetPassageId, oldText){
 			if (targetPassageId === this.passage.id){
@@ -280,7 +280,7 @@ export default Vue.extend({
 
 			eventHub.$emit('drop-down-close');
 
-			const oldText = this.passage.text;
+			//const oldText = this.passage.text;
 			/*
 			The promise below is rejected if the user clicks outside the editor,
 			so we need to handle both resolution and rejection of the promise.
@@ -291,7 +291,7 @@ export default Vue.extend({
 					passageId: this.passage.id,
 					storyId: this.parentStory.id,
 					origin: this.$el,
-					oldText: oldText,
+					//oldText: oldText,
 				},
 				store: this.$store,
 				storyFormat: {

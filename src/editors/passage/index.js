@@ -14,7 +14,7 @@ import codemirrorcomponent from '../../vue/codemirror';
 import modaldialog from '../../ui/modal-dialog';
 import tageditor from './tag-editor';
 import eventHub from '../../vue/eventhub';
-import { firepadRef } from '../../data/firebase-handler';
+import { firepadRef, db } from '../../data/firebase-handler';
 
 
 
@@ -40,7 +40,7 @@ export default Vue.extend({
 		userPassageName: '',
 		saveError: '',
 		origin: null,
-		oldText: '',
+		//oldText: '',
 	}),
 
 	filters: {
@@ -190,16 +190,25 @@ export default Vue.extend({
 				const Firepad = require('firepad');
 				const storyRef = firepadRef.child(this.storyId).child("passagetext").child(this.passageId);
 				var headless = new Firepad.Headless(storyRef);
+				let oldText;
 				const newText = headless.getText(text => {
-					this.$store.dispatch("updatePassageInStory", {
-						story: this.parentStory,
-						passageId: this.passageId,
-						props: {
-							text: text
-						}
-					}).then(() => {
+					db.collection('stories').doc(this.storyId).get().then(snapshot => {
+						const passage = snapshot.data().passages.find(
+							passage => passage.id === this.passageId
+						);
+						oldText = passage.text;
+					}).then(() =>{
+						this.$store.dispatch("updatePassageInStory", {
+							story: this.parentStory,
+							passageId: this.passageId,
+							props: {
+								text: text
+							}
+						})
+					})
+					.then(() => {
 						// We handle updating new links here
-						eventHub.$emit("new-links", this.passage.id, this.oldText);
+						eventHub.$emit("new-links", this.passage.id, oldText);
 						headless.dispose();
 					})
 				})
