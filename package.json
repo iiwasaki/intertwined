@@ -1,12 +1,12 @@
 {
-	"name": "Twine",
-	"version": "2.3.12",
-	"author": "Chris Klimas <chris@twinery.org>",
-	"description": "a GUI for creating nonlinear stories",
+	"name": "Intertwined",
+	"version": "0.1.0",
+	"author": "Ishin Iwasaki <iwasaki@wwu.edu>",
+	"description": "An extension of Twine, made by Chris Klimas (github.com/klembot/twinejs), a GUI for creating nonlinear stories, to support multiple concurrent users.",
 	"license": "GPL-3.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/klembot/twinejs"
+		"url": "https://github.com/iiwasaki/twinejs"
 	},
 	"browserslist": "iOS 1-12, last 2 versions",
 	"main": "src/electron/index.js",

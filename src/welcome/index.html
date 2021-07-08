@@ -5,7 +5,11 @@
 		</h1>
 
 		<p class="larger">
-			{{ 'Twine is an open-source tool for telling interactive, nonlinear stories. There are a few things you should know before you get started.' | say }}
+			{{ 'Intertwined is an experimental, proof-of-concept extension of Twine, an open-source tool for creating interactive, nonlinear stories. Twine is built and maintained by Chris Klimas and can be found at twinery.org. This version is NOT affiliated with Chris in any way; please do NOT send any bug reports or issues to Chris! Those should all go to Ishin at iwasaki@wwu.edu.' | say }}
+		</p>
+
+		<p class="larger">
+			{{ 'Whether you are new to Twine or a seasoned storymaker, there are a few things you should know for using Intertwined.' | say }}
 		</p>
 
 		<p class="buttons">
@@ -24,7 +28,7 @@
 		</p>
 
 		<p class="larger">
-			<span v-html="usedTwineOnceSay()"></span>
+			{{'This version of Intertwined has been made for the Connected Learning Summit 2021. If you are seeing this outside of that context, the app may no longer work as the backing database might have been disconnected.' | say}}
 		</p>
 
 		<p class="buttons">
@@ -34,19 +38,19 @@
 
 	<div class="save" v-if="shown > 2 && !isElectron" transition="fade-in-out">
 		<h1>
-			{{ 'Your work is saved only in your browser.' | say }}
+			{{ 'Unlike regular Twine, your work is saved in an online database.' | say }}
 		</h1>
 
 		<p class="larger">
-			<span v-html="noCreateAccountSay()"></span>
+			{{'If you are familiar with normal Twine, you may remember that Twine usually saves your stories to your local browser storage. This app, however, has all stories shared among all users. You still do not need to create an account to use this app, but it does mean that you will see every story that all other users at CLS 2021 will make.'}}
 		</p>
 
 		<p class="larger">
-			<span v-html="warningSay()"></span>
+			{{'That does mean that you can see anyone else's work and anyone can see your work. Please make sure that anything written in a Twine story is kept relatively professional; any offensive language or content will be removed.' | say}}
 		</p>
 
 		<p class="larger">
-			<span v-html="secondWarningSay()"></span>
+			{{'Please be respectful of your fellow authors! While we want to encourage collaboration, please do so in a "Yes And" manner. Please do not delete stories or passages without permission, and avoid making large sweeping changes to a narrative without permission either. If you want to make your own version of another story, you can always use the duplicate story option to make your own copy to edit.' | say}}
 		</p>
 
 		<p class="buttons">
@@ -60,7 +64,11 @@
 		</h1>
 
 		<p class="larger">
-			{{ 'Thanks for reading, and have fun with Twine.' | say }}
+			{{ 'Thanks for reading, and have fun with Intertwined. This is certainly not perfect - there are many, many inconsistencies and bugs - so please submit any awful bugs you find to Ishin at iwasaki@wwu.edu.' | say }}
+		</p>
+
+		<p class="larger">
+			{{ 'You will see a tab called "CLS Workshop" on the right hand toolbar in the next window; please click that for more information!' | say }}
 		</p>
 
 		<p class="buttons">
