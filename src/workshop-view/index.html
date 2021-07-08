@@ -9,6 +9,11 @@
         <p>Please use the navigation bar on the right to jump to specific sections as necessary. </p>
         <h2 ref="updates">New Updates</h2>
         <p>Any updates (potential changes to the app, group changes, etc.) will be posted here.</p>
+        <p>Known bugs:</p>
+        <ul>
+            <li>Visiting the editor view directly with a link with the story ID (or refreshing the passage editor view page) will result in a blank screen. Workaround: you must enter from the start of the application (https://yellow-smoke-0ebd1751e.azurestaticapps.net/) and navigate to your story manually. </li>
+            <li>Editing a passage title and creating new links in the passage at the same time will not create the new links once you exit the passage editor. Workaround: after exiting, manually create the new passages with the "+ Passage" button and change the names of the new passages to match.</li>
+        </ul>
         <h2 ref="details">Workshop Details</h2>
         <p>Workshop dates:</p>
         <ul>
@@ -31,12 +36,13 @@
         <ul>
             <li>
                 <p>Ishin Iwasaki 岩崎　以心 (he/him): iwasaki@wwu.edu </p>
+                <p>I am a Masters student studying at Western Washington University in Washington State, USA. I am really interested in both education and computer science, especially educational software. In my free time I enjoy video games and trivia; I hope to work some day in the future in a field that intersects learning, CS, and games all in one.</p>
                 <p>If you have any questions about the modified Twine app, the workshop, or anything else, please email me through the email above. Bug reports are also very welcome! </p>
                 <p>このワークショップに使用した資料はほぼ英語ですが、日本語への翻訳が必要な方、又は質問がありましたら、ご遠慮なく日本語でe-mailやClowdrのチャットを送って下さい。</p>
             </li>
             <li>
                 <p>Dr. Caroline Hardin (she/her)</p>
-                <p>Dr. Hardin's blurb here!</p>
+                <p>I study what it means to 'know' computer science, and how we can increase the diversity of who has access to CS education. I'm currently doing research on hackathons, CS Ed toys and games, CS teacher training, digital privacy education, and e-textiles. For details about current projects, visit <a href="http://www.indexinbounds.org" target="_blank" rel="noopener noreferrer">www.indexinbounds.org</a></p>
             </li>
         </ul>
         <h2 ref="reports">Bug Reports</h2>
@@ -57,9 +63,67 @@
         <p>We recommend playing through a couple of stories (you don't have to complete them) to get an idea of what Twine stories feel like. The 7th graders' stories are the best examples for what can be done with the tools just built in to Twine without additional Javascript/CSS experience.</p>
         <h2 ref="twine_started">Twine: Getting Started</h2>
         <p>If you are looking for a comprehensive guide on the syntax used for Twine, the <a href="https://twinery.org/cookbook/" target="_blank" rel="noopener noreferrer">Twine 2 Cookbook</a> is probably the best resource for you. It can be accessed at <a href="https://twinery.org/cookbook/" target="_blank" rel="noopener noreferrer">https://twinery.org/cookbook</a>. It is possible that some of the features described in the Cookbook do not work due to the features having been broken during the translation from the original Twine to Intertwined. In that case, please send a bug report to Ishin at iwasaki@wwu.edu.</p>
-        <p>The rest of this document will be a refresher from the content explained in Day 1 of the workshop series on getting started with Twine. This will assume that we are working on this story alone. For this tutorial, we are going to pretend that we are a middle school math teacher trying to create a mystery story where the student must use some math to get to the end of the story.</p>
+        <p>The rest of this document will be a refresher from the content explained in Day 1 of the workshop series on getting started with Twine. This will assume that we are working on this story alone. For this tutorial, we are going to pretend that we are going to create a simple story about an adventurer in a castle.</p>
         <p>If you have not already made a new story, click on the green "+ Story" icon on the toolbar on the right hand side of the main story screen. If you want to work on a story that already exists, you can click on the story directly to be taken to the editing screen.</p>
         <img :src="'rsrc/img/01started.png'" alt="Green start button highlighted on main Twine screen"></img>
+        <p>After giving your story a name, your story will appear in the list of stories. You can perform operations on the story by clicking on the cog icon under your story, such as playing your story, publishing your story as a .html file (and saving it for all eternity), or deleting your story. Clicking on the story will take you to the passage editor view.</p>
+        <h2 ref="twine_passage">Twine: Passage Essentials</h2>
+        <p>Twine stories are organized in Passages. Each Passage is a “page” of your story. Passages connect to each other in order to create the narrative flow.</p>
+        <p>Let's edit our first passage, the "Untitled Passage", by double-clicking on the passage itself or hovering your mouse over the passage and clicking on the pencil icon to edit it.</p>
+        <p>You will write the text of your story – along with the Twine “code” to make your story interactive and stylized – in this large text box. Text can be written just like in Google Docs or Microsoft Word. We will erase the default text and replace it with the opening of our story: “You find yourself in the entrance hall of an old castle. There is a key on the floor in front of you.” </p>
+        <p>What you type in the editor will be saved to the passage once you exit the editor, either by clicking on the "x", pushing the "ESC" key on your keyboard, or clicking on the screen outside of the editor. If we exit our passage and play our story, we will see that our opening story is indeed there!</p>
+        <p>Let's move on to a different page and give our reader a choice to make this a truly interactive piece of fiction. We left our story with a prompt about a key on the floor. Let's give our reader the choice to pick up the key or leave it where it is.</p>
+        <p>Open up the passage editor again; this time, we are going to create a <b>link</b> to a new passage. Links will advance the reader to different pages. To create a link, we will use [[ ]] (double brackets) to do so. In our editor, under the last line about the key, we are going to insert two new lines.</p>
+        <ul>
+            <li>[[Pick up the key. -> Get Key]]</li>
+            <li>[[Do not pick up the key. -> No Key]]</li>
+        </ul>
+        <img :src="'rsrc/img/02keys.png'" alt="Twine editor of Untitled Passage"></img>
+        <p>Close out of the passage editor, and Twine should have made two new passages for you: one titled "Get Key", and another titled "No Key". There should be an arrow from the first "Untitled Passage" to each of the new passages. (If there isn't, that's okay! There are some bugs to be worked out for Intertwined. Click on the "+ Passage" button at the bottom right of the page, and rename that passage to be the title of the passage either "Get Key" or "No Key", whichever one is missing.)</p>
+        <img :src="'rsrc/img/03passages.png'" alt="Twine story edit view with three passages"></img>
+        <p>The link syntax is as follows: [["Text that will show up on the screen" -> "Name of the passage we are going to"]]. In our examples above, we had the statement "Pick up the key" go to a passage called "Get Key". You can also do something like [[Get Key]] without the arrow; in this case, the text "Get Key" will show up on the screen and it will go to a passage titled "Get Key".</p>
+        <p>Inter-passage links are determined by the passage name, and capitalization matters!</p>
+        <p>Other essentials to know about the Twine editor are the various options for styling your story. Bold, italics, strikethrough, and superscripts can be done through the toolbar options or the markup language.</p>
+        <ul>
+            <li>''Text surrounded by two apostrophes (not to be confused by a quotation mark) will show up bold.''</li>
+            <li>//Text surrounded by backslashes will show up italicized.//</li>
+            <li>^^Text surrounded by two carets will show up as superscript.^^</li>
+            <li>~~Text surrounded by two tildes will show up with a strikethrough.~~</li>
+        </ul>
+        <p>The toolbar makes it so that you do not have to remember a lot of the text commands; feel free to explore with the other text commands, or consult the <a href="https://twinery.org/cookbook/" target="_blank" rel="noopener noreferrer">Twine 2 Cookbook</a> for more details.</p>
+        <p>You’ve probably heard the phrase “Test early; test often” before. Twine stories are no exception! To make sure that everything is showing up as we like, we can test and play our story at any time.  </p>
+        <p>On the bottom right of your window, you should see the “Play” button and the “Test” button. They both do similar things, with “Test” giving you a bit more of a “behind-the-scenes” look of your story. For now, let’s just click on “Play” and make sure that our story is working as intended for now.</p>
+        <img :src="'rsrc/img/04playing.png'" alt="View of Twine story playing"></img>
+        <p>Looking good! Let’s  give the user some agency now to make their own choices.</p>
+        <h2 ref="twine_variables">Twine: Variables and If-Else</h2>
+        <p>One way to enhance our story is to give it some ability to react to player choices beyond selecting a page. Variables can store all kinds of values and will allow the story to react to those variables. Generally speaking, variables have a story-wide scope; that is to say that variables will pass on from passage to passage.</p>
+        <p>Variables can be used in tandem with If-Else statements that will show certain lines of text depending on certain conditions. This can really help keep our story organized. Let's see a practical example in action!</p>
+        <p>In our story above, we had a user visit one passage if they wanted to pick up the key on the floor, and another passage if they wanted to leave the key on the floor as is. No matter which way the reader goes, we are going to have the reader head towards a door. We can make the door's behavior change depending on whether the user picked up the key or not!</p>
+        <p>We are going to add the following lines to the <b>"Get Key"</b> passage:</p>
+        <ul>
+            <li>You pick up the key from the ground. It's a very ornate key with an intricate carving of an owl on the handle.</li>
+            <li>(set: $got_key to "yes")</li>
+            <li>[[Go to the door -> Door]]</li>
+        </ul>
+        <img :src="'rsrc/img/05getkey.png" alt="Twine passage editor view with setting the got key variable"></img>
+        <p>The first line is what the user will see when they get to the passage; a simple little description of their action. The second line, <b>(set: $got_key to "yes")</b>, is going to create a variable called "got_key" for our story, and it is going to have "got_key" hold the value "yes" inside of it. You can achieve the same result by clicking on the "Var..." button in the toolbar and filling in the appropriate lines. The third line continues our story.</p>
+        <p>Let's do something similar to our <b>"No Key"</b> passage:</p>
+        <ul>
+            <li>You leave the key on the floor. After all, someone might have dropped it, and it would be rude to take something that doesn't belong to you.</li>
+            <li>(set: $got_key to "no")</li>
+            <li>[[Go to the door -> Door]]</li>
+        </ul>
+        <p>In this case, we are setting the value of "got_key" to "no". The dollar sign represents that we are storing "got_key" as a variable. If you use the "Test" button to test our story out now, you can keep track of the variables in your story as they are assigned.</p>
+        <img :src="'rsrc/img/06test.png'" alt="Twine testing view showing the result of setting the got key variable"></img>
+        <p>Notice that our third line here is the same as the third line in the "Get Key" passage! Regardless of whether or not we picked up the key, we are going to have the user walk to the door. We can make what happens at the "Door" passage change depending on our variable.</p>
+        <p>Open up the "Door" passage in the editor. We are going to add the following lines: (As usual, you can also click on the "If..." button in the editor toolbar to achieve the same thing as below.)</p>
+        <ul>
+            <li>(if:$got_key is "yes")[You walk to the door. The door is locked, but you use the key and open the door to find some treasure!]</li>
+            <li>(else:)[You walk to the door. The door is locked, and you do not have a key to open it.]</li>
+        </ul>
+        <p>The general format for If-Else statements is to have a parentheses that has the condition immediately followed by what you want to show the user in single brackets. In this case, if we had visited the "Get Key" passage and set our $got_key variable as "yes", then we will show the line about the door opening. If not, the other line will be shown! You can demonstrate this by playing your story and making sure it works.</p>
+        <img :src="'rsrc/img/07ifelse.png'" alt="Twine testing view showing the result of the if-else block"></img>
+        <p>There are lots of other If-Else conditionals you can make. Instead of remembering the text syntax for those, it's a lot easier to click on the "If..." button on the toolbar, fill out the necessary blank spaces, and click "Add" to have the Twine program insert it directly into your text box. </p>
     </div>
 
 </div>
