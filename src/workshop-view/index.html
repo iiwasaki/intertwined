@@ -9,6 +9,7 @@
         <p>Please use the navigation bar on the right to jump to specific sections as necessary. </p>
         <h2 ref="updates">New Updates</h2>
         <p>Any updates (potential changes to the app, group changes, etc.) will be posted here.</p>
+        <p> Update 7/18: For this week and next, try to give users more agency and interactivity in the story by taking in user input! Use the "Input..." tab on the toolbar, or see the section below on getting user input.</p>
         <p>Known bugs:</p>
         <ul>
             <li>Visiting the editor view directly with a link with the story ID (or refreshing the passage editor view page) will result in a blank screen. Workaround: you must enter from the start of the application (https://yellow-smoke-0ebd1751e.azurestaticapps.net/) and navigate to your story manually. </li>
@@ -124,6 +125,21 @@
         <p>The general format for If-Else statements is to have a parentheses that has the condition immediately followed by what you want to show the user in single brackets. In this case, if we had visited the "Get Key" passage and set our $got_key variable as "yes", then we will show the line about the door opening. If not, the other line will be shown! You can demonstrate this by playing your story and making sure it works.</p>
         <img :src="'rsrc/img/07ifelse.png'" alt="Twine testing view showing the result of the if-else block"></img>
         <p>There are lots of other If-Else conditionals you can make. Instead of remembering the text syntax for those, it's a lot easier to click on the "If..." button on the toolbar, fill out the necessary blank spaces, and click "Add" to have the Twine program insert it directly into your text box. </p>
+        <h2 ref="twine_input">Twine: User Input</h2>
+        <p>Getting user input can be a valuable tool for your story. User input can be used to personalize a story (for example, getting a reader's name and referring to the name in the story), give users more agency (giving them a list of items to take from a treasure chest), or even as a form of formative assessment, where the next part of the story is gated behind the student providing the correct answer to the story. </p>
+        <p>The toolbar menu for getting user input can be opened by clicking on the "Input..." button in the passage editor toolbar.</p>
+        <img :src="'rsrc/img/08input.png'" alt="Highlight of the Input button in the passage editor"></img>
+        <p>There are several ways of getting user input that Twine supports. You can grab user input by: </p>
+        <ul>
+            <li>Free text box</li>
+            <li>Dropdown menu</li>
+            <li>Checkbox</li>
+            <li>A popup dialog box</li>
+        </ul>
+        <p>You can customize the text box, dropdown menu, checkbox, or the dialog boxes according to the prompts shown on the screen. In order to save the user input, however, the checkbox at the bottom of the section for "Bind this input element to the variable ___" should be checked. The variable named typed in the input field there will be the name of the variable that the user input will be saved to. Click "Add" once all the fields are filled out, and the appropriate code will be added to your editor.</p>
+        <p>From there, any time the user changes the input field in the story in any way - whether it's typing in new text, checking a different item in the checkbox, selecting a different item in the dropdown - the corresponding variable will be changed. You can check the exact value and behavior of the variable by going into the Test mode and looking at the variable in the passage. The variable will update in real time according to the user choices. </p>
+        <p>There is an example story titled "Day 2: User Input Demo" that will have an example of how a text box can be used in a story.</p>
+        <img :src="'rsrc/img/09testexample.png'" alt="An example view of the test view showing variables"></img>
     </div>
 
 </div>
