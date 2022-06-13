@@ -5,6 +5,7 @@ import firebase from 'firebase/app';
 import "firebase/analytics";
 import "firebase/firestore";
 import "firebase/database";
+import "firebase/auth";
 import actions, { createStory } from "./actions/story";
 import regeneratorRuntime from "regenerator-runtime";
 
@@ -23,6 +24,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
 export const storyCollection = db.collection("stories");
+export const groupCollection = db.collection("groups");
 export const firepadRef = firebase.database().ref();
 
 export default class {
@@ -34,40 +36,40 @@ export default class {
 
     // Saves an entire story object; could grow to be pretty huge if the story gets big.
     // Should think about deconstructing story to be story + references to passages
-    static saveStory(story){
+    static saveStory(story) {
         console.log("in savestory firebase handler");
         storyCollection.doc(story.id).set(story).then(() => {
             console.log("Story successfully saved.");
         })
-        .catch((error) => {
-            console.error("Error saving story: ", error);
-        });
+            .catch((error) => {
+                console.error("Error saving story: ", error);
+            });
     }
 
     // Delete an entire story object.
-    static deleteStory(storyId){
+    static deleteStory(storyId) {
         console.log("in delete story firebase handler");
         storyCollection.doc(storyId).delete().then(() => {
             console.log("Story successfully deleted.");
         })
-        .catch((error) => {
-            console.error("Error deleting story: ", error);
-        });
+            .catch((error) => {
+                console.error("Error deleting story: ", error);
+            });
     }
 
     //Load all of the stories stored in the stories collection
-    static loadStories(store){
+    static loadStories(store) {
         console.log("in load story firebase handler");
         storyCollection.get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
                 /* Coerce the lastUpdate property to a date. */
-		 		if (loadedStory.lastUpdate) {
-		 			loadedStory.lastUpdate = loadedStory.lastUpdate.toDate();
-		 		}
-                 else {
+                if (loadedStory.lastUpdate) {
+                    loadedStory.lastUpdate = loadedStory.lastUpdate.toDate();
+                }
+                else {
                     loadedStory.lastUpdate = new Date();
-                 }
+                }
                 store.commit("ADD_STORY_TO_LIST", loadedStory);
             });
         }).catch((error) => {
@@ -84,9 +86,33 @@ export default class {
             });
             return query;
         }
-        catch (error){
+        catch (error) {
             console.error("Error loading story: ", error);
         }
     }
 
+    static async anonymousAuth() {
+        console.log("Logging in anonymously");
+        try {
+            const login = await firebase.auth().signInAnonymously();
+            console.log("Login:");
+            console.log(login);
+        }
+        catch (err) {
+            console.log(err.code);
+            console.log(err.message);
+        }
+    }
+
+    static async updateGroup(pass){
+        try{
+            const newGroup = await firebase.auth().currentUser.updateProfile({
+                displayName: pass
+            });
+        }
+        catch(err){
+            console.log(err.code);
+            console.log(err.message);
+        }
+    }
 }

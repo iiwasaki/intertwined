@@ -11,6 +11,8 @@
 
 	<header>
 		<h1>{{ storyCountDesc }}</h1>
+		<button class="primary" @click="loadGroupPrompt"> {{'Load Group' | say}}</button>
+		<button class="create" @click="createGroupPrompt"> {{ 'Add New Group' | say}}</button>
 
 		<p>
 			<label>{{ 'Sort By' | say }}</label>

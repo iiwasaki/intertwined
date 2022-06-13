@@ -9,7 +9,8 @@ import idFor from '../id';
 import ui from '../../ui';
 import {vuexfireMutations, firestoreAction} from 'vuexfire';
 import FirebaseHandler, { firepadRef } from "../firebase-handler";
-import {storyCollection} from "../firebase-handler";
+import {storyCollection, groupCollection} from "../firebase-handler";
+import firebase from 'firebase/app';
 
 /*
 A shorthand function for finding a particular story in the state, or a
@@ -167,7 +168,8 @@ const storyStore = {
 			if (story.passages) {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
-			return storyCollection.add(story).then( () => {console.log("Added story via vuex")});
+			console.log(firebase.auth().currentUser);
+			return groupCollection.doc("group1").collection("stories").add(story).then( () => {console.log("Added story via vuex")});
 		}),
 
 		updatePassageInStory: firestoreAction(( { state }, payload) => {

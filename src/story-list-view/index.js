@@ -14,6 +14,9 @@ import listToolbar from './list-toolbar';
 import storyitem from './story-item';
 import filedragndrop from '../ui/file-drag-n-drop';
 import eventHub from '../vue/eventhub';
+import FirebaseHandler, { db } from '../data/firebase-handler';
+import firebase from 'firebase/app';
+import twoprompter from '../dialogs/two-prompt';
 
 require('./index.less');
 
@@ -47,12 +50,19 @@ export default Vue.extend({
 		}
 	},
 
-	async beforeCreate(){
-		await this.$store.dispatch('bindStories', {order: 'name', dir: 'asc'});
+	async beforeCreate() {
+		FirebaseHandler.anonymousAuth();
+		console.log("Logging in done");
+		await this.$store.dispatch('bindStories', { order: 'name', dir: 'asc' });
+		console.log("Load story done");
+		eventHub.$on('newGroup', this.createNewGroup);
+		eventHub.$on('loadGroup', this.loadGroup);
 	},
 
-	async beforeDestroy(){
+	async beforeDestroy() {
 		await this.$store.dispatch('unbindStories');
+		eventHub.$off('newGroup', this.createNewGroup);
+		eventHub.$off('loadGroup', this.loadGroup);
 	},
 
 	computed: {
@@ -148,7 +158,7 @@ export default Vue.extend({
 			}
 
 			this.storyOrder = 'lastUpdate';
-			await this.$store.dispatch('bindStories', {order: this.storyOrder, dir: this.storyOrderDir});
+			await this.$store.dispatch('bindStories', { order: this.storyOrder, dir: this.storyOrderDir });
 		},
 
 		async sortByName() {
@@ -165,7 +175,73 @@ export default Vue.extend({
 			}
 
 			this.storyOrder = 'name';
-			await this.$store.dispatch('bindStories', {order: this.storyOrder, dir: this.storyOrderDir});
+			await this.$store.dispatch('bindStories', { order: this.storyOrder, dir: this.storyOrderDir });
+		},
+
+		/* From https://stackoverflow.com/questions/4434076/best-way-to-alphanumeric-check-in-javascript*/
+		isAlNum(str) {
+			var code, i, len;
+			for (i = 0, len = str.length; i < len; i++) {
+				code = str.charCodeAt(i);
+				if (!(code > 47 && code < 58) && // numeric (0-9)
+					!(code > 64 && code < 91) && // upper alpha (A-Z)
+					!(code > 96 && code < 123)) { // lower alpha (a-z)
+					return false;
+				}
+			}
+			return true;
+		},
+
+		/* Creates a new group */
+		createGroupPrompt(e) {
+			twoprompter.prompt({
+				message: locale.say(
+					'What should your new group be named?<br>(You can NOT change this later.)'
+				),
+				messagetwo: locale.say(
+					'What should the new group passcode be?<br>(You can NOT change this later.)'
+				),
+				buttonLabel: '<i class="fa fa-plus"></i> ' + locale.say('Add'),
+				buttonClass: 'create',
+				validator: async (name, pass) =>{
+					if (await !this.isAlNum(name)) {
+						return locale.say("Group name must be alphanumeric only.");
+					}
+					else if (await !this.isAlNum(pass)) {
+						return locale.say("Passcode must be alphanumeric only.");
+					}
+					var docRef = db.collection("groups").doc(name);
+					let doc = await docRef.get();
+					if (doc.exists){
+						return locale.say("Group already exists!");
+					}
+				},
+				responseEvent: 'newGroup',
+				origin: e.target
+			});
+		},
+
+		/* Load a group of stories from an existing group, aka change groups */
+		loadGroupPrompt(e) {
+			twoprompter.prompt({
+				message: locale.say(
+					'What should your new group be named?<br>(You can NOT change this later.)'
+				),
+				buttonLabel: '<i class="fa fa-plus"></i> ' + locale.say('Add'),
+				buttonClass: 'create',
+			});
+		},
+
+		createNewGroup(name, pass){
+			let docData = {
+				name: name,
+				code: pass
+			}
+			db.collection("groups").doc(name).set(docData).
+			then(() => {
+				FirebaseHandler.updateGroup(pass);
+			});
+			eventHub.$emit('close');
 		}
 	},
 
