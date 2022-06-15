@@ -21,16 +21,21 @@ export default {
 		store.dispatch('createStory', normalizedProps);
 	},
 
-	updateStory(store, id, props) {
+	updateStory(store, id, groupName, props) {
 		store.dispatch('updateStory',
 		{
 			id: id,
+			groupID: groupName,
 			props: props
 		});
 	},
 
-	deleteStory(store, id) {
-		store.dispatch('deleteStory',id);
+	deleteStory(store, id, groupName) {
+		store.dispatch('deleteStory',
+		{
+			storyID:id,
+			groupID: groupName
+		});
 	},
 
 	duplicateStory(store, id, newName) {

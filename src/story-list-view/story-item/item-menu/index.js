@@ -112,7 +112,7 @@ export default Vue.extend({
 		 */
 		deleteStoryPost(toDeleteId){
 			if (toDeleteId === this.story.id){
-				storyActions.deleteStory(this.$store, toDeleteId);
+				storyActions.deleteStory(this.$store, toDeleteId, this.story.groupName);
 			}
 		},
 
@@ -142,7 +142,7 @@ export default Vue.extend({
 		 */
 		 async renameStoryPost(toRenameId, newName){
 			if (toRenameId === this.story.id){
-				await storyActions.updateStory(this.$store, this.story.id, {name: newName, lastUpdate: new Date() });
+				await storyActions.updateStory(this.$store, this.story.id, this.story.groupName, {name: newName, lastUpdate: new Date() });
 			}
 		},
 

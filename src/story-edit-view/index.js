@@ -323,6 +323,7 @@ export default Vue.extend({
 					storyActions.updateStory(
 						this.$store,
 						this.story.id,
+						this.story.groupName,
 						{ zoom: zoomLevels[zoomIndex.length - 1] }
 					);
 				}
@@ -331,6 +332,7 @@ export default Vue.extend({
 				storyActions.updateStory(
 					this.$store,
 					this.story.id,
+					this.story.groupName,
 					{ zoom: zoomLevels[zoomIndex - 1] }
 				);
 			}
@@ -344,6 +346,7 @@ export default Vue.extend({
 					storyActions.updateStory(
 						this.$store,
 						this.story.id,
+						this.story.groupName,
 						{ zoom: zoomLevels[0] }
 					);
 				}
@@ -352,6 +355,7 @@ export default Vue.extend({
 				storyActions.updateStory(
 					this.$store,
 					this.story.id,
+					this.story.groupName,
 					{ zoom: zoomLevels[zoomIndex + 1] }
 				);
 			}

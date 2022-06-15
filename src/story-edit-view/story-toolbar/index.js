@@ -40,7 +40,7 @@ export default Vue.extend({
 
 	methods: {
 		setZoom(description) {
-			storyActions.updateStory(this.$store, this.story.id, {zoom: zoomMappings[description]});
+			storyActions.updateStory(this.$store, this.story.id, this.story.groupName, {zoom: zoomMappings[description]});
 		},
 
 		test() {

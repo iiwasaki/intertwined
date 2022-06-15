@@ -15,8 +15,8 @@ import storyitem from './story-item';
 import filedragndrop from '../ui/file-drag-n-drop';
 import eventHub from '../vue/eventhub';
 import FirebaseHandler, { db } from '../data/firebase-handler';
-import firebase from 'firebase/app';
 import twoprompter from '../dialogs/two-prompt';
+import store from '../data/store';
 
 require('./index.less');
 
@@ -51,10 +51,27 @@ export default Vue.extend({
 	},
 
 	async beforeCreate() {
-		FirebaseHandler.anonymousAuth();
-		console.log("Logging in done");
-		await this.$store.dispatch('bindStories', { order: 'name', dir: 'asc' });
-		console.log("Load story done");
+		let groupName = store.state.pref.group;
+		let groupCode = store.state.pref.groupcode;
+		if (groupName != '' && groupCode != '') {
+			console.log("Checking pass");
+			db.collection("groups").doc(groupName).update({
+				name: groupName,
+				code: groupCode
+			}, { merge: true })
+				.then(async () => {
+					console.log("Now binding");
+					await this.$store.dispatch('bindStories', { order: 'name', dir: 'asc', groupID: groupName });
+					console.log("Load story done");
+				})
+				.catch((error) => {
+					console.log("Error: ", error);
+				})
+
+		}
+	},
+
+	created() {
 		eventHub.$on('newGroup', this.createNewGroup);
 		eventHub.$on('loadGroup', this.loadGroup);
 	},
@@ -112,6 +129,14 @@ export default Vue.extend({
 				'%d Stories',
 				this.stories.length
 			);
+		},
+
+		currentGroupDesc() {
+			let groupName = store.state.pref.group;
+			if (groupName == '') {
+				return locale.say("No Group Selected");
+			}
+			return groupName;
 		}
 	},
 
@@ -203,17 +228,18 @@ export default Vue.extend({
 				),
 				buttonLabel: '<i class="fa fa-plus"></i> ' + locale.say('Add'),
 				buttonClass: 'create',
-				validator: async (name, pass) =>{
+				validator: async (name, pass) => {
 					if (await !this.isAlNum(name)) {
 						return locale.say("Group name must be alphanumeric only.");
 					}
 					else if (await !this.isAlNum(pass)) {
 						return locale.say("Passcode must be alphanumeric only.");
 					}
-					var docRef = db.collection("groups").doc(name);
+					var docRef = db.collection("groupnames").doc(name);
 					let doc = await docRef.get();
-					if (doc.exists){
-						return locale.say("Group already exists!");
+					if (doc.exists) {
+						console.log(doc);
+						return locale.say("A group with that name already exists!");
 					}
 				},
 				responseEvent: 'newGroup',
@@ -225,22 +251,56 @@ export default Vue.extend({
 		loadGroupPrompt(e) {
 			twoprompter.prompt({
 				message: locale.say(
-					'What should your new group be named?<br>(You can NOT change this later.)'
+					'Group name (Case sensitive):'
+				),
+				messagetwo: locale.say(
+					'Group passcode (Case sensitive):'
 				),
 				buttonLabel: '<i class="fa fa-plus"></i> ' + locale.say('Add'),
 				buttonClass: 'create',
+				validator: async (name, pass) => {
+					if (await !this.isAlNum(name)) {
+						return locale.say("Group name must be alphanumeric only.");
+					}
+					else if (await !this.isAlNum(pass)) {
+						return locale.say("Passcode must be alphanumeric only.");
+					}
+					console.log("Checking loading new group name and code");
+					await db.collection("groups").doc(name).update({
+						name: name,
+						code: pass
+					}, { merge: true })
+					.then(async () => {
+						this.loadGroup(name, pass);
+					})
+					.catch((error) => {
+						console.log("Error in update group: ", error);
+						alert("Group passcode incorrect!");
+						return "Passcode invalid!";
+					});
+				},
+				origin: e.target
 			});
 		},
 
-		createNewGroup(name, pass){
+		createNewGroup(name, pass) {
 			let docData = {
 				name: name,
 				code: pass
 			}
-			db.collection("groups").doc(name).set(docData).
-			then(() => {
-				FirebaseHandler.updateGroup(pass);
-			});
+			db.collection("groupnames").doc(name).set({ name: name })
+				.then(() => {
+					db.collection("groups").doc(name).set(docData);
+				})
+				.then(() => {
+					FirebaseHandler.updateGroup(name, pass, this.storyOrder, this.storyOrderDir);
+				});
+			eventHub.$emit('close');
+		},
+
+		loadGroup(name, pass) {
+			console.log("In loadGroup");
+			FirebaseHandler.updateGroup(name, pass, this.storyOrder, this.storyOrderDir);
 			eventHub.$emit('close');
 		}
 	},

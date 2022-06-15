@@ -8,6 +8,7 @@ import "firebase/database";
 import "firebase/auth";
 import actions, { createStory } from "./actions/story";
 import regeneratorRuntime from "regenerator-runtime";
+import store from '../data/store';
 
 // Config file unique to this app that points to the Firebase project
 const firebaseConfig = {
@@ -38,7 +39,7 @@ export default class {
     // Should think about deconstructing story to be story + references to passages
     static saveStory(story) {
         console.log("in savestory firebase handler");
-        storyCollection.doc(story.id).set(story).then(() => {
+        groupCollection.doc(story.groupName).collection('stories').doc(story.id).set(story).then(() => {
             console.log("Story successfully saved.");
         })
             .catch((error) => {
@@ -47,9 +48,9 @@ export default class {
     }
 
     // Delete an entire story object.
-    static deleteStory(storyId) {
+    static deleteStory(groupName, storyId) {
         console.log("in delete story firebase handler");
-        storyCollection.doc(storyId).delete().then(() => {
+        groupCollection.doc(groupName).collection('stories').doc(storyId).delete().then(() => {
             console.log("Story successfully deleted.");
         })
             .catch((error) => {
@@ -58,9 +59,9 @@ export default class {
     }
 
     //Load all of the stories stored in the stories collection
-    static loadStories(store) {
+    static loadStories(store, groupName) {
         console.log("in load story firebase handler");
-        storyCollection.get().then((doc) => {
+        groupCollection.doc(groupName).collection('stories').get().then((doc) => {
             doc.forEach((result) => {
                 var loadedStory = result.data();
                 /* Coerce the lastUpdate property to a date. */
@@ -78,10 +79,10 @@ export default class {
     }
 
     // Grab and return a singular story based off of ID
-    static async loadStoryById(id) {
+    static async loadStoryById(groupName, id) {
         console.log("in load story by ID firebase handler");
         try {
-            const query = await storyCollection.doc(id).get().then((result) => {
+            const query = await groupCollection.doc(groupName).collection('stories').doc(id).get().then((result) => {
                 return result.data();
             });
             return query;
@@ -91,8 +92,10 @@ export default class {
         }
     }
 
+    /* Unused now, but leaving it in for now - no authentication is needed since it doesn't work
+     * well with security rules with just an anonymous auth */
     static async anonymousAuth() {
-        console.log("Logging in anonymously");
+        console.log("Logging in anonymously - this should not appear in console ever");
         try {
             const login = await firebase.auth().signInAnonymously();
             console.log("Login:");
@@ -104,15 +107,9 @@ export default class {
         }
     }
 
-    static async updateGroup(pass){
-        try{
-            const newGroup = await firebase.auth().currentUser.updateProfile({
-                displayName: pass
-            });
-        }
-        catch(err){
-            console.log(err.code);
-            console.log(err.message);
-        }
+    static updateGroup(name, pass, order, dir){
+        store.commit("UPDATE_PREF", {name: 'group', value: name});
+        store.commit("UPDATE_PREF", {name: 'groupcode', value: pass});
+        store.dispatch('bindStories', {order: order, dir: dir, groupID: name});
     }
 }

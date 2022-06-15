@@ -78,6 +78,7 @@ export default Vue.extend({
 			.then(
 				() => (this.$store.dispatch('bindStory', {
 					storyId: this.story.id,
+					groupID: this.story.groupName
 				}))
 			)
 			.then(

@@ -14,7 +14,7 @@ import codemirrorcomponent from '../../vue/codemirror';
 import modaldialog from '../../ui/modal-dialog';
 import tageditor from './tag-editor';
 import eventHub from '../../vue/eventhub';
-import { firepadRef, db } from '../../data/firebase-handler';
+import { firepadRef, groupCollection } from '../../data/firebase-handler';
 
 
 
@@ -192,7 +192,7 @@ export default Vue.extend({
 				var headless = new Firepad.Headless(storyRef);
 				let oldText;
 				const newText = headless.getText(text => {
-					db.collection('stories').doc(this.storyId).get().then(snapshot => {
+					groupCollection.doc(this.parentStory.groupName).collection("stories").doc(this.storyId).get().then(snapshot => {
 						const passage = snapshot.data().passages.find(
 							passage => passage.id === this.passageId
 						);

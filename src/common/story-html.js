@@ -11,7 +11,7 @@ import FirebaseHandler from '../data/firebase-handler';
 
 export default {
 	async getStoryPlayHtml(store, storyId) {
-		const story = await FirebaseHandler.loadStoryById(storyId);
+		const story = await FirebaseHandler.loadStoryById(store.state.pref.group,storyId);
 
 		if (!story) {
 			throw new Error(
@@ -29,7 +29,7 @@ export default {
 	},
 
 	async getStoryProofingHtml(store, storyId) {
-		const story = await FirebaseHandler.loadStoryById(storyId);
+		const story = await FirebaseHandler.loadStoryById(store.state.pref.group, storyId);
 
 		if (!story) {
 			throw new Error(
@@ -48,7 +48,7 @@ export default {
 
 	async getStoryTestHtml(store, storyId, startPassageId) {
 		console.log("stody Id is " + storyId);
-		const story = await FirebaseHandler.loadStoryById(storyId);
+		const story = await FirebaseHandler.loadStoryById(store.state.pref.group, storyId);
 
 		console.log(story);
 

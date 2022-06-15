@@ -12,6 +12,7 @@ const saveFile = require('../../file/save');
 import {mapGetters} from 'vuex';
 import themeswitcher from './theme-switcher';
 import eventHub from '../../vue/eventhub';
+import store from '../../data/store';
 
 export default Vue.extend({
 	template: require('./index.html'),
@@ -26,7 +27,8 @@ export default Vue.extend({
 
 	methods: {
 		createNewStory(name){
-			storyActions.createStory(this.$store, {name: name});
+			
+			storyActions.createStory(this.$store, {name: name, groupName: store.state.pref.group, code: store.state.pref.groupcode});
 		},
 		createStoryPrompt(e) {
 			// Prompt for the new story name.
@@ -38,6 +40,11 @@ export default Vue.extend({
 				buttonLabel: '<i class="fa fa-plus"></i> ' + locale.say('Add'),
 				buttonClass: 'create',
 				validator: name => {
+					if (store.state.pref.group == '' || store.state.pref.groupcode == ''){
+						return locale.say(
+							'No group chosen - please load an existing group or create a new one.'
+						);
+					}
 					if (
 						this.existingStories.find(story => story.name === name)
 					) {

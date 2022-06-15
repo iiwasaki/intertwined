@@ -18,6 +18,8 @@ export default {
 			'en-us',
 		proofingFormat: 'Paperthin',
 		welcomeSeen: false,
+		group: '',
+		groupcode: '',
 	},
 
 	getters: {
@@ -35,6 +37,9 @@ export default {
 		},
 		localePref: state => {
 			return state.locale;
+		},
+		groupPref: state => {
+			return state.group;
 		}
 	},
 

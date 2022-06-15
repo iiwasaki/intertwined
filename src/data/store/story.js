@@ -82,17 +82,17 @@ const storyStore = {
 	actions:{
 		bindStories: firestoreAction(({ bindFirestoreRef }, payload) => {
 			console.log("Binding all stories");
-			return bindFirestoreRef('stories', storyCollection.orderBy(payload.order, payload.dir));
+			return bindFirestoreRef('stories', groupCollection.doc(payload.groupID).collection('stories').orderBy(payload.order, payload.dir));
 		}),
 
 		unbindStories: firestoreAction (({ unbindFirestoreRef }) => {
 			console.log("Unbinding all stories");
-			unbindFirestoreRef('stories')
+			unbindFirestoreRef('stories');
 		}),
 
 		bindStory: firestoreAction(({ bindFirestoreRef }, payload) => {
 			console.log("Binding individual story (in store -> story.js)");
-			return bindFirestoreRef('story', storyCollection.doc(payload.storyId));
+			return bindFirestoreRef('story', groupCollection.doc(payload.groupID).collection('stories').doc(payload.storyId));
 		}),
 
 		unbindStory: firestoreAction (({ unbindFirestoreRef }) => {
@@ -100,11 +100,11 @@ const storyStore = {
 			unbindFirestoreRef('story');
 		}),
 
-		deleteStory: firestoreAction ((context, storyId) => {
+		deleteStory: firestoreAction ((context, payload) => {
 			console.log("in delete story vuexfire action");
 			const Firepad = require('firepad');
-			var storyRef = firepadRef.child(storyId).remove();
-			return storyCollection.doc(storyId).delete();
+			var storyRef = firepadRef.child(payload.storyID).remove();
+			return groupCollection.doc(payload.groupID).collection('stories').doc(payload.storyID).delete();
 		}),
 
 		updateStory: firestoreAction(({ state }, payload) => {
@@ -112,7 +112,7 @@ const storyStore = {
 			console.log("Id is: ");
 			console.log(id);
 			let props = payload.props;
-			return storyCollection.doc(id).update(props).then(() => {
+			return groupCollection.doc(payload.groupID).collection('stories').doc(id).update(props).then(() => {
 				console.log("Story updating with vuex!");
 			});
 		}),
@@ -149,7 +149,7 @@ const storyStore = {
 
 				story.passages.push(passage);
 			});
-			return storyCollection.add(story);
+			return groupCollection.doc(payload.groupID).collection('stories').add(story);
 		}),
 
 		createStory: firestoreAction(({ state }, props) => {
@@ -159,7 +159,7 @@ const storyStore = {
 					lastUpdate: new Date(),
 					ifid: uuid().toUpperCase(),
 					tagColors: {},
-					passages: []
+					passages: [],
 				},
 				storyStore.storyDefaults,
 				props
@@ -168,8 +168,8 @@ const storyStore = {
 			if (story.passages) {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
-			console.log(firebase.auth().currentUser);
-			return groupCollection.doc("group1").collection("stories").add(story).then( () => {console.log("Added story via vuex")});
+			
+			return groupCollection.doc(props.groupName).collection("stories").add(story).then( () => {console.log("Added story via vuex")});
 		}),
 
 		updatePassageInStory: firestoreAction(( { state }, payload) => {
@@ -204,7 +204,7 @@ const storyStore = {
 
 			Object.assign(passage, props);
 			story.lastUpdate = new Date();
-			return storyCollection.doc(story.id).set(story);
+			return groupCollection.doc(story.groupName).collection('stories').doc(story.id).set(story);
 		}),
 
 		deletePassageInStory: firestoreAction(({ state }, payload) => {
@@ -219,7 +219,7 @@ const storyStore = {
 			);
 			firepadRef.child(story.id).child("passagetext").child(passageId).remove();
 			story.lastUpdate = new Date();
-			return storyCollection.doc(story.id).set(story);
+			return groupCollection.doc(story.groupName).collection('stories').doc(story.id).set(story);
 		}),
 
 		createPassageInStory: firestoreAction(({ state }, payload) => {
@@ -265,7 +265,7 @@ const storyStore = {
 			}
 
 			story.lastUpdate = new Date();
-			return storyCollection.doc(story.id).set(story);
+			return groupCollection.doc(story.groupName).collection('stories').doc(story.id).set(story);
 		}),
 
 		// Takes the passage text and assigns it to the RTDB.
@@ -324,7 +324,9 @@ const storyStore = {
 		stylesheet: '',
 		script: '',
 		storyFormat: '',
-		storyFormatVersion: ''
+		storyFormatVersion: '',
+		groupName: '',
+		code: ''
 	},
 
 	passageDefaults: {

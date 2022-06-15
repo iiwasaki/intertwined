@@ -127,7 +127,7 @@ export default Vue.extend({
 		},
 
 		setAsStart() {
-				storyActions.updateStory(this.$store, this.parentStory.id, {
+				storyActions.updateStory(this.$store, this.parentStory.id, this.parentStory.groupName, {
 				startPassage: this.passage.id
 			});
 		},
