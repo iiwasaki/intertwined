@@ -6,7 +6,7 @@ const PoPlugin = require('./webpack/po-webpack-plugin');
 const Autoprefixer = require('less-plugin-autoprefix');
 const package = require('./package.json');
 
-const isRelease = process.env.NODE_ENV === 'production';
+const isRelease = true;
 const useCdn = process.env.USE_CDN === 'y';
 const useElectron = process.env.USE_ELECTRON === 'y';
 
