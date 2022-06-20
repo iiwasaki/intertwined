@@ -7,8 +7,8 @@ const Autoprefixer = require('less-plugin-autoprefix');
 const package = require('./package.json');
 
 const isRelease = true;
-const useCdn = process.env.USE_CDN === 'y';
-const useElectron = process.env.USE_ELECTRON === 'y';
+const useCdn = false;
+const useElectron = false;
 
 const config = (module.exports = {
 	devtool: 'source-map',
