@@ -12,7 +12,7 @@ const useElectron = process.env.USE_ELECTRON === 'y';
 
 const config = (module.exports = {
 	devtool: 'source-map',
-	mode: isRelease ? 'production' : 'development',
+	mode: 'production',
 	entry: './src/index.js',
 	target: useElectron ? 'electron-renderer' : 'web',
 	output: {
