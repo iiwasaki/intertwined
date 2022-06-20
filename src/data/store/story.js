@@ -81,27 +81,22 @@ const storyStore = {
 
 	actions:{
 		bindStories: firestoreAction(({ bindFirestoreRef }, payload) => {
-			console.log("Binding all stories");
 			return bindFirestoreRef('stories', groupCollection.doc(payload.groupID).collection('stories').orderBy(payload.order, payload.dir));
 		}),
 
 		unbindStories: firestoreAction (({ unbindFirestoreRef }) => {
-			console.log("Unbinding all stories");
 			unbindFirestoreRef('stories');
 		}),
 
 		bindStory: firestoreAction(({ bindFirestoreRef }, payload) => {
-			console.log("Binding individual story (in store -> story.js)");
 			return bindFirestoreRef('story', groupCollection.doc(payload.groupID).collection('stories').doc(payload.storyId));
 		}),
 
 		unbindStory: firestoreAction (({ unbindFirestoreRef }) => {
-			console.log("Unbinding individual story (in store -> story.js)");
 			unbindFirestoreRef('story');
 		}),
 
 		deleteStory: firestoreAction ((context, payload) => {
-			console.log("in delete story vuexfire action");
 			const Firepad = require('firepad');
 			var storyRef = firepadRef.child(payload.storyID).remove();
 			return groupCollection.doc(payload.groupID).collection('stories').doc(payload.storyID).delete();
@@ -109,20 +104,15 @@ const storyStore = {
 
 		updateStory: firestoreAction(({ state }, payload) => {
 			let id = payload.id;
-			console.log("Id is: ");
-			console.log(id);
+			
 			let props = payload.props;
-			return groupCollection.doc(payload.groupID).collection('stories').doc(id).update(props).then(() => {
-				console.log("Story updating with vuex!");
-			});
+			return groupCollection.doc(payload.groupID).collection('stories').doc(id).update(props);
 		}),
 
 		duplicateStory: firestoreAction(({state}, payload) => {
-			console.log("in duplicate story vuex");
 			let id = payload.id;
 			let newName = payload.newName;
 			const original = getStoryById(state, id);
-			console.log(original);
 
 			let story = Object.assign({}, original, {
 				id: idFor(newName),
@@ -169,7 +159,7 @@ const storyStore = {
 				story.passages.forEach(passage => (passage.story = story.id));
 			}
 			
-			return groupCollection.doc(props.groupName).collection("stories").add(story).then( () => {console.log("Added story via vuex")});
+			return groupCollection.doc(props.groupName).collection("stories").add(story);
 		}),
 
 		updatePassageInStory: firestoreAction(( { state }, payload) => {
@@ -223,7 +213,6 @@ const storyStore = {
 		}),
 
 		createPassageInStory: firestoreAction(({ state }, payload) => {
-			console.log("Create passage in story story.js");
 			let story = payload.story;
 			let props = payload.props;
 			/*
@@ -270,9 +259,7 @@ const storyStore = {
 
 		// Takes the passage text and assigns it to the RTDB.
 		duplicatePassagesInStory: firestoreAction(({ state }, payload) => {
-			console.log("Hi");
 			const newStory = getStoryById(state, payload.newId);
-			console.log(newStory);
 			const Firepad = require('firepad');
 			newStory.passages.forEach( individualPassage => {
 				var storyRef = firepadRef.child(newStory.id).child("passagetext").child(individualPassage.id);
