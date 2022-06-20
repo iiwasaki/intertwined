@@ -13,7 +13,7 @@
 	"scripts": {
 		"build": "npm-run-all -l --parallel build:web --serial build:build-number",
 		"build:build-number": "node scripts/build-number.js",
-		"build:web": "cross-env NODE_ENV=production webpack",
+		"build:web": "cross-env NODE_ENV=production USE_CDN=n webpack",
 		"clean": "rimraf dist/",
 		"lint": "eslint src/ || exit 0",
 		"lint:noisy": "eslint src/",
