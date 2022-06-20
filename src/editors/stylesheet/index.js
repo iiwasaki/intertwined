@@ -53,6 +53,7 @@ export default Vue.extend({
 			const newText = headless.getText(text => {
 				this.$store.dispatch("updateStory", {
 					id: this.storyId,
+					groupID: this.story.groupName,
 					props: {
 						stylesheet: text
 					}

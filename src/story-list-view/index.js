@@ -54,15 +54,12 @@ export default Vue.extend({
 		let groupName = store.state.pref.group;
 		let groupCode = store.state.pref.groupcode;
 		if (groupName != '' && groupCode != '') {
-			console.log("Checking pass");
 			db.collection("groups").doc(groupName).update({
 				name: groupName,
 				code: groupCode
 			}, { merge: true })
 				.then(async () => {
-					console.log("Now binding");
 					await this.$store.dispatch('bindStories', { order: 'name', dir: 'asc', groupID: groupName });
-					console.log("Load story done");
 				})
 				.catch((error) => {
 					console.log("Error: ", error);
@@ -238,7 +235,6 @@ export default Vue.extend({
 					var docRef = db.collection("groupnames").doc(name);
 					let doc = await docRef.get();
 					if (doc.exists) {
-						console.log(doc);
 						return locale.say("A group with that name already exists!");
 					}
 				},
@@ -265,7 +261,6 @@ export default Vue.extend({
 					else if (await !this.isAlNum(pass)) {
 						return locale.say("Passcode must be alphanumeric only.");
 					}
-					console.log("Checking loading new group name and code");
 					await db.collection("groups").doc(name).update({
 						name: name,
 						code: pass
@@ -274,7 +269,6 @@ export default Vue.extend({
 						this.loadGroup(name, pass);
 					})
 					.catch((error) => {
-						console.log("Error in update group: ", error);
 						alert("Group passcode incorrect!");
 						return "Passcode invalid!";
 					});
@@ -299,7 +293,6 @@ export default Vue.extend({
 		},
 
 		loadGroup(name, pass) {
-			console.log("In loadGroup");
 			FirebaseHandler.updateGroup(name, pass, this.storyOrder, this.storyOrderDir);
 			eventHub.$emit('close');
 		}
