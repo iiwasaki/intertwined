@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {defaults, usePrefsContext} from './prefs';
-import {useStoriesContext} from './stories';
+import {StoriesState, useStoriesContext, Story} from './stories';
 import {
 	formatWithNameAndVersion,
 	StoryFormat,
@@ -8,6 +8,9 @@ import {
 } from './story-formats';
 import {usePersistence} from './persistence/use-persistence';
 import {LoadingCurtain} from '../components/loading-curtain';
+import {db} from "../firebase-config"
+
+
 
 export const StateLoader: React.FC = ({children}) => {
 	const [initing, setIniting] = React.useState(false);
@@ -28,6 +31,27 @@ export const StateLoader: React.FC = ({children}) => {
 	// formats -> prefs (so it can repair bad format preferences) -> stories
 
 	React.useEffect(() => {
+		if (inited){
+			console.log("Init complete!")
+			db.collection("stories").onSnapshot( (snapshot) => {
+				snapshot.docChanges().forEach( (change) => {
+					if (change.type === "added"){
+						console.log("New story ", change.doc.data())
+					}
+					if (change.type === "modified"){
+						console.log("Modified story: ", change.doc.data())
+						storiesDispatch({type: "updateStory", storyId: change.doc.data().id, props: {name: change.doc.data().name}})
+					}
+					if (change.type === "removed"){
+						console.log("Removed story: ", change.doc.data())
+					}
+				})
+			})
+		}
+		
+	}, [inited])
+
+	React.useEffect(() => {
 		async function run() {
 			if (!initing) {
 				const formatsState = await storyFormats.load();
@@ -40,7 +64,6 @@ export const StateLoader: React.FC = ({children}) => {
 				setInited(true);
 			}
 		}
-
 		run();
 		setIniting(true);
 	}, [
@@ -51,7 +74,7 @@ export const StateLoader: React.FC = ({children}) => {
 		prefsDispatch,
 		stories,
 		storiesDispatch,
-		storyFormats
+		storyFormats,
 	]);
 
 	React.useEffect(() => {

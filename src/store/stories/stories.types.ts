@@ -183,6 +183,12 @@ export interface DeletePassagesAction {
 	storyId: string;
 }
 
+/* Firebase addition */
+export interface SyncStoriesAction {
+	type: 'sync';
+	state: Story[]
+}
+
 export type StoriesAction =
 	| InitStoriesAction
 	| RepairStoriesAction
@@ -194,7 +200,8 @@ export type StoriesAction =
 	| UpdatePassageAction
 	| UpdatePassagesAction
 	| DeletePassageAction
-	| DeletePassagesAction;
+	| DeletePassagesAction
+	| SyncStoriesAction;
 
 export type StoriesDispatch = React.Dispatch<
 	StoriesAction | Thunk<StoriesState, StoriesAction>
@@ -212,3 +219,4 @@ export interface StoriesContextProps {
 	dispatch: StoriesDispatch;
 	stories: Story[];
 }
+

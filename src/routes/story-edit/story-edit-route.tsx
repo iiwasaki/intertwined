@@ -28,6 +28,12 @@ import {useZoomTransition} from './use-zoom-transition';
 import {useZoomShortcuts} from './use-zoom-shortcuts';
 import {MarqueeablePassageMap} from './marqueeable-passage-map';
 
+/* Firebase */
+import { db } from '../../firebase-config';
+import {
+	useStoriesContext
+} from "../../store/stories"
+
 export const InnerStoryEditRoute: React.FC = () => {
 	const [inited, setInited] = React.useState(false);
 	const {dispatch: dialogsDispatch} = useDialogsContext();
@@ -36,6 +42,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 	const {dispatch: undoableStoriesDispatch, stories} =
 		useUndoableStoriesContext();
 	const story = storyWithId(stories, storyId);
+	const {dispatch: storiesDispatch} = useStoriesContext();
 	useZoomShortcuts(story);
 
 	const selectedPassages = React.useMemo(
@@ -137,6 +144,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	React.useEffect(() => {
 		if (!inited) {
+			console.log("We are in the story edit route")
 			setInited(true);
 
 			if (story.passages.length === 0) {
@@ -148,6 +156,44 @@ export const InnerStoryEditRoute: React.FC = () => {
 			}
 		}
 	}, [getCenter, inited, story, undoableStoriesDispatch]);
+
+	React.useEffect(() => {
+		console.log("Making snapshot for story")
+		let unsubscribe = db.collection("stories").doc(story.id).onSnapshot((snapshot) => {
+			console.log("Snapshot triggered")
+			if (!snapshot.metadata.hasPendingWrites){
+				console.log("Dispatching from story editing snapshot update")
+				storiesDispatch({type: "updateStory", storyId: snapshot?.data()?.id, props: {name: snapshot?.data()?.name} })
+			}
+		})
+		return () => {
+			console.log("Unsubbing from passages for story")
+			unsubscribe()
+		}
+	}, [])
+
+	React.useEffect(() => {
+		console.log("Making snapshots for passages")
+		let unsubscribe = db.collection("passages").doc("group_id").collection(story.id).onSnapshot((snapshot) =>{
+			console.log("Dispatching passage act from story passage editing snapshot update")
+			snapshot.forEach((doc) => {
+				storiesDispatch({type: "updatePassage", storyId: doc.data().story, passageId: doc.data().id, props: {
+					id: doc.data().id,
+					left: doc.data().left,
+					name: doc.data().name,
+					story: doc.data().story,
+					tags: doc.data().tags,
+					text: doc.data().text,
+					top: doc.data().top
+				}})
+			})
+		})
+
+		return () => {
+			console.log("Unsubscribing from passages for story")
+			unsubscribe()
+		}
+	}, [])
 
 	const visibleZoom = useZoomTransition(story.zoom, mainContent.current);
 

@@ -11,6 +11,9 @@ import {updatePassages} from './update-passages';
 import {updateStory} from './update-story';
 import {StoriesAction, StoriesState} from '../stories.types';
 
+/* Firebase addition */
+import { syncStories } from './sync-stories';
+
 export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 	state,
 	action
@@ -52,8 +55,11 @@ export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 			return updatePassages(state, action.storyId, action.passageUpdates);
 
 		case 'updateStory':
+			console.log("In updateStory dispatched action")
 			return updateStory(state, action.storyId, action.props);
-
+		case 'sync':
+			//return syncStories(state, action.state)
+			break;
 		default:
 			console.warn(`${(action as any).type} not implemented yet`);
 	}

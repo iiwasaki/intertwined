@@ -6,6 +6,9 @@
 import {Passage, Story} from '../../../stories/stories.types';
 import {addUnique, remove} from '../comma-list';
 
+/* Firebase addons */
+import { db } from '../../../../firebase-config';
+
 export interface StorageTransaction {
 	passageIds: string;
 	storyIds: string;
@@ -48,6 +51,25 @@ export function saveStory(transaction: StorageTransaction, story: Story) {
 		`twine-stories-${story.id}`,
 		JSON.stringify({...story, passages: undefined})
 	);
+	console.log("In saveStory in save.ts")
+	db.collection("stories").doc(story.id).set(
+		{
+			ifid: story.ifid,
+			id: story.id,
+			lastUpdate: story.lastUpdate.toString(),
+			name: story.name,
+			script: story.script,
+			selected: false,
+			snapToGrid: false,
+			startPassage: story.startPassage,
+			storyFormat: story.storyFormat,
+			storyFormatVersion: story.storyFormatVersion,
+			stylesheet: story.stylesheet,
+			tags: story.tags,
+			tagColors: story.tagColors,
+		}
+	)
+
 }
 
 /**
@@ -61,6 +83,8 @@ export function deleteStory(transaction: StorageTransaction, story: Story) {
 
 	transaction.storyIds = remove(transaction.storyIds, story.id);
 	window.localStorage.removeItem(`twine-stories-${story.id}`);
+
+	
 }
 
 /**
@@ -76,6 +100,18 @@ export function savePassage(transaction: StorageTransaction, passage: Passage) {
 		`twine-passages-${passage.id}`,
 		JSON.stringify(passage)
 	);
+	console.log("In savePassage in save.ts")
+	db.collection("passages").doc("group_id").collection(passage.story).doc(passage.id).set(
+		{
+			id: passage.id,
+			left: passage.left,
+			name: passage.name,
+			story: passage.story,
+			tags: passage.tags,
+			text: passage.text,
+			top: passage.top,
+		}
+	)
 }
 
 /**

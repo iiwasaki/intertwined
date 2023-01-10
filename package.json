@@ -22,6 +22,8 @@
 		"eases": "^1.0.8",
 		"element-closest": "^3.0.2",
 		"file-saver": "^2.0.5",
+		"firebase": "^8.10.0",
+		"firepad": "^1.5.11",
 		"focus-trap-react": "^8.9.2",
 		"focus-visible": "^5.2.0",
 		"fs-extra": "^10.0.0",

@@ -5,14 +5,16 @@ import {reducer} from './reducer';
 import {
 	StoriesContextProps,
 	StoriesAction,
-	StoriesState
+	StoriesState,
 } from './stories.types';
 import {useStoryFormatsContext} from '../story-formats';
 import {useStoreErrorReporter} from '../use-store-error-reporter';
 
+
+
 export const StoriesContext = React.createContext<StoriesContextProps>({
 	dispatch: () => {},
-	stories: []
+	stories: [],
 });
 
 StoriesContext.displayName = 'Stories';
@@ -29,6 +31,8 @@ export const StoriesContextProvider: React.FC = props => {
 	> = React.useMemo(
 		() => (state, action) => {
 			const newState = reducer(state, action);
+			console.log("In reducer action " + action.type)
+			console.log(newState)
 
 			try {
 				storiesPersistence.saveMiddleware(newState, action, formats);

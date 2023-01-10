@@ -7,6 +7,7 @@ import {
 	storyWithName
 } from '../../../stories';
 import {isPersistablePassageChange} from '../../persistable-changes';
+import { isPersistableStoryChange } from '../../persistable-changes';
 import {
 	deletePassageById,
 	deleteStory,
@@ -157,11 +158,13 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 
 		case 'updateStory': {
 			const story = storyWithId(state, action.storyId);
-
-			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
-				story.passages.forEach(passage => savePassage(transaction, passage));
-			});
+			if (isPersistableStoryChange(action.props)){
+				console.log("In updateStory in save-middleware")
+				doUpdateTransaction(transaction => {
+					saveStory(transaction, story);
+					story.passages.forEach(passage => savePassage(transaction, passage));
+				});
+			}
 			break;
 		}
 
