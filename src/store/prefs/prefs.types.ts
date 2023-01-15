@@ -110,6 +110,12 @@ export interface PrefsState {
 	 * Has the user been shown the welcome route?
 	 */
 	welcomeSeen: boolean;
+
+	/* Firebase additions: the group user belong to */
+	groupName: string;
+
+	/* Firebase additions: the group passcode */
+	groupCode: string;
 }
 
 export type PrefsDispatch = React.Dispatch<PrefsAction>;

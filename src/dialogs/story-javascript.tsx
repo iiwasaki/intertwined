@@ -22,6 +22,9 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 	const story = storyWithId(stories, storyId);
 	const {t} = useTranslation();
 
+	const [firePadInit, setFirePadInit] = React.useState(false);
+
+
 	const handleChange = (
 		editor: CodeMirror.Editor,
 		data: CodeMirror.EditorChange,
@@ -58,6 +61,7 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 						placeholder: t('dialogs.storyJavaScript.explanation')
 					}}
 					value={story.script}
+					setFirePadInit={setFirePadInit}
 				/>
 			</DialogEditor>
 		</DialogCard>

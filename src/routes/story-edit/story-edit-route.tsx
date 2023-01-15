@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useParams} from 'react-router-dom';
-import {MainContent} from '../../components/container/main-content';
+import { useParams } from 'react-router-dom';
+import { MainContent } from '../../components/container/main-content';
 import {
 	DialogsContextProvider,
 	PassageEditDialog,
@@ -19,14 +19,14 @@ import {
 	UndoableStoriesContextProvider,
 	useUndoableStoriesContext
 } from '../../store/undoable-stories';
-import {Point, Rect} from '../../util/geometry';
-import {StoryEditToolbar} from './toolbar';
+import { Point, Rect } from '../../util/geometry';
+import { StoryEditToolbar } from './toolbar';
 import './story-edit-route.css';
-import {ZoomButtons} from './zoom-buttons';
-import {DocumentTitle} from '../../components/document-title/document-title';
-import {useZoomTransition} from './use-zoom-transition';
-import {useZoomShortcuts} from './use-zoom-shortcuts';
-import {MarqueeablePassageMap} from './marqueeable-passage-map';
+import { ZoomButtons } from './zoom-buttons';
+import { DocumentTitle } from '../../components/document-title/document-title';
+import { useZoomTransition } from './use-zoom-transition';
+import { useZoomShortcuts } from './use-zoom-shortcuts';
+import { MarqueeablePassageMap } from './marqueeable-passage-map';
 
 /* Firebase */
 import { db } from '../../firebase-config';
@@ -36,13 +36,13 @@ import {
 
 export const InnerStoryEditRoute: React.FC = () => {
 	const [inited, setInited] = React.useState(false);
-	const {dispatch: dialogsDispatch} = useDialogsContext();
+	const { dispatch: dialogsDispatch } = useDialogsContext();
 	const mainContent = React.useRef<HTMLDivElement>(null);
-	const {storyId} = useParams<{storyId: string}>();
-	const {dispatch: undoableStoriesDispatch, stories} =
+	const { storyId } = useParams<{ storyId: string }>();
+	const { dispatch: undoableStoriesDispatch, stories } =
 		useUndoableStoriesContext();
 	const story = storyWithId(stories, storyId);
-	const {dispatch: storiesDispatch} = useStoriesContext();
+	const { dispatch: storiesDispatch } = useStoriesContext();
 	useZoomShortcuts(story);
 
 	const selectedPassages = React.useMemo(
@@ -106,7 +106,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 			dialogsDispatch({
 				type: 'addDialog',
 				component: PassageEditDialog,
-				props: {passageId: passage.id, storyId: story.id}
+				props: { passageId: passage.id, storyId: story.id }
 			}),
 		[dialogsDispatch, story.id]
 	);
@@ -161,9 +161,9 @@ export const InnerStoryEditRoute: React.FC = () => {
 		console.log("Making snapshot for story")
 		let unsubscribe = db.collection("stories").doc(story.id).onSnapshot((snapshot) => {
 			console.log("Snapshot triggered")
-			if (!snapshot.metadata.hasPendingWrites){
+			if (!snapshot.metadata.hasPendingWrites) {
 				console.log("Dispatching from story editing snapshot update")
-				storiesDispatch({type: "updateStory", storyId: snapshot?.data()?.id, props: {name: snapshot?.data()?.name} })
+				storiesDispatch({ type: "updateStory", storyId: snapshot?.data()?.id, props: { name: snapshot?.data()?.name } })
 			}
 		})
 		return () => {
@@ -174,18 +174,41 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	React.useEffect(() => {
 		console.log("Making snapshots for passages")
-		let unsubscribe = db.collection("passages").doc("group_id").collection(story.id).onSnapshot((snapshot) =>{
+		let unsubscribe = db.collection("passages").doc("group_id").collection(story.id).onSnapshot((snapshot) => {
+			console.log("Has pending writes?", snapshot.metadata.hasPendingWrites)
 			console.log("Dispatching passage act from story passage editing snapshot update")
-			snapshot.forEach((doc) => {
-				storiesDispatch({type: "updatePassage", storyId: doc.data().story, passageId: doc.data().id, props: {
-					id: doc.data().id,
-					left: doc.data().left,
-					name: doc.data().name,
-					story: doc.data().story,
-					tags: doc.data().tags,
-					text: doc.data().text,
-					top: doc.data().top
-				}})
+			snapshot.docChanges().forEach((change) => {
+				if (change.type === "added") {
+					console.log("New Passage: ", change.doc.data())
+					storiesDispatch({
+						type: "createPassage", storyId: change.doc.data().story, props: {
+							id: change.doc.data().id,
+							left: change.doc.data().left,
+							name: change.doc.data().name,
+							story: change.doc.data(). story,
+							tags: change.doc.data().tags,
+							text: change.doc.data().text,
+							top: change.doc.data().top,
+						}
+					})
+				}
+				if (change.type === "modified") {
+					storiesDispatch({
+							type: "updatePassage", storyId: change.doc.data().story, passageId: change.doc.data().id, props: {
+							id: change.doc.data().id,
+							left: change.doc.data().left,
+							name: change.doc.data().name,
+							story: change.doc.data().story,
+							tags: change.doc.data().tags,
+							text: change.doc.data().text,
+							top: change.doc.data().top
+						}
+					})
+				}
+				if (change.type === "removed"){
+					console.log("Deleted Passage: ", change.doc.data())
+				}
+
 			})
 		})
 

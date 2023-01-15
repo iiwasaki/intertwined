@@ -36,12 +36,13 @@ export async function load(): Promise<Story[]> {
 		passages.forEach((query) => {
 			const passage: Passage = JSON.parse(JSON.stringify(query.data()))
 			stories[passage.story].passages.push({
-				...passageDefaults,
+				...passageDefaults(),
 				...passage,
 
 				// Remove empty tags.
 				tags: passage.tags ? passage.tags.filter(t => t.trim() !== '') : []
 			});
+			console.log("Stories so far: ", stories)
 		})
 	}
 	return Object.values(stories);

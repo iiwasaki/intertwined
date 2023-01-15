@@ -5,6 +5,9 @@ import {Passage, StoriesAction, StoriesState, Story} from '../stories.types';
 import {createNewlyLinkedPassages} from './create-newly-linked-passages';
 import {deleteOrphanedPassages} from './delete-orphaned-passages';
 
+/*Firebase*/
+import { db } from '../../../firebase-config';
+
 export interface UpdatePassageOptions {
 	dontUpdateOthers?: boolean;
 }
@@ -37,12 +40,18 @@ export function updatePassage(
 		const oldName = passage.name;
 		const oldText = passage.text;
 
-		dispatch({
-			props,
-			type: 'updatePassage',
-			passageId: passage.id,
-			storyId: story.id
-		});
+		console.log("In the action-creators update-passage")
+
+		// dispatch({
+		// 	props,
+		// 	type: 'updatePassage',
+		// 	passageId: passage.id,
+		// 	storyId: story.id
+		// });
+
+		db.collection("passages").doc("group_id").collection(story.id).doc(passage.id).set({
+			text: props.text
+		}, {merge: true})
 
 		// Side effects from changes.
 

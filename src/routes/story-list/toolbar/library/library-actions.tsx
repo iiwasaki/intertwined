@@ -4,10 +4,16 @@ import {ArchiveButton} from './archive-button';
 import {ImportStoryButton} from './import-story-button';
 import {StoryTagsButton} from './story-tags-button';
 
+/* For firebase */
+import {GroupButton} from "./group-button"
+import { AddGroupButton } from './add-group-button';
+
 export const LibraryActions: React.FC = () => (
 	<ButtonBar>
 		<StoryTagsButton />
 		<ImportStoryButton />
 		<ArchiveButton />
+		<GroupButton />
+		<AddGroupButton />
 	</ButtonBar>
 );

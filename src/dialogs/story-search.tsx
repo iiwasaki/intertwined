@@ -44,6 +44,8 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 	);
 	const {t} = useTranslation();
 
+	const [firePadInit, setFirePadInit] = React.useState(false);
+
 	const story = storyWithId(stories, storyId);
 	const matches = passagesMatchingSearch(story.passages, find, flags);
 
@@ -97,12 +99,14 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 						mode: 'text'
 					}}
 					value={find}
+					setFirePadInit={setFirePadInit}
 				/>
 				<CodeArea
 					label={t('dialogs.storySearch.replaceWith')}
 					onBeforeChange={handleReplaceWithChange}
 					options={{extraKeys: ignoreTab, mode: 'text'}}
 					value={replace}
+					setFirePadInit={setFirePadInit}
 				/>
 			</div>
 			<div className="search-flags">

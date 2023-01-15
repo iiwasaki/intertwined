@@ -144,6 +144,8 @@ export function fakePrefs(overrides?: Partial<PrefsState>): PrefsState {
 		storyListTagFilter: [],
 		storyTagColors: {[tags[0]]: 'red', [tags[1]]: 'green', [tags[2]]: 'blue'},
 		welcomeSeen: random.boolean(),
+		groupName: "testgroup",
+		groupCode: "testcode",
 		...overrides
 	};
 }

@@ -31,5 +31,7 @@ export const defaults = (): PrefsState => ({
 	storyListSort: 'name',
 	storyListTagFilter: [],
 	storyTagColors: {},
-	welcomeSeen: false
+	welcomeSeen: false,
+	groupName: "",
+	groupCode: "",
 });

@@ -9,6 +9,7 @@ import {StoryFormat} from '../../store/story-formats';
 import {useCodeMirrorPassageHints} from '../../store/use-codemirror-passage-hints';
 import {useFormatCodeMirrorMode} from '../../store/use-format-codemirror-mode';
 import {codeMirrorOptionsFromPrefs} from '../../util/codemirror-options';
+import { db } from '../../firebase-config';
 
 export interface PassageTextProps {
 	onChange: (value: string) => void;
@@ -36,21 +37,24 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		useFormatCodeMirrorMode(storyFormat.name, storyFormat.version) ?? 'text';
 	const {t} = useTranslation();
 
+	const [firePadInit, setFirePadInit] = React.useState(false);
+
+
 	// Effects to handle debouncing updates upward. The idea here is that the
 	// component maintains a local state so that the CodeMirror instance always is
 	// up-to-date with what the user has typed, but the global context may not be.
 	// This is because updating global context causes re-rendering in the story
 	// map, which can be time-intensive.
 
-	React.useEffect(() => {
-		// A change to passage text has occurred externally, e.g. through a find and
-		// replace. We ignore this if a change is pending so that users don't see
-		// things they've typed in disappear or be replaced.
+	// React.useEffect(() => {
+	// 	// A change to passage text has occurred externally, e.g. through a find and
+	// 	// replace. We ignore this if a change is pending so that users don't see
+	// 	// things they've typed in disappear or be replaced.
 
-		if (!changePending && localText !== passage.text) {
-			setLocalText(passage.text);
-		}
-	}, [changePending, localText, passage.text]);
+	// 	if (!changePending && localText !== passage.text) {
+	// 		setLocalText(passage.text);
+	// 	}
+	// }, [changePending, localText, passage.text]);
 
 	// The code below handles user changes in the text field. 1 second is a
 	// guesstimate.
@@ -59,8 +63,11 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		() =>
 			debounce((value: string) => {
 				onChange(value);
-				setChangePending(false);
-			}, 1000),
+				// setChangePending(false);
+				// db.collection("passages").doc("group_id").collection(story.id).doc(passage.id).set({
+				// 	text: value
+				// }, {merge: true})
+			}, 2000),
 		[onChange]
 	);
 
@@ -71,11 +78,12 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 			// The potential combination of loading a mode and the dialog entrance
 			// animation seems to mess up CodeMirror's cursor rendering. The delay below
 			// is intended to run after the animation completes.
-
+			console.log("handleMount triggered")
 			window.setTimeout(() => {
+				console.log("Actually handling mount")
 				editor.focus();
 				editor.refresh();
-			}, 400);
+			}, 1000);
 		},
 		[onEditorChange]
 	);
@@ -84,14 +92,18 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		(
 			editor: CodeMirror.Editor,
 			data: CodeMirror.EditorChange,
-			text: string
+			text: string,
 		) => {
-			onEditorChange(editor);
-			setChangePending(true);
-			debouncedOnChange(text);
-			setLocalText(text);
+			console.log("Firepad init is: ", firePadInit)
+			if (firePadInit){
+				console.log("in handleChange. Text is: ", text)
+				onEditorChange(editor);
+				setChangePending(true);
+				debouncedOnChange(text);
+				setLocalText(text);
+			}
 		},
-		[debouncedOnChange, onEditorChange]
+		[debouncedOnChange, onEditorChange, firePadInit]
 	);
 
 	const options = React.useMemo(
@@ -116,10 +128,12 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 				fontScale={prefs.passageEditorFontScale}
 				label={t('dialogs.passageEdit.passageTextEditorLabel')}
 				labelHidden
-				onBeforeChange={handleChange}
-				onChange={onEditorChange}
+				onChange={handleChange}
 				options={options}
 				value={localText}
+				setFirePadInit={setFirePadInit}
+				storyId={story.id}
+				element={passage.id}
 			/>
 		</DialogEditor>
 	);

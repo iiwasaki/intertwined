@@ -4,6 +4,7 @@
 /* Firebase imports */
 import firebase from "firebase/app"
 import "firebase/firestore"
+import "firebase/database"
 
 const fb_configs = {
     apiKey: "AIzaSyAlGCG-47VvTtVndtm3hmvkUhgcKkXk50s",
@@ -24,4 +25,5 @@ if (!firebase.apps.length) {
 }
 
 export const db = firebase.firestore()
+export const rtdb = firebase.database()
 

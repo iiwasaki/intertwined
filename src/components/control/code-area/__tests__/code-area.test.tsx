@@ -10,7 +10,6 @@ describe('<CodeArea>', () => {
 		return render(
 			<CodeArea
 				label="mock-label"
-				onBeforeChange={jest.fn()}
 				value="mock-value"
 				{...props}
 			/>

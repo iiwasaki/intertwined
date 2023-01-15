@@ -21,6 +21,8 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 	const {prefs} = usePrefsContext();
 	const story = storyWithId(stories, storyId);
 	const {t} = useTranslation();
+	const [firePadInit, setFirePadInit] = React.useState(false);
+
 
 	const handleChange = (
 		editor: CodeMirror.Editor,
@@ -58,6 +60,7 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 						placeholder: t('dialogs.storyStylesheet.explanation')
 					}}
 					value={story.stylesheet}
+					setFirePadInit={setFirePadInit}
 				/>
 			</DialogEditor>
 		</DialogCard>
