@@ -12,7 +12,9 @@ import {storyFileName} from '../../../electron/shared';
  */
 export function importStories(
 	toImport: Story[],
-	existingStories: Story[]
+	existingStories: Story[],
+	groupName: string,
+	groupCode: string,
 ): Thunk<StoriesState, CreateStoryAction | UpdateStoryAction> {
 	toImport.forEach(importStory => {
 		if (
@@ -52,9 +54,9 @@ export function importStories(
 					}));
 				}
 
-				dispatch({props, type: 'updateStory', storyId: existingStory.id});
+				dispatch({props, type: 'updateStory', storyId: existingStory.id, groupName, groupCode});
 			} else {
-				dispatch({props, type: 'createStory'});
+				dispatch({props, type: 'createStory', groupName, groupCode});
 			}
 		});
 	};

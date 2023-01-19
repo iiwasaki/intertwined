@@ -5,6 +5,7 @@ import {IconButton} from '../../../../components/control/icon-button';
 import {createUntitledPassage, Story} from '../../../../store/stories';
 import {useUndoableStoriesContext} from '../../../../store/undoable-stories';
 import {Point} from '../../../../util/geometry';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface CreatePassageButtonProps {
 	getCenter: () => Point;
@@ -13,11 +14,12 @@ export interface CreatePassageButtonProps {
 
 export const CreatePassageButton: React.FC<CreatePassageButtonProps> = props => {
 	const {getCenter, story} = props;
+	const {prefs} = usePrefsContext();
 	const {dispatch} = useUndoableStoriesContext();
 	const handleClick = React.useCallback(() => {
 		const {left, top} = getCenter();
 
-		dispatch(createUntitledPassage(story, left, top), 'undoChange.newPassage');
+		dispatch(createUntitledPassage(story, left, top, prefs.groupName, prefs.groupCode), 'undoChange.newPassage');
 	}, [dispatch, getCenter, story]);
 	const {t} = useTranslation();
 

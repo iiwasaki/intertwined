@@ -25,7 +25,7 @@ export const StoryTagsDialog: React.FC<StoryTagsDialogProps> = props => {
 	}
 
 	function handleChangeTagName(tagName: string, newName: string) {
-		storiesDispatch(renameStoryTag(stories, tagName, newName));
+		storiesDispatch(renameStoryTag(stories, tagName, newName, prefs.groupName, prefs.groupCode));
 	}
 
 	return (

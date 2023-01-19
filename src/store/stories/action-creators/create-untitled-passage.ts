@@ -11,7 +11,9 @@ import {unusedName} from '../../../util/unused-name';
 export function createUntitledPassage(
 	story: Story,
 	centerX: number,
-	centerY: number
+	centerY: number,
+	groupName: string,
+	groupCode: string
 ): CreatePassageAction {
 	if (!Number.isFinite(centerX) || !Number.isFinite(centerY)) {
 		throw new Error('Center must be a finite coordinate pair');
@@ -83,6 +85,8 @@ export function createUntitledPassage(
 			...bounds,
 			story: story.id,
 			name: passageName
-		}
+		},
+		groupName: groupName,
+		groupCode: groupCode
 	};
 }

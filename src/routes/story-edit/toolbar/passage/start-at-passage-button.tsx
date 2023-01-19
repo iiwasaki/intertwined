@@ -8,6 +8,7 @@ import {
 	updateStory,
 	useStoriesContext
 } from '../../../../store/stories';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface StartAtPassageButtonProps {
 	passage?: Passage;
@@ -17,6 +18,7 @@ export interface StartAtPassageButtonProps {
 export const StartAtPassageButton: React.FC<StartAtPassageButtonProps> = props => {
 	const {passage, story} = props;
 	const {dispatch, stories} = useStoriesContext();
+	const {prefs} = usePrefsContext();
 	const {t} = useTranslation();
 
 	function handleClick() {
@@ -24,7 +26,7 @@ export const StartAtPassageButton: React.FC<StartAtPassageButtonProps> = props =
 			throw new Error('No passage set');
 		}
 
-		dispatch(updateStory(stories, story, {startPassage: passage.id}));
+		dispatch(updateStory(stories, story, {startPassage: passage.id}, prefs.groupName, prefs.groupCode));
 	}
 
 	return (

@@ -27,7 +27,9 @@ export function replaceInPassage(
 	passage: Passage,
 	searchFor: string,
 	replaceWith: string,
-	flags: StorySearchFlags
+	flags: StorySearchFlags,
+	groupName: string,
+	groupCode: string,
 ): Thunk<StoriesState, StoriesAction> {
 	return (dispatch, getState) => {
 		if (searchFor === '') {
@@ -56,7 +58,7 @@ export function replaceInPassage(
 		}
 
 		if (Object.keys(props).length > 0) {
-			updatePassage(story, passage, props)(dispatch, getState);
+			updatePassage(story, passage, props, {}, groupName,  groupCode)(dispatch, getState);
 		}
 	};
 }
@@ -65,7 +67,9 @@ export function replaceInStory(
 	story: Story,
 	searchFor: string,
 	replaceWith: string,
-	flags: StorySearchFlags
+	flags: StorySearchFlags,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, StoriesAction> {
 	return (dispatch, getState) => {
 		if (searchFor === '') {
@@ -82,7 +86,7 @@ export function replaceInStory(
 				const name = replaceText(passage.name, searchFor, replaceWith, flags);
 
 				if (name !== passage.name) {
-					updatePassage(story, passage, {name})(dispatch, getState);
+					updatePassage(story, passage, {name}, {}, groupName, groupCode)(dispatch, getState);
 				}
 			}
 
@@ -90,7 +94,7 @@ export function replaceInStory(
 				const text = replaceText(passage.text, searchFor, replaceWith, flags);
 
 				if (text !== passage.text) {
-					updatePassage(story, passage, {text})(dispatch, getState);
+					updatePassage(story, passage, {text}, {}, groupName, groupCode)(dispatch, getState);
 				}
 			}
 		} else {
@@ -102,7 +106,9 @@ export function replaceInStory(
 					passage,
 					searchFor,
 					replaceWith,
-					flags
+					flags, 
+					groupName, 
+					groupCode
 				)(dispatch, getState);
 			}
 		}

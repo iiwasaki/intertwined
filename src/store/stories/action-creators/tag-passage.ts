@@ -7,7 +7,9 @@ import {isValidTagName} from '../../../util/tag';
 export function addPassageTag(
 	story: Story,
 	passage: Passage,
-	tagName: string
+	tagName: string,
+	groupName: string,
+	groupCode: string
 ): UpdatePassageAction {
 	if (passage.story !== story.id) {
 		throw new Error('This passage does not belong to this story.');
@@ -25,7 +27,9 @@ export function addPassageTag(
 		type: 'updatePassage',
 		passageId: passage.id,
 		storyId: story.id,
-		props: {tags: [...passage.tags, tagName]}
+		props: {tags: [...passage.tags, tagName]},
+		groupName: groupName,
+		groupCode: groupCode
 	};
 }
 
@@ -35,7 +39,9 @@ export function addPassageTag(
 export function removePassageTag(
 	story: Story,
 	passage: Passage,
-	tagName: string
+	tagName: string,
+	groupName: string,
+	groupCode: string
 ): UpdatePassageAction {
 	if (passage.story !== story.id) {
 		throw new Error('This passage does not belong to this story.');
@@ -53,6 +59,8 @@ export function removePassageTag(
 		type: 'updatePassage',
 		passageId: passage.id,
 		storyId: story.id,
-		props: {tags: passage.tags.filter(t => t !== tagName)}
+		props: {tags: passage.tags.filter(t => t !== tagName)},
+		groupName: groupName,
+		groupCode: groupCode
 	};
 }

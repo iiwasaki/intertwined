@@ -5,6 +5,8 @@ import {IconFolder} from '@tabler/icons';
 import { setPref, usePrefsContext } from '../../../../store/prefs';
 import { DualPromptButton } from '../../../../components/control/dual-prompt-button';
 import { db } from '../../../../firebase-config';
+import { useStoriesContext } from '../../../../store/stories';
+import { usePersistence } from '../../../../store/persistence/use-persistence';
 
 export const GroupButton: React.FC = () => {
     const {dispatch, prefs} = usePrefsContext();
@@ -14,6 +16,8 @@ export const GroupButton: React.FC = () => {
     const [newCode, setNewCode] = React.useState (
         prefs.groupCode
     )
+    const {dispatch: storiesDispatch} = useStoriesContext();
+    const {stories} = usePersistence();
 
     function validateGroupName(value: string) {
 		if (value.trim() === '') {
@@ -23,17 +27,18 @@ export const GroupButton: React.FC = () => {
 			};
 		}
 
-		return db.collection("groups").doc(value).get().then((doc) => {
+		return db.collection("grouplist").doc(value).get().then((doc) => {
             if (doc.exists){
-                console.log("Doc does exist, ", value)
                 return {
-                    valid: false,
-                    message: "A group with that name already exists!"
+                    valid: true
                 }
             }
             else {
                 console.log("Doc doesn't exist, ", value)
-                return {valid: true};
+                return {
+                    valid: false,
+                    message: "No group exists with that name."
+                };
             }
         }).catch ((error) => {
             console.log("Error getting document, ", error)
@@ -57,8 +62,14 @@ export const GroupButton: React.FC = () => {
     }
 
     function handleSubmit() {
+        async function refreshGroups() {
+            const newStories = await stories.load(newGroup, newCode)
+            storiesDispatch({type: 'init', state: newStories})
+        }
         dispatch(setPref('groupName', newGroup))
         dispatch(setPref('groupCode', newCode))
+        refreshGroups()
+
     }
 
 	return (

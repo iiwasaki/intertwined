@@ -13,6 +13,7 @@ import {
 } from './undoable-stories.types';
 import {reducer} from './reducer';
 import {useStoriesContext} from '../stories';
+import { usePrefsContext } from '../prefs';
 
 export const UndoableStoriesContext = React.createContext<UndoableStoriesContextProps>(
 	{
@@ -28,6 +29,7 @@ export const useUndoableStoriesContext = () =>
 
 export const UndoableStoriesContextProvider: React.FC = props => {
 	const {dispatch: storiesDispatch, stories} = useStoriesContext();
+	const {prefs} = usePrefsContext();
 	const [state, dispatch] = React.useReducer(reducer, {
 		changes: [],
 		currentChange: -1
@@ -39,7 +41,9 @@ export const UndoableStoriesContextProvider: React.FC = props => {
 					type: 'addChange',
 					action,
 					description: description,
-					storiesState: stories
+					storiesState: stories,
+					groupName: prefs.groupName,
+					groupCode: prefs.groupCode
 				});
 			}
 

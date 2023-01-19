@@ -14,6 +14,7 @@ import {
 import {FormatLoader} from '../../store/format-loader';
 import {DialogComponentProps} from '../dialogs.types';
 import {StoryDetailsDialogStats} from './story-stats';
+import { usePrefsContext } from '../../store/prefs';
 
 export interface StoryDetailsDialogProps extends DialogComponentProps {
 	storyId: string;
@@ -23,6 +24,7 @@ export const StoryDetailsDialog: React.FC<StoryDetailsDialogProps> = props => {
 	const {storyId, ...other} = props;
 	const {dispatch, stories} = useStoriesContext();
 	const {formats} = useStoryFormatsContext();
+	const {prefs} = usePrefsContext();
 	const story = storyWithId(stories, storyId);
 	const {t} = useTranslation();
 
@@ -32,8 +34,8 @@ export const StoryDetailsDialog: React.FC<StoryDetailsDialogProps> = props => {
 		dispatch(
 			updateStory(stories, story, {
 				storyFormat: newFormat.name,
-				storyFormatVersion: newFormat.version
-			})
+				storyFormatVersion: newFormat.version,
+			}, prefs.groupName, prefs.groupCode)
 		);
 	}
 
@@ -69,7 +71,7 @@ export const StoryDetailsDialog: React.FC<StoryDetailsDialogProps> = props => {
 				<CheckboxButton
 					label={t('dialogs.storyDetails.snapToGrid')}
 					onChange={value =>
-						dispatch(updateStory(stories, story, {snapToGrid: value}))
+						dispatch(updateStory(stories, story, {snapToGrid: value}, prefs.groupName, prefs.groupCode))
 					}
 					value={story.snapToGrid}
 				/>

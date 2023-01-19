@@ -33,6 +33,7 @@ import { db } from '../../firebase-config';
 import {
 	useStoriesContext
 } from "../../store/stories"
+import { usePrefsContext } from '../../store/prefs';
 
 export const InnerStoryEditRoute: React.FC = () => {
 	const [inited, setInited] = React.useState(false);
@@ -43,6 +44,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 		useUndoableStoriesContext();
 	const story = storyWithId(stories, storyId);
 	const { dispatch: storiesDispatch } = useStoriesContext();
+	const {prefs} = usePrefsContext();
 	useZoomShortcuts(story);
 
 	const selectedPassages = React.useMemo(
@@ -69,7 +71,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	const handleDeselectPassage = React.useCallback(
 		(passage: Passage) =>
-			undoableStoriesDispatch(deselectPassage(story, passage)),
+			undoableStoriesDispatch(deselectPassage(story, passage, prefs.groupName, prefs.groupCode)),
 		[story, undoableStoriesDispatch]
 	);
 
@@ -91,7 +93,9 @@ export const InnerStoryEditRoute: React.FC = () => {
 						[]
 					),
 					change.left / story.zoom,
-					change.top / story.zoom
+					change.top / story.zoom,
+					prefs.groupName,
+					prefs.groupCode
 				),
 				selectedPassages.length > 1
 					? 'undoChange.movePassages'
@@ -113,7 +117,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	const handleSelectPassage = React.useCallback(
 		(passage: Passage, exclusive: boolean) =>
-			undoableStoriesDispatch(selectPassage(story, passage, exclusive)),
+			undoableStoriesDispatch(selectPassage(story, passage, exclusive, prefs.groupName, prefs.groupCode)),
 		[story, undoableStoriesDispatch]
 	);
 
@@ -132,7 +136,9 @@ export const InnerStoryEditRoute: React.FC = () => {
 				selectPassagesInRect(
 					story,
 					logicalRect,
-					exclusive ? selectedPassages.map(passage => passage.id) : []
+					exclusive ? selectedPassages.map(passage => passage.id) : [],
+					prefs.groupName,
+					prefs.groupCode
 				)
 			);
 		},
@@ -151,7 +157,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 				const center = getCenter();
 
 				undoableStoriesDispatch(
-					createUntitledPassage(story, center.left, center.top)
+					createUntitledPassage(story, center.left, center.top, prefs.groupName, prefs.groupCode)
 				);
 			}
 		}
@@ -159,22 +165,25 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	React.useEffect(() => {
 		console.log("Making snapshot for story")
-		let unsubscribe = db.collection("stories").doc(story.id).onSnapshot((snapshot) => {
+		let unsubscribe = db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).collection("stories").doc(story.name).onSnapshot((snapshot) => {
 			console.log("Snapshot triggered")
 			if (!snapshot.metadata.hasPendingWrites) {
 				console.log("Dispatching from story editing snapshot update")
-				storiesDispatch({ type: "updateStory", storyId: snapshot?.data()?.id, props: { name: snapshot?.data()?.name } })
+				storiesDispatch({ type: "updateStory", storyId: snapshot?.data()?.id, props: { name: snapshot?.data()?.name }, groupName: prefs.groupName,
+				groupCode: prefs.groupCode })
 			}
+		}, (err) => {
+			throw new Error("Could not get story data from database - story does not exist, or incorrect group name or passcode.")
 		})
 		return () => {
-			console.log("Unsubbing from passages for story")
+			console.log("Unsubbing from story")
 			unsubscribe()
 		}
 	}, [])
 
 	React.useEffect(() => {
 		console.log("Making snapshots for passages")
-		let unsubscribe = db.collection("passages").doc("group_id").collection(story.id).onSnapshot((snapshot) => {
+		let unsubscribe = db.collection("passages").doc(prefs.groupName).collection("pass").doc(prefs.groupCode).collection(storyId).onSnapshot((snapshot) => {
 			console.log("Has pending writes?", snapshot.metadata.hasPendingWrites)
 			console.log("Dispatching passage act from story passage editing snapshot update")
 			snapshot.docChanges().forEach((change) => {
@@ -189,7 +198,9 @@ export const InnerStoryEditRoute: React.FC = () => {
 							tags: change.doc.data().tags,
 							text: change.doc.data().text,
 							top: change.doc.data().top,
-						}
+						},
+						groupName: prefs.groupName,
+						groupCode: prefs.groupCode
 					})
 				}
 				if (change.type === "modified") {
@@ -202,7 +213,9 @@ export const InnerStoryEditRoute: React.FC = () => {
 							tags: change.doc.data().tags,
 							text: change.doc.data().text,
 							top: change.doc.data().top
-						}
+						},
+						groupName: prefs.groupName,
+						groupCode: prefs.groupCode
 					})
 				}
 				if (change.type === "removed"){

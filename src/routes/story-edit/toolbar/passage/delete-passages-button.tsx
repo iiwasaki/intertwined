@@ -6,6 +6,7 @@ import {useTranslation} from 'react-i18next';
 import {IconButton} from '../../../../components/control/icon-button';
 import {deletePassages, Passage, Story} from '../../../../store/stories';
 import {useUndoableStoriesContext} from '../../../../store/undoable-stories';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface DeletePassagesButtonProps {
 	passages: Passage[];
@@ -18,6 +19,7 @@ export const DeletePassagesButton: React.FC<
 	const {passages, story} = props;
 	const {dispatch} = useUndoableStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 	const disabled = React.useMemo(() => {
 		if (passages.length === 0) {
 			return true;
@@ -31,7 +33,7 @@ export const DeletePassagesButton: React.FC<
 		}
 
 		dispatch(
-			deletePassages(story, passages),
+			deletePassages(story, passages, prefs.groupName, prefs.groupCode),
 			passages.length > 1
 				? 'undoChange.deletePassages'
 				: 'undoChange.deletePassage'

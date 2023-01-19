@@ -6,7 +6,7 @@ import {
 	storyWithId,
 	storyWithName
 } from '../../../stories';
-import {isPersistablePassageChange} from '../../persistable-changes';
+import { isPersistablePassageChange } from '../../persistable-changes';
 import { isPersistableStoryChange } from '../../persistable-changes';
 import {
 	deletePassageById,
@@ -40,8 +40,8 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			const passage = passageWithName(state, story.id, action.props.name);
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
-				savePassage(transaction, passage);
+				saveStory(transaction, story, action.groupName, action.groupCode);
+				savePassage(transaction, passage, action.groupName, action.groupCode);
 			});
 			break;
 		}
@@ -50,7 +50,7 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			const story = storyWithId(state, action.storyId);
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
+				saveStory(transaction, story, action.groupName, action.groupCode);
 				action.props.forEach(props => {
 					if (!props.name) {
 						throw new Error('Passage was created but with no name specified');
@@ -58,7 +58,9 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 
 					savePassage(
 						transaction,
-						passageWithName(state, story.id, props.name)
+						passageWithName(state, story.id, props.name),
+						action.groupName,
+						action.groupCode
 					);
 				});
 			});
@@ -73,8 +75,8 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			const story = storyWithName(state, action.props.name);
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
-				story.passages.forEach(passage => savePassage(transaction, passage));
+				saveStory(transaction, story, action.groupName, action.groupCode);
+				story.passages.forEach(passage => savePassage(transaction, passage, action.groupName, action.groupCode));
 			});
 			break;
 
@@ -86,7 +88,7 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			// this point in time.
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
+				saveStory(transaction, story, action.groupName, action.groupCode);
 				deletePassageById(transaction, action.passageId);
 			});
 			break;
@@ -98,7 +100,7 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			// See above comment about passages.
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
+				saveStory(transaction, story, action.groupName, action.groupCode);
 				action.passageIds.forEach(passageId =>
 					deletePassageById(transaction, passageId)
 				);
@@ -130,8 +132,8 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 				const passage = passageWithId(state, action.storyId, action.passageId);
 
 				doUpdateTransaction(transaction => {
-					saveStory(transaction, story);
-					savePassage(transaction, passage);
+					saveStory(transaction, story, action.groupName, action.groupCode);
+					savePassage(transaction, passage, action.groupName, action.groupCode);
 				});
 				break;
 			}
@@ -141,7 +143,7 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 			const story = storyWithId(state, action.storyId);
 
 			doUpdateTransaction(transaction => {
-				saveStory(transaction, story);
+				saveStory(transaction, story, action.groupName, action.groupCode);
 				Object.keys(action.passageUpdates)
 					.filter(passageId =>
 						isPersistablePassageChange(action.passageUpdates[passageId])
@@ -149,7 +151,9 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 					.forEach(passageId =>
 						savePassage(
 							transaction,
-							passageWithId(state, action.storyId, passageId)
+							passageWithId(state, action.storyId, passageId),
+							action.groupName,
+							action.groupCode
 						)
 					);
 			});
@@ -158,11 +162,11 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 
 		case 'updateStory': {
 			const story = storyWithId(state, action.storyId);
-			if (isPersistableStoryChange(action.props)){
+			if (isPersistableStoryChange(action.props)) {
 				console.log("In updateStory in save-middleware")
 				doUpdateTransaction(transaction => {
-					saveStory(transaction, story);
-					story.passages.forEach(passage => savePassage(transaction, passage));
+					saveStory(transaction, story, action.groupName, action.groupCode);
+					story.passages.forEach(passage => savePassage(transaction, passage, action.groupName, action.groupCode));
 				});
 			}
 			break;
@@ -170,8 +174,7 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 
 		default:
 			console.warn(
-				`Story action ${
-					(action as any).type
+				`Story action ${(action as any).type
 				} has no local storage persistence handler`
 			);
 	}

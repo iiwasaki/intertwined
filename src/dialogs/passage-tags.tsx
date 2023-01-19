@@ -12,6 +12,7 @@ import {
 import {useUndoableStoriesContext} from '../store/undoable-stories';
 import {Color} from '../util/color';
 import {TagEditor} from '../components/tag/tag-editor';
+import { usePrefsContext } from '../store/prefs';
 
 export interface PassageTagsDialogProps extends DialogComponentProps {
 	storyId: string;
@@ -21,20 +22,21 @@ export const PassageTagsDialog: React.FC<PassageTagsDialogProps> = props => {
 	const {storyId, ...other} = props;
 	const {dispatch, stories} = useUndoableStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 
 	const story = storyWithId(stories, storyId);
 	const tags = storyPassageTags(story);
 
 	function handleChangeColor(tagName: string, color: Color) {
 		dispatch(
-			setTagColor(story, tagName, color),
+			setTagColor(story, tagName, color, prefs.groupName, prefs.groupCode),
 			t('undoChange.changeTagColor')
 		);
 	}
 
 	function handleChangeTagName(tagName: string, newName: string) {
 		dispatch(
-			renamePassageTag(story, tagName, newName),
+			renamePassageTag(story, tagName, newName, prefs.groupName, prefs.groupCode),
 			t('undoChange.renameTag')
 		);
 	}

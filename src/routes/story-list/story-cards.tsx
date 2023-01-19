@@ -37,7 +37,7 @@ export const StoryCards: React.FC<StoryCardsProps> = props => {
 		storiesDispatch(
 			updateStory(stories, story, {
 				tags: story.tags.filter(tag => tag !== tagName)
-			})
+			}, prefs.groupName, prefs.groupCode)
 		);
 	}
 

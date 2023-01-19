@@ -14,6 +14,7 @@ import {EditPassagesButton} from './edit-passages-buttons';
 import {SelectAllPassagesButton} from './select-all-passages-button';
 import {StartAtPassageButton} from './start-at-passage-button';
 import {TestPassageButton} from './test-passage-button';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface PassageActionsProps {
 	getCenter: () => Point;
@@ -25,6 +26,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 	story
 }) => {
 	const {dispatch} = useStoriesContext();
+	const {prefs} = usePrefsContext();
 	const selectedPassages = React.useMemo(
 		() => story.passages.filter(passage => passage.selected),
 		[story.passages]
@@ -44,7 +46,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 		// existing passages, updates them, but does not see that the passage name
 		// has been updated since that hasn't happened yet.
 
-		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}));
+		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}, prefs.groupName, prefs.groupCode));
 	}
 
 	return (

@@ -6,6 +6,7 @@ import {updateStory, useStoriesContext, Story} from '../../store/stories';
 import {ButtonCard} from '../../components/container/button-card';
 import './zoom-buttons.css';
 import {useScrollbarSize} from 'react-scrollbar-size';
+import { usePrefsContext } from '../../store/prefs';
 
 export interface ZoomButtonsProps {
 	story: Story;
@@ -15,10 +16,11 @@ export const ZoomButtons: React.FC<ZoomButtonsProps> = React.memo(({story}) => {
 	const {dispatch, stories} = useStoriesContext();
 	const {t} = useTranslation();
 	const {height} = useScrollbarSize();
+	const {prefs} = usePrefsContext();
 
 	const handleZoomChange = React.useCallback(
 		(zoom: number) => {
-			dispatch(updateStory(stories, story, {zoom}));
+			dispatch(updateStory(stories, story, {zoom}, prefs.groupName, prefs.groupCode));
 		},
 		[dispatch, stories, story]
 	);

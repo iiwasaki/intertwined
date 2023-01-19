@@ -133,12 +133,16 @@ export interface RepairStoriesAction {
 export interface CreateStoryAction {
 	type: 'createStory';
 	props: Partial<Story>;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface UpdateStoryAction {
 	type: 'updateStory';
 	props: Partial<Omit<Story, 'id'>>;
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface DeleteStoryAction {
@@ -150,12 +154,16 @@ export interface CreatePassageAction {
 	type: 'createPassage';
 	props: Partial<Passage>;
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface CreatePassagesAction {
 	type: 'createPassages';
 	props: Partial<Passage>[];
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface UpdatePassageAction {
@@ -163,24 +171,32 @@ export interface UpdatePassageAction {
 	passageId: string;
 	props: Partial<Passage>;
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface UpdatePassagesAction {
 	type: 'updatePassages';
 	passageUpdates: Record<string, Partial<Passage>>;
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface DeletePassageAction {
 	type: 'deletePassage';
 	passageId: string;
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface DeletePassagesAction {
 	type: 'deletePassages';
 	passageIds: string[];
 	storyId: string;
+	groupName: string;
+	groupCode: string;
 }
 
 /* Firebase addition */

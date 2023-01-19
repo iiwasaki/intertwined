@@ -15,7 +15,7 @@ import {StoriesActionOrThunk} from './undoable-stories.types';
  */
 export function reverseAction(
 	action: StoriesAction,
-	state: StoriesState
+	state: StoriesState,
 ): StoriesActionOrThunk {
 	switch (action.type) {
 		case 'createPassage':
@@ -23,7 +23,9 @@ export function reverseAction(
 				return {
 					type: 'deletePassage',
 					passageId: action.props.id,
-					storyId: action.storyId
+					storyId: action.storyId,
+					groupName: action.groupName,
+					groupCode: action.groupCode
 				};
 			} else if (action.props.name) {
 				// This is dependant on the fact that we will only undo this action
@@ -43,7 +45,9 @@ export function reverseAction(
 							action.storyId,
 							action.props.name!
 						).id,
-						storyId: action.storyId
+						storyId: action.storyId,
+						groupName: action.groupName,
+						groupCode: action.groupCode
 					});
 				};
 
@@ -69,7 +73,9 @@ export function reverseAction(
 						dispatch({
 							type: 'deletePassage',
 							passageId: props.id,
-							storyId: action.storyId
+							storyId: action.storyId,
+							groupName: action.groupName,
+							groupCode: action.groupCode
 						});
 					} else if (props.name) {
 						// This is dependent on the fact that we will only undo this action
@@ -79,7 +85,9 @@ export function reverseAction(
 							type: 'deletePassage',
 							passageId: passageWithName(getState(), action.storyId, props.name)
 								.id,
-							storyId: action.storyId
+							storyId: action.storyId,
+							groupName: action.groupName,
+							groupCode: action.groupCode
 						});
 					}
 				});
@@ -89,7 +97,9 @@ export function reverseAction(
 			return {
 				type: 'createPassage',
 				props: passageWithId(state, action.storyId, action.passageId),
-				storyId: action.storyId
+				storyId: action.storyId,
+				groupName: action.groupName,
+				groupCode: action.groupCode
 			};
 
 		case 'deletePassages':
@@ -98,7 +108,9 @@ export function reverseAction(
 				props: action.passageIds.map(passageId =>
 					passageWithId(state, action.storyId, passageId)
 				),
-				storyId: action.storyId
+				storyId: action.storyId,
+				groupName: action.groupName,
+				groupCode: action.groupCode
 			};
 
 		case 'updatePassage': {
@@ -115,7 +127,9 @@ export function reverseAction(
 				type: 'updatePassage',
 				props,
 				passageId: action.passageId,
-				storyId: action.storyId
+				storyId: action.storyId,
+				groupName: action.groupName,
+				groupCode: action.groupCode
 			};
 		}
 
@@ -139,7 +153,9 @@ export function reverseAction(
 					},
 					{} as Record<string, Partial<Passage>>
 				),
-				storyId: action.storyId
+				storyId: action.storyId,
+				groupName: action.groupName,
+				groupCode: action.groupCode
 			};
 
 		case 'updateStory': {
@@ -155,7 +171,9 @@ export function reverseAction(
 			return {
 				type: 'updateStory',
 				props,
-				storyId: action.storyId
+				storyId: action.storyId,
+				groupName: action.groupName,
+				groupCode: action.groupCode
 			};
 		}
 	}

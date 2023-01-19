@@ -26,7 +26,7 @@ export const TagStoryButton: React.FC<TagStoryButtonProps> = props => {
 		storiesDispatch(
 			updateStory(stories, story, {
 				tags: story.tags ? [...story.tags, tagName] : [tagName]
-			})
+			}, prefs.groupName, prefs.groupCode)
 		);
 
 		if (tagColor) {

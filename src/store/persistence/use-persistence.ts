@@ -12,7 +12,7 @@ export interface PersistenceHooks {
 		saveMiddleware: (state: PrefsState, action: PrefsAction) => void;
 	};
 	stories: {
-		load: () => Promise<StoriesState>;
+		load: (groupName?: string, groupCode?: string) => Promise<StoriesState>;
 		saveMiddleware: (
 			state: StoriesState,
 			action: StoriesAction,

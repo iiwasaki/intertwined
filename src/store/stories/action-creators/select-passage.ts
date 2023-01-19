@@ -12,7 +12,9 @@ import {
  * Deselects all passages.
  */
 export function deselectAllPassages(
-	story: Story
+	story: Story,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassagesAction> {
 	return dispatch => {
 		const passageUpdates: Record<string, Partial<Passage>> = {};
@@ -27,7 +29,9 @@ export function deselectAllPassages(
 			dispatch({
 				passageUpdates,
 				type: 'updatePassages',
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};
@@ -38,7 +42,9 @@ export function deselectAllPassages(
  */
 export function deselectPassage(
 	story: Story,
-	passage: Passage
+	passage: Passage,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassageAction> {
 	if (passage.story !== story.id) {
 		throw new Error('This passage does not belong to this story');
@@ -50,7 +56,9 @@ export function deselectPassage(
 				type: 'updatePassage',
 				passageId: passage.id,
 				props: {selected: false},
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};
@@ -60,7 +68,9 @@ export function deselectPassage(
  * Selects all passages.
  */
 export function selectAllPassages(
-	story: Story
+	story: Story,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassagesAction> {
 	return dispatch => {
 		const passageUpdates: Record<string, Partial<Passage>> = {};
@@ -75,7 +85,9 @@ export function selectAllPassages(
 			dispatch({
 				passageUpdates,
 				type: 'updatePassages',
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};
@@ -87,7 +99,9 @@ export function selectAllPassages(
 export function selectPassage(
 	story: Story,
 	passage: Passage,
-	exclusive: boolean
+	exclusive: boolean,
+	groupName: string,
+	groupCode: string,
 ): Thunk<StoriesState, UpdatePassagesAction> {
 	if (passage.story !== story.id) {
 		throw new Error('This passage does not belong to this story');
@@ -109,7 +123,7 @@ export function selectPassage(
 		}
 
 		if (Object.keys(passageUpdates).length > 0) {
-			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id});
+			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id, groupName: groupName, groupCode: groupCode});
 		}
 	};
 }
@@ -117,7 +131,9 @@ export function selectPassage(
 export function selectPassagesInRect(
 	story: Story,
 	rect: Rect,
-	ignoreIds: string[] = []
+	ignoreIds: string[] = [],
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassagesAction> {
 	return dispatch => {
 		const passageUpdates: Record<string, Partial<Passage>> = {};
@@ -137,7 +153,7 @@ export function selectPassagesInRect(
 		});
 
 		if (Object.keys(passageUpdates).length > 0) {
-			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id});
+			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id, groupName: groupName, groupCode: groupCode});
 		}
 	};
 }

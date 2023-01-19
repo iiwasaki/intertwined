@@ -5,7 +5,9 @@ import {isValidTagName} from '../../../util/tag';
 export function renameStoryTag(
 	stories: Story[],
 	oldName: string,
-	newName: string
+	newName: string,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, StoriesAction> {
 	if (!isValidTagName(newName)) {
 		throw new Error(`"${newName}" is not a valid tag name.`);
@@ -19,7 +21,9 @@ export function renameStoryTag(
 					storyId: story.id,
 					props: {
 						tags: story.tags.map(tag => (tag === oldName ? newName : tag))
-					}
+					},
+					groupName: groupName,
+					groupCode: groupCode
 				});
 			}
 		});

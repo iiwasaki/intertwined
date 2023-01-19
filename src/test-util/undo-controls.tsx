@@ -1,14 +1,16 @@
 import * as React from 'react';
 import {updateStory} from '../store/stories';
 import {useUndoableStoriesContext} from '../store/undoable-stories';
+import { usePrefsContext } from '../store/prefs';
 
 export const UndoControls: React.FC = () => {
 	const {dispatch, stories} = useUndoableStoriesContext();
+	const {prefs} = usePrefsContext();
 	const [annotation, setAnnotation] = React.useState('mock-annotation');
 
 	function handleCreateUndo() {
 		dispatch(
-			updateStory(stories, stories[0], {name: 'mock-story-rename'}),
+			updateStory(stories, stories[0], {name: 'mock-story-rename'}, prefs.groupName, prefs.groupCode),
 			annotation
 		);
 	}

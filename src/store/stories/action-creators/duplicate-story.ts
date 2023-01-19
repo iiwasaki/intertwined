@@ -7,7 +7,9 @@ import {unusedName} from '../../../util/unused-name';
  */
 export function duplicateStory(
 	story: Story,
-	stories: Story[]
+	stories: Story[],
+	groupName: string,
+	groupCode: string,
 ): CreateStoryAction {
 	return {
 		type: 'createStory',
@@ -19,6 +21,8 @@ export function duplicateStory(
 				story.name,
 				stories.map(story => story.name)
 			)
-		}
+		},
+		groupName,
+		groupCode
 	};
 }

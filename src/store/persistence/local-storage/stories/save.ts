@@ -3,8 +3,8 @@
 // result, saving requires that you start and end a transaction manually. This
 // minimizes the number of writes to local storage.
 
-import {Passage, Story} from '../../../stories/stories.types';
-import {addUnique, remove} from '../comma-list';
+import { Passage, Story } from '../../../stories/stories.types';
+import { addUnique, remove } from '../comma-list';
 
 /* Firebase addons */
 import { db } from '../../../../firebase-config';
@@ -37,7 +37,7 @@ export function doUpdateTransaction(updater: StorageUpdater) {
 /**
  * Saves a story to local storage. This does *not* affect any child passages.
  **/
-export function saveStory(transaction: StorageTransaction, story: Story) {
+export function saveStory(transaction: StorageTransaction, story: Story, groupName: string, groupCode: string) {
 	if (!story.id) {
 		throw new Error('Story has no ID');
 	}
@@ -49,26 +49,47 @@ export function saveStory(transaction: StorageTransaction, story: Story) {
 
 	window.localStorage.setItem(
 		`twine-stories-${story.id}`,
-		JSON.stringify({...story, passages: undefined})
+		JSON.stringify({ ...story, passages: undefined })
 	);
-	console.log("In saveStory in save.ts")
-	db.collection("stories").doc(story.id).set(
-		{
-			ifid: story.ifid,
-			id: story.id,
-			lastUpdate: story.lastUpdate.toString(),
-			name: story.name,
-			script: story.script,
-			selected: false,
-			snapToGrid: false,
-			startPassage: story.startPassage,
-			storyFormat: story.storyFormat,
-			storyFormatVersion: story.storyFormatVersion,
-			stylesheet: story.stylesheet,
-			tags: story.tags,
-			tagColors: story.tagColors,
+	console.log("In saveStory in save.ts, groupname and code: ", groupName, groupCode)
+	db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).get().then((doc) => {
+		if (doc.exists) {
+			// Existing story - do not rewrite ifid, id in case it has deviated at all due to desync when two stories are created at once.
+			console.log("Existing story")
+			db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).set({
+				lastUpdate: story.lastUpdate.toString(),
+				name: story.name,
+				script: story.script,
+				startPassage: story.startPassage,
+				storyFormat: story.storyFormat,
+				storyFormatVersion: story.storyFormatVersion,
+				stylesheet: story.stylesheet,
+				tags: story.tags,
+				tagColors: story.tagColors,
+			}, { merge: true })
 		}
-	)
+		else {
+			// New story - generate new id and such.
+			db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).set(
+				{
+					ifid: story.ifid,
+					id: story.id,
+					lastUpdate: story.lastUpdate.toString(),
+					name: story.name,
+					script: story.script,
+					selected: false,
+					snapToGrid: false,
+					startPassage: story.startPassage,
+					storyFormat: story.storyFormat,
+					storyFormatVersion: story.storyFormatVersion,
+					stylesheet: story.stylesheet,
+					tags: story.tags,
+					tagColors: story.tagColors,
+				}
+			)
+		}
+	})
+
 
 }
 
@@ -84,13 +105,13 @@ export function deleteStory(transaction: StorageTransaction, story: Story) {
 	transaction.storyIds = remove(transaction.storyIds, story.id);
 	window.localStorage.removeItem(`twine-stories-${story.id}`);
 
-	
+
 }
 
 /**
  * Saves a passage to local storage.
  */
-export function savePassage(transaction: StorageTransaction, passage: Passage) {
+export function savePassage(transaction: StorageTransaction, passage: Passage, groupName: string, groupCode: string) {
 	if (!passage.id) {
 		throw new Error('Passage has no ID');
 	}
@@ -101,17 +122,15 @@ export function savePassage(transaction: StorageTransaction, passage: Passage) {
 		JSON.stringify(passage)
 	);
 	console.log("In savePassage in save.ts")
-	db.collection("passages").doc("group_id").collection(passage.story).doc(passage.id).set(
-		{
-			id: passage.id,
-			left: passage.left,
-			name: passage.name,
-			story: passage.story,
-			tags: passage.tags,
-			text: passage.text,
-			top: passage.top,
-		}
-	)
+	db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(passage.story).doc(passage.id).set({
+		id: passage.id,
+		left: passage.left,
+		name: passage.name,
+		story: passage.story,
+		tags: passage.tags,
+		text: passage.text,
+		top: passage.top,
+	}, { merge: true })
 }
 
 /**

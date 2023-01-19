@@ -11,7 +11,9 @@ import {passagesMatchingSearch} from '../getters';
 export function highlightPassagesMatchingSearch(
 	story: Story,
 	search: string,
-	flags: StorySearchFlags
+	flags: StorySearchFlags,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassagesAction> {
 	return dispatch => {
 		let passageUpdates: Record<string, Partial<Passage>> = {};
@@ -45,7 +47,9 @@ export function highlightPassagesMatchingSearch(
 			dispatch({
 				passageUpdates,
 				type: 'updatePassages',
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};

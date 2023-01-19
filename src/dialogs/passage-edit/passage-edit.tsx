@@ -17,6 +17,7 @@ import {PassageText} from './passage-text';
 import {PassageToolbar} from './passage-toolbar';
 import {StoryFormatToolbar} from './story-format-toolbar';
 import {TagToolbar} from './tag-toolbar';
+import { usePrefsContext } from '../../store/prefs';
 
 export interface PassageEditDialogProps
 	extends Omit<DialogCardProps, 'headerLabel'> {
@@ -37,6 +38,7 @@ export const InnerPassageEditDialog: React.FC<
 	const {formats} = useStoryFormatsContext();
 	const passage = passageWithId(stories, storyId, passageId);
 	const story = storyWithId(stories, storyId);
+	const {prefs} = usePrefsContext();
 	const storyFormat = formatWithNameAndVersion(
 		formats,
 		story.storyFormat,
@@ -62,7 +64,7 @@ export const InnerPassageEditDialog: React.FC<
 
 	const handlePassageTextChange = React.useCallback(
 		(text: string) => {
-			dispatch(updatePassage(story, passage, {text}));
+			dispatch(updatePassage(story, passage, {text}, {}, prefs.groupName, prefs.groupCode));
 		},
 		[dispatch, passage, story]
 	);

@@ -20,6 +20,7 @@ import {UndoableStoriesContextProvider} from '../../store/undoable-stories';
 import {StoryListToolbar} from './toolbar/story-list-toolbar';
 import {StoryCards} from './story-cards';
 import {ClickAwayListener} from '../../components/click-away-listener';
+import { db } from '../../firebase-config';
 
 export const InnerStoryListRoute: React.FC = () => {
 	const {dispatch: dialogsDispatch} = useDialogsContext();
@@ -27,6 +28,8 @@ export const InnerStoryListRoute: React.FC = () => {
 	const {prefs} = usePrefsContext();
 	const {shouldShowDonationPrompt} = useDonationCheck();
 	const {t} = useTranslation();
+	
+	let [activeGroupName, setActiveGroupName] = React.useState("No Group selected");
 
 	const selectedStories = React.useMemo(
 		() => stories.filter(story => story.selected),
@@ -54,7 +57,7 @@ export const InnerStoryListRoute: React.FC = () => {
 	React.useEffect(() => {
 		for (const story of selectedStories) {
 			if (story.selected && !visibleStories.includes(story)) {
-				storiesDispatch(deselectStory(story));
+				storiesDispatch(deselectStory(story, prefs.groupName, prefs.groupCode));
 			}
 		}
 	}, [selectedStories, stories, storiesDispatch, visibleStories]);
@@ -65,20 +68,40 @@ export const InnerStoryListRoute: React.FC = () => {
 		}
 	}, [dialogsDispatch, shouldShowDonationPrompt]);
 
+	React.useEffect(() => {
+		if (prefs.groupName === "" || prefs.groupCode === "") {
+			setActiveGroupName("No group or incorrect group code")
+			return
+		}
+		db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).get().then((doc) => {
+			if (doc.exists){
+				setActiveGroupName(prefs.groupName)
+			}
+			else {
+				setActiveGroupName("No group or incorrect group code")
+			}
+		}).catch((error) => {
+			console.log("Error in getting group: ", error)
+			setActiveGroupName("Incorrect group passcode")
+		})
+	}, [prefs.groupCode, prefs.groupName])
+
 	return (
 		<div className="story-list-route">
 			<StoryListToolbar selectedStories={selectedStories} />
 			<ClickAwayListener
 				ignoreSelector=".story-card"
-				onClickAway={() => storiesDispatch(deselectAllStories())}
+				onClickAway={() => storiesDispatch(deselectAllStories(prefs.groupName, prefs.groupCode))}
 			>
 				<MainContent
-					title={t(
+					title={
+						`${activeGroupName} | ` +
+						t(
 						prefs.storyListTagFilter.length > 0
 							? 'routes.storyList.taggedTitleCount'
 							: 'routes.storyList.titleCount',
 						{count: visibleStories.length}
-					)}
+					) }
 				>
 					<SafariWarningCard />
 					<div className="stories">
@@ -87,7 +110,7 @@ export const InnerStoryListRoute: React.FC = () => {
 						) : (
 							<StoryCards
 								onSelectStory={story =>
-									storiesDispatch(selectStory(story, true))
+									storiesDispatch(selectStory(story, true, prefs.groupName, prefs.groupCode))
 								}
 								stories={visibleStories}
 							/>

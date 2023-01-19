@@ -11,6 +11,8 @@ export type UndoableStoriesAction =
 			action: StoriesActionOrThunk;
 			description: string;
 			storiesState: StoriesState;
+			groupName: string,
+			groupCode: string
 	  }
 	| {type: 'updateCurrent'; change: number};
 

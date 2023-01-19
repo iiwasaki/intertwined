@@ -9,12 +9,14 @@ import {importStories, Story, useStoriesContext} from '../../store/stories';
 import {FileChooser} from './file-chooser';
 import {StoryChooser} from './story-chooser';
 import './story-import.css';
+import { usePrefsContext } from '../../store/prefs';
 
 export type StoryImportDialogProps = DialogCardProps;
 
 export const StoryImportDialog: React.FC<StoryImportDialogProps> = props => {
 	const {onClose} = props;
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 	const {dispatch, stories: existingStories} = useStoriesContext();
 	const [file, setFile] = React.useState<File>();
 	const [stories, setStories] = React.useState<Story[]>([]);
@@ -25,7 +27,7 @@ export const StoryImportDialog: React.FC<StoryImportDialogProps> = props => {
 	}
 
 	function handleImport(stories: Story[]) {
-		dispatch(importStories(stories, existingStories));
+		dispatch(importStories(stories, existingStories, prefs.groupName, prefs.groupCode));
 		onClose();
 	}
 

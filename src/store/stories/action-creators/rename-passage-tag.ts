@@ -11,7 +11,9 @@ import {isValidTagName} from '../../../util/tag';
 export function renamePassageTag(
 	story: Story,
 	oldName: string,
-	newName: string
+	newName: string,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdatePassagesAction | UpdateStoryAction> {
 	if (!isValidTagName(newName)) {
 		throw new Error(`"${newName}" is not a valid tag name.`);
@@ -31,7 +33,7 @@ export function renamePassageTag(
 		});
 
 		if (Object.keys(passageUpdates).length > 0) {
-			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id});
+			dispatch({type: 'updatePassages', passageUpdates, storyId: story.id, groupName: groupName, groupCode: groupCode});
 
 			// Move the tag color to the new one.
 
@@ -42,7 +44,9 @@ export function renamePassageTag(
 			dispatch({
 				type: 'updateStory',
 				props: {tagColors},
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};

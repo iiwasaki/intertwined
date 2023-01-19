@@ -25,7 +25,9 @@ export function deleteOrphanedPassages(
 	story: Story,
 	passage: Passage,
 	newText: string,
-	oldText: string
+	oldText: string,
+	groupName: string,
+	groupCode: string,
 ): Thunk<StoriesState, DeletePassagesAction> {
 	if (!story.passages.some(p => p.id === passage.id)) {
 		throw new Error('This passage does not belong to this story.');
@@ -63,7 +65,7 @@ export function deleteOrphanedPassages(
 		}, []);
 
 		if (passageIds.length > 0) {
-			dispatch({type: 'deletePassages', passageIds, storyId: story.id});
+			dispatch({type: 'deletePassages', passageIds, storyId: story.id, groupName: groupName, groupCode: groupCode});
 		}
 	};
 }

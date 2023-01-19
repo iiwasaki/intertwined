@@ -7,6 +7,7 @@ import {StoryTagsButton} from './story-tags-button';
 /* For firebase */
 import {GroupButton} from "./group-button"
 import { AddGroupButton } from './add-group-button';
+import { RefreshLibraryButton } from './refresh-library-button';
 
 export const LibraryActions: React.FC = () => (
 	<ButtonBar>
@@ -15,5 +16,6 @@ export const LibraryActions: React.FC = () => (
 		<ArchiveButton />
 		<GroupButton />
 		<AddGroupButton />
+		<RefreshLibraryButton />
 	</ButtonBar>
 );

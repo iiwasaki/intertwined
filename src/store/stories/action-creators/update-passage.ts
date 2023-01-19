@@ -19,7 +19,9 @@ export function updatePassage(
 	story: Story,
 	passage: Passage,
 	props: Partial<Passage>,
-	options: UpdatePassageOptions = {}
+	options: UpdatePassageOptions = {},
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, StoriesAction> {
 	if (!story.passages.some(p => p.id === passage.id)) {
 		throw new Error('This passage does not belong to this story.');
@@ -49,14 +51,14 @@ export function updatePassage(
 		// 	storyId: story.id
 		// });
 
-		db.collection("passages").doc("group_id").collection(story.id).doc(passage.id).set({
+		db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.name).doc(passage.id).set({
 			text: props.text
 		}, {merge: true})
 
 		// Side effects from changes.
 
 		if (!options.dontUpdateOthers && props.text) {
-			dispatch(deleteOrphanedPassages(story, passage, props.text, oldText));
+			dispatch(deleteOrphanedPassages(story, passage, props.text, oldText, groupName, groupCode));
 
 			// We need to get an up-to-date version of the story so placement of new
 			// passages is correct.
@@ -69,7 +71,7 @@ export function updatePassage(
 			const updatedStory = storyWithId(getState(), story.id);
 
 			dispatch(
-				createNewlyLinkedPassages(updatedStory, passage, props.text, oldText)
+				createNewlyLinkedPassages(updatedStory, passage, props.text, oldText, groupName, groupCode)
 			);
 		}
 
@@ -120,7 +122,9 @@ export function updatePassage(
 						story,
 						relinkedPassage,
 						{text: newText},
-						options
+						options,
+						groupName,
+						groupCode
 					)(dispatch, getState);
 				}
 			});

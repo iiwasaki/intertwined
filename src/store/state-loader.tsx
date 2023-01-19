@@ -30,33 +30,33 @@ export const StateLoader: React.FC = ({children}) => {
 	// Repairs must go:
 	// formats -> prefs (so it can repair bad format preferences) -> stories
 
-	React.useEffect(() => {
-		if (inited){
-			console.log("Init complete!")
-			db.collection("stories").onSnapshot( (snapshot) => {
-				snapshot.docChanges().forEach( (change) => {
-					if (change.type === "added"){
-						console.log("New story ", change.doc.data())
-					}
-					if (change.type === "modified"){
-						console.log("Modified story: ", change.doc.data())
-						storiesDispatch({type: "updateStory", storyId: change.doc.data().id, props: {name: change.doc.data().name}})
-					}
-					if (change.type === "removed"){
-						console.log("Removed story: ", change.doc.data())
-					}
-				})
-			})
-		}
-		
-	}, [inited])
+	/* No longer going to subscribe to the story list; users will have to manually refresh */
+	// React.useEffect(() => {
+	// 	if (inited){
+	// 		console.log("Init complete!")
+	// 		db.collection("stories").onSnapshot( (snapshot) => {
+	// 			snapshot.docChanges().forEach( (change) => {
+	// 				if (change.type === "added"){
+	// 					console.log("New story ", change.doc.data())
+	// 				}
+	// 				if (change.type === "modified"){
+	// 					console.log("Modified story: ", change.doc.data())
+	// 					storiesDispatch({type: "updateStory", storyId: change.doc.data().id, props: {name: change.doc.data().name}})
+	// 				}
+	// 				if (change.type === "removed"){
+	// 					console.log("Removed story: ", change.doc.data())
+	// 				}
+	// 			})
+	// 		})
+	// 	}
+	// }, [inited])
 
 	React.useEffect(() => {
 		async function run() {
 			if (!initing) {
 				const formatsState = await storyFormats.load();
 				const prefsState = await prefs.load();
-				const storiesState = await stories.load();
+				const storiesState = await stories.load(prefsState.groupName, prefsState.groupCode);
 
 				formatsDispatch({type: 'init', state: formatsState});
 				prefsDispatch({type: 'init', state: prefsState});

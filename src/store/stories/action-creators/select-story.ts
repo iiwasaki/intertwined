@@ -5,14 +5,18 @@ import {StoriesState, Story, UpdateStoryAction} from '../stories.types';
  * Deselects a single story.
  */
 export function deselectStory(
-	story: Story
+	story: Story,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdateStoryAction> {
 	return (dispatch, getState) => {
 		if (!story.selected) {
 			dispatch({
 				type: 'updateStory',
 				storyId: story.id,
-				props: {selected: false}
+				props: {selected: false},
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};
@@ -21,14 +25,19 @@ export function deselectStory(
 /**
  * Deselects all stories.
  */
-export function deselectAllStories(): Thunk<StoriesState, UpdateStoryAction> {
+export function deselectAllStories(
+	groupName: string,
+	groupCode: string
+): Thunk<StoriesState, UpdateStoryAction> {
 	return (dispatch, getState) => {
 		for (const story of getState()) {
 			if (story.selected) {
 				dispatch({
 					type: 'updateStory',
 					storyId: story.id,
-					props: {selected: false}
+					props: {selected: false},
+					groupName: groupName,
+					groupCode: groupCode,
 				});
 			}
 		}
@@ -40,14 +49,18 @@ export function deselectAllStories(): Thunk<StoriesState, UpdateStoryAction> {
  */
 export function selectStory(
 	story: Story,
-	exclusive: boolean
+	exclusive: boolean,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdateStoryAction> {
 	return (dispatch, getState) => {
 		if (!story.selected) {
 			dispatch({
 				type: 'updateStory',
 				storyId: story.id,
-				props: {selected: true}
+				props: {selected: true},
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 
@@ -57,7 +70,9 @@ export function selectStory(
 					dispatch({
 						type: 'updateStory',
 						storyId: other.id,
-						props: {selected: false}
+						props: {selected: false},
+						groupName: groupName,
+						groupCode: groupCode
 					});
 				}
 			}

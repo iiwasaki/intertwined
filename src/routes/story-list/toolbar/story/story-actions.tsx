@@ -7,6 +7,7 @@ import {DeleteStoryButton} from './delete-story-button';
 import {DuplicateStoryButton} from './duplicate-story-button';
 import {EditStoryButton} from './edit-story-button';
 import {TagStoryButton} from './tag-story-button';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface StoryActionsProps {
 	selectedStory?: Story;
@@ -14,6 +15,7 @@ export interface StoryActionsProps {
 
 export const StoryActions: React.FC<StoryActionsProps> = props => {
 	const {selectedStory} = props;
+	const {prefs} = usePrefsContext();
 	const {dispatch, stories} = useStoriesContext();
 
 	return (
@@ -24,7 +26,7 @@ export const StoryActions: React.FC<StoryActionsProps> = props => {
 			<RenameStoryButton
 				existingStories={stories}
 				onRename={name =>
-					dispatch(updateStory(stories, selectedStory!, {name}))
+					dispatch(updateStory(stories, selectedStory!, {name}, prefs.groupName, prefs.groupCode))
 				}
 				story={selectedStory}
 			/>

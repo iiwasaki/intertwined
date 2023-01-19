@@ -10,6 +10,7 @@ import {
 } from '../../store/stories';
 import {useUndoableStoriesContext} from '../../store/undoable-stories';
 import {Color} from '../../util/color';
+import { usePrefsContext } from '../../store/prefs';
 
 export interface TagToolbarProps {
 	passage: Passage;
@@ -20,17 +21,18 @@ export const TagToolbar: React.FC<TagToolbarProps> = props => {
 	const {passage, story} = props;
 	const {dispatch, stories} = useUndoableStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 
 	function handleChangeTagColor(name: string, color: Color) {
 		dispatch(
 			updateStory(stories, story, {
-				tagColors: {...story.tagColors, [name]: color}
-			})
+				tagColors: {...story.tagColors, [name]: color},
+			}, prefs.groupName, prefs.groupCode)
 		);
 	}
 
 	function handleRemoveTag(name: string) {
-		dispatch(removePassageTag(story, passage, name), t('undoChange.removeTag'));
+		dispatch(removePassageTag(story, passage, name, prefs.groupName, prefs.groupCode), t('undoChange.removeTag'));
 	}
 
 	if (passage.tags.length === 0) {

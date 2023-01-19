@@ -7,7 +7,9 @@ import {storyFileName} from '../../../electron/shared';
 export function updateStory(
 	stories: Story[],
 	story: Story,
-	props: Partial<Story>
+	props: Partial<Story>,
+	groupName: string,
+	groupCode: string
 ): UpdateStoryAction {
 	if (
 		props.name &&
@@ -21,6 +23,8 @@ export function updateStory(
 	return {
 		props,
 		storyId: story.id,
-		type: 'updateStory'
+		type: 'updateStory',
+		groupName: groupName,
+		groupCode: groupCode
 	};
 }

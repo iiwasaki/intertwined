@@ -16,6 +16,7 @@ import {
 import {useUndoableStoriesContext} from '../store/undoable-stories';
 import {DialogComponentProps} from './dialogs.types';
 import './story-search.css';
+import { usePrefsContext } from '../store/prefs';
 
 // See https://github.com/codemirror/CodeMirror/issues/5444
 
@@ -38,6 +39,7 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 	const [replace, setReplace] = React.useState('');
 	const [find, setFind] = React.useState('');
 	const {dispatch, stories} = useUndoableStoriesContext();
+	const {prefs} = usePrefsContext();
 	const debouncedDispatch = React.useMemo(
 		() => debounce(dispatch, 250),
 		[dispatch]
@@ -50,10 +52,10 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 	const matches = passagesMatchingSearch(story.passages, find, flags);
 
 	React.useEffect(() => {
-		debouncedDispatch(highlightPassagesMatchingSearch(story, find, flags));
+		debouncedDispatch(highlightPassagesMatchingSearch(story, find, flags, prefs.groupName, prefs.groupCode));
 
 		return () =>
-			debouncedDispatch(highlightPassagesMatchingSearch(story, '', {}));
+			debouncedDispatch(highlightPassagesMatchingSearch(story, '', {}, prefs.groupName, prefs.groupCode));
 	}, [debouncedDispatch, find, flags, story]);
 
 	function handleReplaceWithChange(
@@ -74,7 +76,7 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 
 	function handleReplace() {
 		dispatch(
-			replaceInStory(story, find, replace, flags),
+			replaceInStory(story, find, replace, flags, prefs.groupName, prefs.groupCode),
 			'undoChange.replaceAllText'
 		);
 	}

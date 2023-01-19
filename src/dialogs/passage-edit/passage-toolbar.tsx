@@ -19,6 +19,7 @@ import {
 } from '../../store/stories';
 import {useUndoableStoriesContext} from '../../store/undoable-stories';
 import {Color} from '../../util/color';
+import { usePrefsContext } from '../../store/prefs';
 
 export interface PassageToolbarProps {
 	editor?: Editor;
@@ -30,6 +31,7 @@ export const PassageToolbar: React.FC<PassageToolbarProps> = props => {
 	const {editor, passage, story} = props;
 	const {dispatch, stories} = useUndoableStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 	const isStart = story.startPassage === passage.id;
 
 	function handleAddTag(name: string, color?: Color) {
@@ -42,10 +44,10 @@ export const PassageToolbar: React.FC<PassageToolbarProps> = props => {
 		//
 		// If this changes, then this should change too.
 
-		dispatch(addPassageTag(story, passage, name), t('undoChange.addTag'));
+		dispatch(addPassageTag(story, passage, name, prefs.groupName, prefs.groupCode), t('undoChange.addTag'));
 
 		if (color) {
-			dispatch(setTagColor(story, name, color));
+			dispatch(setTagColor(story, name, color, prefs.groupName, prefs.groupCode));
 		}
 	}
 
@@ -55,15 +57,15 @@ export const PassageToolbar: React.FC<PassageToolbarProps> = props => {
 		// existing passages, updates them, but does not see that the passage name
 		// has been updated since that hasn't happened yet.
 
-		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}));
+		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}, prefs.groupName, prefs.groupCode));
 	}
 
 	function handleSetAsStart() {
-		dispatch(updateStory(stories, story, {startPassage: passage.id}));
+		dispatch(updateStory(stories, story, {startPassage: passage.id}, prefs.groupName, prefs.groupCode));
 	}
 
 	function handleSetSize({height, width}: {height: number; width: number}) {
-		dispatch(updatePassage(story, passage, {height, width}));
+		dispatch(updatePassage(story, passage, {height, width}, {}, prefs.groupName, prefs.groupCode));
 	}
 
 	return (

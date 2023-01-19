@@ -3,36 +3,49 @@ import { Passage, Story } from '../../../stories/stories.types';
 import { db } from '../../../../firebase-config';
 
 /* Firebase load */
-export async function load(): Promise<Story[]> {
+export async function load(groupName?: string, groupCode?: string): Promise<Story[]> {
 	const stories: Record<string, Story> = {};
-	const results = await db.collection("stories").get()
-	if (results.empty) {
+	console.log("In load")
+	console.log("Group name: ", groupName)
+	console.log("Group code: ", groupCode)
+	if (!groupName || !groupCode){
+		return []
+	}
+	const results = await db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").get().catch((error) => {
+		console.log("Insufficient perms: ", error)
+		return null
+	})
+	if (results) {
+		if (results.empty) {
+			return [];
+		}
+		results.forEach((doc) => {
+			const story: Story = JSON.parse(JSON.stringify(doc.data()))
+			if (!story.id) {
+				console.warn('Story in firestore storage had no ID, skipping', story);
+				return;
+			}
+			stories[story.name] = {
+				...storyDefaults(),
+				...story,
+
+				// Coerce lastUpdate to a date.
+				lastUpdate: story.lastUpdate
+					? new Date(Date.parse(story.lastUpdate as unknown as string))
+					: new Date(),
+
+				// Force the passages property to be an empty array -- we'll populate it
+				// when we load passages below.
+				passages: []
+			}
+		})
+	}
+	else {
 		return [];
 	}
-	results.forEach((doc) => {
-		const story: Story = JSON.parse(JSON.stringify(doc.data()))
-		if (!story.id) {
-			console.warn('Story in firestore storage had no ID, skipping', story);
-			return;
-		}
-		stories[story.id] = {
-			...storyDefaults(),
-			...story,
-
-			// Coerce lastUpdate to a date.
-			lastUpdate: story.lastUpdate
-				? new Date(Date.parse(story.lastUpdate as unknown as string))
-				: new Date(),
-
-			// Force the passages property to be an empty array -- we'll populate it
-			// when we load passages below.
-			passages: []
-		}
-	})
-
 	console.log("Showing stories ", stories)
 	for (const key of Object.keys(stories)) {
-		const passages = await db.collection("passages").doc("group_id").collection(key).get()
+		const passages = await db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(key).get()
 		passages.forEach((query) => {
 			const passage: Passage = JSON.parse(JSON.stringify(query.data()))
 			stories[passage.story].passages.push({

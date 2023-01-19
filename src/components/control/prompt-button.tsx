@@ -64,7 +64,7 @@ export const PromptButton: React.FC<PromptButtonProps> = props => {
 				}
 			}
 		}
-
+		setValidation({valid:false, message: "Validating input..."})
 		updateValidation();
 	}, [validate, value]);
 

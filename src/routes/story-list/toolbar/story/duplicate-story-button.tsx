@@ -7,6 +7,7 @@ import {
 	Story,
 	useStoriesContext
 } from '../../../../store/stories';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface DuplicateStoryButtonProps {
 	story?: Story;
@@ -17,13 +18,14 @@ export const DuplicateStoryButton: React.FC<DuplicateStoryButtonProps> = ({
 }) => {
 	const {dispatch, stories} = useStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 
 	function handleClick() {
 		if (!story) {
 			throw new Error('No story set');
 		}
 
-		dispatch(duplicateStory(story, stories));
+		dispatch(duplicateStory(story, stories, prefs.groupName, prefs.groupCode));
 	}
 
 	return (

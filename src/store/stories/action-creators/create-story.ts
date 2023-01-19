@@ -31,7 +31,9 @@ export function createStory(
 				storyFormat: prefs.storyFormat.name,
 				storyFormatVersion: prefs.storyFormat.version,
 				...props
-			}
+			},
+			groupName: prefs.groupName,
+			groupCode: prefs.groupCode
 		});
 
 		return id;

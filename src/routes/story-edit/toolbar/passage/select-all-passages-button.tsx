@@ -7,6 +7,7 @@ import {
 	Story,
 	useStoriesContext
 } from '../../../../store/stories';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface SelectAllPassagesButtonProps {
 	story: Story;
@@ -16,12 +17,13 @@ export const SelectAllPassagesButton: React.FC<SelectAllPassagesButtonProps> = p
 	const {story} = props;
 	const {dispatch} = useStoriesContext();
 	const {t} = useTranslation();
+	const {prefs} = usePrefsContext();
 
 	return (
 		<IconButton
 			icon={<IconMarquee />}
 			label={t('common.selectAll')}
-			onClick={() => dispatch(selectAllPassages(story))}
+			onClick={() => dispatch(selectAllPassages(story, prefs.groupName, prefs.groupCode))}
 		/>
 	);
 };

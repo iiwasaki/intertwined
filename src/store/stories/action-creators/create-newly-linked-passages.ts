@@ -18,7 +18,9 @@ export function createNewlyLinkedPassages(
 	story: Story,
 	passage: Passage,
 	newText: string,
-	oldText: string
+	oldText: string,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, CreatePassagesAction> {
 	if (!story.passages.some(p => p.id === passage.id)) {
 		throw new Error('This passage does not belong to this story.');
@@ -90,7 +92,9 @@ export function createNewlyLinkedPassages(
 
 				left += passageDefs.width + passageGap;
 				return result;
-			})
+			}),
+			groupName: groupName,
+			groupCode: groupCode
 		});
 	};
 }

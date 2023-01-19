@@ -7,7 +7,9 @@ export function movePassages(
 	story: Story,
 	passageIds: string[],
 	xChange: number,
-	yChange: number
+	yChange: number,
+	groupName: string,
+	groupCode: string,
 ): UpdatePassagesAction {
 	const passageUpdates: Record<string, Partial<Passage>> = {};
 
@@ -35,5 +37,5 @@ export function movePassages(
 		passageUpdates[passage.id] = {left, top};
 	});
 
-	return {type: 'updatePassages', passageUpdates, storyId: story.id};
+	return {type: 'updatePassages', passageUpdates, storyId: story.id, groupName: groupName, groupCode: groupCode};
 }

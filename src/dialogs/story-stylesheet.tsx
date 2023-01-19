@@ -30,7 +30,7 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 		text: string
 	) => {
 		setCmEditor(editor);
-		dispatch(updateStory(stories, story, {stylesheet: text}));
+		dispatch(updateStory(stories, story, {stylesheet: text}, prefs.groupName, prefs.groupCode));
 	};
 
 	return (

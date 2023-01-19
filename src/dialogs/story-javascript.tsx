@@ -31,7 +31,7 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 		text: string
 	) => {
 		setCmEditor(editor);
-		dispatch(updateStory(stories, story, {script: text}));
+		dispatch(updateStory(stories, story, {script: text}, prefs.groupName, prefs.groupCode));
 	};
 
 	return (

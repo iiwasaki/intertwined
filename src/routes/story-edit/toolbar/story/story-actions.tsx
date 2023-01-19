@@ -7,6 +7,7 @@ import {FindReplaceButton} from './find-replace-button';
 import {JavaScriptButton} from './javascript-button';
 import {PassageTagsButton} from './passage-tags-button';
 import {StylesheetButton} from './stylesheet-button';
+import { usePrefsContext } from '../../../../store/prefs';
 
 export interface StoryActionsProps {
 	story: Story;
@@ -14,6 +15,7 @@ export interface StoryActionsProps {
 
 export const StoryActions: React.FC<StoryActionsProps> = props => {
 	const {dispatch, stories} = useStoriesContext();
+	const {prefs} = usePrefsContext();
 	const {story} = props;
 
 	return (
@@ -21,7 +23,7 @@ export const StoryActions: React.FC<StoryActionsProps> = props => {
 			<FindReplaceButton story={story} />
 			<RenameStoryButton
 				existingStories={stories}
-				onRename={name => dispatch(updateStory(stories, story, {name}))}
+				onRename={name => dispatch(updateStory(stories, story, {name}, prefs.groupName, prefs.groupCode))}
 				story={story}
 			/>
 			<DetailsButton story={story} />

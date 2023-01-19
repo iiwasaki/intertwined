@@ -6,7 +6,9 @@ import {StoriesState, Story, UpdateStoryAction} from '../stories.types';
 export function setTagColor(
 	story: Story,
 	name: string,
-	color: Color
+	color: Color,
+	groupName: string,
+	groupCode: string
 ): Thunk<StoriesState, UpdateStoryAction> {
 	if (!isValidTagName(name)) {
 		throw new Error(`"${name}" is not a valid tag name.`);
@@ -24,14 +26,18 @@ export function setTagColor(
 				dispatch({
 					type: 'updateStory',
 					props: {tagColors},
-					storyId: story.id
+					storyId: story.id,
+					groupName: groupName,
+					groupCode: groupCode
 				});
 			}
 		} else {
 			dispatch({
 				type: 'updateStory',
 				props: {tagColors: {...story.tagColors, [name]: color}},
-				storyId: story.id
+				storyId: story.id,
+				groupName: groupName,
+				groupCode: groupCode
 			});
 		}
 	};

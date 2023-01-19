@@ -10,13 +10,15 @@ import {
  */
 export function deletePassage(
 	story: Story,
-	passage: Passage
+	passage: Passage,
+	groupName: string,
+	groupCode: string,
 ): DeletePassageAction {
 	if (!story.passages.some(p => p.id === passage.id)) {
 		throw new Error('This passage does not belong to this story.');
 	}
 
-	return {type: 'deletePassage', storyId: story.id, passageId: passage.id};
+	return {type: 'deletePassage', storyId: story.id, passageId: passage.id, groupName, groupCode};
 }
 
 /**
@@ -24,11 +26,15 @@ export function deletePassage(
  */
 export function deletePassages(
 	story: Story,
-	passages: Passage[]
+	passages: Passage[],
+	groupName: string,
+	groupCode: string,
 ): DeletePassagesAction {
 	return {
 		type: 'deletePassages',
 		storyId: story.id,
-		passageIds: passages.map(passage => passage.id)
+		passageIds: passages.map(passage => passage.id),
+		groupName,
+		groupCode
 	};
 }

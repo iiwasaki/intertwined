@@ -38,7 +38,7 @@ export function createPassage(
 			...passageDefaults(),
 			id: uuid(),
 			...passageProps,
-			story: story.id
+			story: story.name
 		};
 		const newStory: Story = {
 			...story,
