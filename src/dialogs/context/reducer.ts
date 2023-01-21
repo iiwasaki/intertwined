@@ -46,6 +46,9 @@ export const reducer: React.Reducer<DialogsState, DialogsAction> = (
 		case 'removeDialog':
 			return state.filter((dialog, index) => index !== action.index);
 
+		case 'removeAllDialogs':
+			return [];
+
 		case 'setDialogCollapsed':
 			return state.map((dialog, index) =>
 				index === action.index

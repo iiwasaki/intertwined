@@ -7,6 +7,7 @@ import {IconButton} from '../../../../components/control/icon-button';
 import {deletePassages, Passage, Story} from '../../../../store/stories';
 import {useUndoableStoriesContext} from '../../../../store/undoable-stories';
 import { usePrefsContext } from '../../../../store/prefs';
+import { deletePassagesFB } from '../../../../store/stories';
 
 export interface DeletePassagesButtonProps {
 	passages: Passage[];
@@ -32,12 +33,14 @@ export const DeletePassagesButton: React.FC<
 			return;
 		}
 
-		dispatch(
-			deletePassages(story, passages, prefs.groupName, prefs.groupCode),
-			passages.length > 1
-				? 'undoChange.deletePassages'
-				: 'undoChange.deletePassage'
-		);
+		// dispatch(
+		// 	deletePassages(story, passages, prefs.groupName, prefs.groupCode),
+		// 	passages.length > 1
+		// 		? 'undoChange.deletePassages'
+		// 		: 'undoChange.deletePassage'
+		// );
+
+		deletePassagesFB(story, passages, prefs.groupName, prefs.groupCode)
 	}, [dispatch, passages, story]);
 
 	useHotkeys('Backspace,Delete', handleClick, [handleClick]);

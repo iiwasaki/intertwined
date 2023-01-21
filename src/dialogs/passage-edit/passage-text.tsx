@@ -63,10 +63,6 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		() =>
 			debounce((value: string) => {
 				onChange(value);
-				// setChangePending(false);
-				// db.collection("passages").doc("group_id").collection(story.id).doc(passage.id).set({
-				// 	text: value
-				// }, {merge: true})
 			}, 2000),
 		[onChange]
 	);
@@ -78,9 +74,7 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 			// The potential combination of loading a mode and the dialog entrance
 			// animation seems to mess up CodeMirror's cursor rendering. The delay below
 			// is intended to run after the animation completes.
-			console.log("handleMount triggered")
 			window.setTimeout(() => {
-				console.log("Actually handling mount")
 				editor.focus();
 				editor.refresh();
 			}, 1000);
@@ -94,9 +88,7 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 			data: CodeMirror.EditorChange,
 			text: string,
 		) => {
-			console.log("Firepad init is: ", firePadInit)
 			if (firePadInit){
-				console.log("in handleChange. Text is: ", text)
 				onEditorChange(editor);
 				setChangePending(true);
 				debouncedOnChange(text);
@@ -111,7 +103,7 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 			...codeMirrorOptionsFromPrefs(prefs),
 			mode: storyFormatExtensionsDisabled ? 'text' : mode,
 			lineWrapping: true,
-			placeholder: t('dialogs.passageEdit.passageTextPlaceholder'),
+			placeholder: (passage.text === '') ? t('dialogs.passageEdit.passageTextPlaceholder') : passage.text,
 			prefixTrigger: {
 				callback: autocompletePassageNames,
 				prefixes: ['[[', '->']

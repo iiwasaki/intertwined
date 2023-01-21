@@ -5,6 +5,7 @@ import {PromptButton} from '../control/prompt-button';
 import {storyFileName} from '../../electron/shared';
 import {Story} from '../../store/stories';
 import {IconButton} from '../control/icon-button';
+import { db } from '../../firebase-config';
 
 // This is here because it's used in two places--the story list and the story
 // info dialog.
@@ -21,37 +22,61 @@ interface EnabledRenameStoryButtonProps {
 	existingStories: Story[];
 	onRename: (value: string) => void;
 	story: Story;
+	groupName: string;
+	groupCode: string;
 }
 
 const EnabledRenameStoryButton: React.FC<EnabledRenameStoryButtonProps> = props => {
-	const {existingStories, onRename, story} = props;
+	const {existingStories, onRename, story, groupName, groupCode} = props;
 	const [newName, setNewName] = React.useState(story.name);
 	const {t} = useTranslation();
 
 	React.useEffect(() => setNewName(story.name), [story]);
 
 	function validate(name: string) {
-		if (name.trim() === '') {
+		return db.runTransaction((transaction) => {
+			let nameDocRef = db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(name);
+			return transaction.get(nameDocRef).then((nameDoc => {
+				if (nameDoc.exists){
+					return {
+						valid: false,
+						message: t('components.renameStoryButton.nameAlreadyUsed'),
+					}
+				}
+				else {
+					return {
+						valid: true,
+					}
+				}
+			})).catch(() => {
+				return {
+					valid: false,
+					message: t('components.renameStoryButton.emptyName'),
+				}
+			})
+		}).then((result) => {
+			return result;
+		}).catch(() => {
 			return {
+				valid: false,
 				message: t('components.renameStoryButton.emptyName'),
-				valid: false
-			};
-		}
+			}
+		})
 
-		if (
-			existingStories.some(
-				s =>
-					s.id !== story.id &&
-					storyFileName(s) === storyFileName({...story, name})
-			)
-		) {
-			return {
-				message: t('components.renameStoryButton.nameAlreadyUsed'),
-				valid: false
-			};
-		}
+		// if (
+		// 	existingStories.some(
+		// 		s =>
+		// 			s.id !== story.id &&
+		// 			storyFileName(s) === storyFileName({...story, name})
+		// 	)
+		// ) {
+		// 	return {
+		// 		message: t('components.renameStoryButton.nameAlreadyUsed'),
+		// 		valid: false
+		// 	};
+		// }
 
-		return {valid: true};
+		// return {valid: true};
 	}
 
 	return (

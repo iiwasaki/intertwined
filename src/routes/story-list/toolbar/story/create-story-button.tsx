@@ -4,17 +4,19 @@ import {useHistory} from 'react-router-dom';
 import {IconPlus} from '@tabler/icons';
 import {usePrefsContext} from '../../../../store/prefs';
 import {
-	createStory,
-	storyDefaults,
+	createStoryFirebase,
+	createPassageFirebase,
 	useStoriesContext
 } from '../../../../store/stories';
 import {PromptButton} from '../../../../components/control/prompt-button';
 import {unusedName} from '../../../../util/unused-name';
 import { db } from '../../../../firebase-config';
 import { usePersistence } from '../../../../store/persistence/use-persistence';
+import { useStoryFormatsContext } from '../../../../store/story-formats';
 
 export const CreateStoryButton: React.FC = () => {
 	const {dispatch, stories} = useStoriesContext();
+	const {formats} = useStoryFormatsContext();
 	const [newName, setNewName] = React.useState("");
 	const history = useHistory();
 	const {prefs} = usePrefsContext();
@@ -79,12 +81,19 @@ export const CreateStoryButton: React.FC = () => {
 	}
 
 	function handleSubmit() {
+		if (newName.trim() === '') {
+			alert(t('routes.storyList.toolbar.createStoryButton.emptyName'))
+			return;
+		}
 		db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).collection("stories").doc(newName).get().then(async (doc) => {
 			if (!doc.exists){
-				createStory(stories, prefs, {name: newName})(
-					dispatch,
-					() => stories
-				);
+				createStoryFirebase(stories, prefs, {name: newName, storyFormat: prefs.storyFormat.name, storyFormatVersion: prefs.storyFormat.version}).then((id) => {
+					console.log("Made story with id: ", id)
+					createPassageFirebase(prefs, id).then(async () => {
+						const newStories = await storyPersistence.load(prefs.groupName, prefs.groupCode)
+						dispatch({type: 'init', state: newStories})
+					})
+				})
 			}
 			else {
 				const newStories = await storyPersistence.load(prefs.groupName, prefs.groupCode)

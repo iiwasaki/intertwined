@@ -2,7 +2,7 @@ import escapeRegExp from 'lodash/escapeRegExp';
 import {Thunk} from 'react-hook-thunk-reducer';
 import {storyWithId} from '../getters';
 import {Passage, StoriesAction, StoriesState, Story} from '../stories.types';
-import {createNewlyLinkedPassages} from './create-newly-linked-passages';
+import {createNewlyLinkedPassagesFirebase} from './create-newly-linked-passages-fb';
 import {deleteOrphanedPassages} from './delete-orphaned-passages';
 
 /*Firebase*/
@@ -51,7 +51,7 @@ export function updatePassage(
 		// 	storyId: story.id
 		// });
 
-		db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.name).doc(passage.id).set({
+		db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name).set({
 			text: props.text
 		}, {merge: true})
 
@@ -70,9 +70,12 @@ export function updatePassage(
 
 			const updatedStory = storyWithId(getState(), story.id);
 
-			dispatch(
-				createNewlyLinkedPassages(updatedStory, passage, props.text, oldText, groupName, groupCode)
-			);
+			// Old - this does not work with Firebase.
+			// dispatch(
+			// 	createNewlyLinkedPassages(updatedStory, passage, props.text, oldText, groupName, groupCode)
+			// );
+
+			createNewlyLinkedPassagesFirebase(updatedStory, passage, props.text, oldText, groupName, groupCode)
 		}
 
 		if (props.name) {

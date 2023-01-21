@@ -33,4 +33,5 @@ export type DialogsAction =
 	  }
 	| {type: 'removeDialog'; index: number}
 	| {type: 'setDialogCollapsed'; collapsed: boolean; index: number}
-	| {type: 'setDialogMaximized'; maximized: boolean; index: number};
+	| {type: 'setDialogMaximized'; maximized: boolean; index: number}
+	| {type: 'removeAllDialogs'};

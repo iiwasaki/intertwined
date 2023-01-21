@@ -25,7 +25,7 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 				console.warn('Story in firestore storage had no ID, skipping', story);
 				return;
 			}
-			stories[story.name] = {
+			stories[story.id] = {
 				...storyDefaults(),
 				...story,
 

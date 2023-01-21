@@ -12,29 +12,37 @@ export interface EditPassagesButtonProps {
 
 export const EditPassagesButton: React.FC<EditPassagesButtonProps> = props => {
 	const {passages, story} = props;
-	const {dispatch} = useDialogsContext();
+	const {dispatch: dialogsDispatch, dialogs: allDialogs} = useDialogsContext();
 	const {t} = useTranslation();
 
 	function handleClick() {
-		dispatch(dispatch =>
-			passages.forEach(passage =>
-				dispatch({
+		// Only one edit window open for now - Firepad and CodeMirror desyncs when multiple are opened.
+		if (allDialogs.length > 0) {
+			dialogsDispatch({
+				type: 'removeAllDialogs'
+			})
+			setTimeout(() => {
+				dialogsDispatch({
 					type: 'addDialog',
 					component: PassageEditDialog,
-					props: {passageId: passage.id, storyId: story.id}
+					props: { passageId: passages[0].id, storyId: story.id }
 				})
-			)
-		);
+			}, 700)
+		}
+		else {
+			dialogsDispatch({
+				type: 'addDialog',
+				component: PassageEditDialog,
+				props: { passageId: passages[0].id, storyId: story.id }
+			})
+		}
 	}
 
 	return (
 		<IconButton
 			disabled={passages.length === 0}
 			icon={<IconEdit />}
-			label={
-				passages.length > 1
-					? t('common.editCount', {count: passages.length})
-					: t('common.edit')
+			label={t('common.edit')
 			}
 			onClick={handleClick}
 		/>

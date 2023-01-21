@@ -122,7 +122,7 @@ export function savePassage(transaction: StorageTransaction, passage: Passage, g
 		JSON.stringify(passage)
 	);
 	console.log("In savePassage in save.ts")
-	db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(passage.story).doc(passage.id).set({
+	db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(passage.story).doc(passage.name).set({
 		id: passage.id,
 		left: passage.left,
 		name: passage.name,

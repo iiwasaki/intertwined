@@ -3,17 +3,21 @@
 import * as React from 'react';
 import { IconFolderPlus } from '@tabler/icons';
 import { setPref, usePrefsContext } from '../../../../store/prefs';
+import { useStoriesContext } from '../../../../store/stories';
+import { usePersistence } from '../../../../store/persistence/use-persistence';
 import { DualPromptButton } from '../../../../components/control/dual-prompt-button';
 import { db } from '../../../../firebase-config';
 
 export const AddGroupButton: React.FC = () => {
     const { dispatch, prefs } = usePrefsContext();
+    const { dispatch: storiesDispatch} = useStoriesContext();
     const [newGroup, setNewGroup] = React.useState(
         prefs.groupName
     )
     const [newCode, setNewCode] = React.useState(
         prefs.groupCode
     )
+    const {stories} = usePersistence();
 
     function alnumCheck(value: string) {
         let regEx = /^[0-9a-zA-Z]+$/;
@@ -82,10 +86,13 @@ export const AddGroupButton: React.FC = () => {
         }).then(() => {
             db.collection("grouplist").doc(newGroup).set({
                 active: true,
-            }).then(() => {
-                dispatch(setPref('groupName', newGroup))
-                dispatch(setPref('groupCode', newCode))
-                // Load stories again here
+            }).then(async () => {
+                const newStories = await stories.load(newGroup, newCode)
+                if (newStories) {
+                    storiesDispatch({type: 'init', state: newStories})
+                    dispatch(setPref('groupName', newGroup))
+                    dispatch(setPref('groupCode', newCode))
+                }
             }).catch((error) => {
                 console.log("Error setting new group in all groups list: ", error)
             })

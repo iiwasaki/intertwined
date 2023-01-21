@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { debounce } from 'lodash';
 import {useTranslation} from 'react-i18next';
 import {IndentButtons, UndoRedoButtons} from '../components/codemirror';
 import {ButtonBar} from '../components/container/button-bar';
@@ -23,15 +24,22 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 	const {t} = useTranslation();
 	const [firePadInit, setFirePadInit] = React.useState(false);
 
+	const debouncedOnChange = 
+			debounce((value: string) => {
+				dispatch(updateStory(stories, story, {stylesheet: value}, prefs.groupName, prefs.groupCode));
+			}, 2000)
 
-	const handleChange = (
+	const handleChange = React.useCallback((
 		editor: CodeMirror.Editor,
 		data: CodeMirror.EditorChange,
 		text: string
 	) => {
-		setCmEditor(editor);
-		dispatch(updateStory(stories, story, {stylesheet: text}, prefs.groupName, prefs.groupCode));
-	};
+		if (firePadInit){
+			setCmEditor(editor);
+			debouncedOnChange(text);
+		}
+	}, [firePadInit]
+	);
 
 	return (
 		<DialogCard
@@ -51,7 +59,7 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 					fontScale={prefs.codeEditorFontScale}
 					label={t('dialogs.storyStylesheet.editorLabel')}
 					labelHidden
-					onBeforeChange={handleChange}
+					onChange={handleChange}
 					options={{
 						...codeMirrorOptionsFromPrefs(prefs),
 						autofocus: true,
@@ -61,6 +69,8 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 					}}
 					value={story.stylesheet}
 					setFirePadInit={setFirePadInit}
+					storyId={story.id}
+					element={"stylesheet"}
 				/>
 			</DialogEditor>
 		</DialogCard>

@@ -34,17 +34,19 @@ import {
 	useStoriesContext
 } from "../../store/stories"
 import { usePrefsContext } from '../../store/prefs';
+import { useHistory } from 'react-router-dom';
 
 export const InnerStoryEditRoute: React.FC = () => {
 	const [inited, setInited] = React.useState(false);
-	const { dispatch: dialogsDispatch } = useDialogsContext();
+	const { dispatch: dialogsDispatch, dialogs: allDialogs } = useDialogsContext();
 	const mainContent = React.useRef<HTMLDivElement>(null);
 	const { storyId } = useParams<{ storyId: string }>();
 	const { dispatch: undoableStoriesDispatch, stories } =
 		useUndoableStoriesContext();
 	const story = storyWithId(stories, storyId);
 	const { dispatch: storiesDispatch } = useStoriesContext();
-	const {prefs} = usePrefsContext();
+	const { prefs } = usePrefsContext();
+	const history = useHistory();
 	useZoomShortcuts(story);
 
 	const selectedPassages = React.useMemo(
@@ -106,13 +108,28 @@ export const InnerStoryEditRoute: React.FC = () => {
 	);
 
 	const handleEditPassage = React.useCallback(
-		(passage: Passage) =>
-			dialogsDispatch({
-				type: 'addDialog',
-				component: PassageEditDialog,
-				props: { passageId: passage.id, storyId: story.id }
-			}),
-		[dialogsDispatch, story.id]
+		(passage: Passage) => {
+			if (allDialogs.length > 0) {
+				dialogsDispatch({
+					type: 'removeAllDialogs'
+				})
+				setTimeout(() => {
+					dialogsDispatch({
+						type: 'addDialog',
+						component: PassageEditDialog,
+						props: { passageId: passage.id, storyId: story.id }
+					})
+				}, 700)
+			}
+			else {
+				dialogsDispatch({
+					type: 'addDialog',
+					component: PassageEditDialog,
+					props: { passageId: passage.id, storyId: story.id }
+				})
+			}
+		},
+		[dialogsDispatch, story.id, allDialogs]
 	);
 
 	const handleSelectPassage = React.useCallback(
@@ -150,7 +167,6 @@ export const InnerStoryEditRoute: React.FC = () => {
 
 	React.useEffect(() => {
 		if (!inited) {
-			console.log("We are in the story edit route")
 			setInited(true);
 
 			if (story.passages.length === 0) {
@@ -166,11 +182,33 @@ export const InnerStoryEditRoute: React.FC = () => {
 	React.useEffect(() => {
 		console.log("Making snapshot for story")
 		let unsubscribe = db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).collection("stories").doc(story.name).onSnapshot((snapshot) => {
-			console.log("Snapshot triggered")
-			if (!snapshot.metadata.hasPendingWrites) {
-				console.log("Dispatching from story editing snapshot update")
-				storiesDispatch({ type: "updateStory", storyId: snapshot?.data()?.id, props: { name: snapshot?.data()?.name }, groupName: prefs.groupName,
-				groupCode: prefs.groupCode })
+			try {
+				console.log("Snapshot triggered")
+				if (snapshot?.data() === undefined) {
+					alert ("Story has been renamed or deleted; please go back to the main menu and refresh the library.")
+					history.push("/stories/")
+					return;
+				}
+				if (!snapshot.metadata.hasPendingWrites) {
+					console.log("Dispatching from story editing snapshot update")
+					storiesDispatch({
+						type: "updateStory", storyId: snapshot?.data()?.id, props: {
+							name: snapshot?.data()?.name,
+							startPassage: snapshot?.data()?.startPassage,
+							storyFormat: snapshot?.data()?.storyFormat,
+							storyFormatVersion: snapshot?.data()?.storyFormatVersion,
+							script: snapshot?.data()?.script,
+							stylesheet: snapshot?.data()?.stylesheet,
+							tagColors: snapshot?.data()?.tagColors,
+							tags: snapshot?.data()?.tags,
+						},
+						groupName: prefs.groupName,
+						groupCode: prefs.groupCode
+					})
+				}
+			}
+			catch(error) {
+				throw "Error"
 			}
 		}, (err) => {
 			throw new Error("Could not get story data from database - story does not exist, or incorrect group name or passcode.")
@@ -194,7 +232,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 							id: change.doc.data().id,
 							left: change.doc.data().left,
 							name: change.doc.data().name,
-							story: change.doc.data(). story,
+							story: change.doc.data().story,
 							tags: change.doc.data().tags,
 							text: change.doc.data().text,
 							top: change.doc.data().top,
@@ -205,21 +243,28 @@ export const InnerStoryEditRoute: React.FC = () => {
 				}
 				if (change.type === "modified") {
 					storiesDispatch({
-							type: "updatePassage", storyId: change.doc.data().story, passageId: change.doc.data().id, props: {
+						type: "updatePassage", storyId: change.doc.data().story, passageId: change.doc.data().id, props: {
 							id: change.doc.data().id,
 							left: change.doc.data().left,
 							name: change.doc.data().name,
 							story: change.doc.data().story,
 							tags: change.doc.data().tags,
 							text: change.doc.data().text,
-							top: change.doc.data().top
+							top: change.doc.data().top,
 						},
 						groupName: prefs.groupName,
 						groupCode: prefs.groupCode
 					})
 				}
-				if (change.type === "removed"){
+				if (change.type === "removed") {
 					console.log("Deleted Passage: ", change.doc.data())
+					storiesDispatch({
+						type:"deletePassage",
+						passageId: change.doc.data().id,
+						storyId: change.doc.data().story,
+						groupName: prefs.groupName,
+						groupCode: prefs.groupCode
+					})
 				}
 
 			})

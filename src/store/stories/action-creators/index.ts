@@ -16,3 +16,8 @@ export * from './tag-color';
 export * from './tag-passage';
 export * from './update-passage';
 export * from './update-story';
+export * from './create-story-fb';
+export * from './create-passage-fb';
+export * from './create-newly-linked-passages-fb'
+export * from "./rename-story-fb"
+export * from "./delete-passages-fb"

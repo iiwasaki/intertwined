@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { debounce } from 'lodash';
 import {useTranslation} from 'react-i18next';
 import {IndentButtons, UndoRedoButtons} from '../components/codemirror';
 import {ButtonBar} from '../components/container/button-bar';
@@ -25,14 +26,25 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 	const [firePadInit, setFirePadInit] = React.useState(false);
 
 
-	const handleChange = (
-		editor: CodeMirror.Editor,
-		data: CodeMirror.EditorChange,
-		text: string
-	) => {
-		setCmEditor(editor);
-		dispatch(updateStory(stories, story, {script: text}, prefs.groupName, prefs.groupCode));
-	};
+	const debouncedOnChange = 
+			debounce((value: string) => {
+				dispatch(updateStory(stories, story, {script: value}, prefs.groupName, prefs.groupCode));
+			}, 2000)
+
+	const handleChange = React.useCallback( 
+		(
+			editor: CodeMirror.Editor,
+			data: CodeMirror.EditorChange,
+			text: string
+		) => {
+		if (firePadInit){
+			setCmEditor(editor);
+			debouncedOnChange(text);
+		}
+		
+		
+	}, [firePadInit]
+	);
 
 	return (
 		<DialogCard
@@ -52,7 +64,7 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 					fontScale={prefs.codeEditorFontScale}
 					label={t('dialogs.storyJavaScript.editorLabel')}
 					labelHidden
-					onBeforeChange={handleChange}
+					onChange={handleChange}
 					options={{
 						...codeMirrorOptionsFromPrefs(prefs),
 						autofocus: true,
@@ -62,6 +74,8 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 					}}
 					value={story.script}
 					setFirePadInit={setFirePadInit}
+					storyId={story.id}
+					element={"javascript"}
 				/>
 			</DialogEditor>
 		</DialogCard>

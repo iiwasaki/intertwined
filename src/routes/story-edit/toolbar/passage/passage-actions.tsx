@@ -15,6 +15,7 @@ import {SelectAllPassagesButton} from './select-all-passages-button';
 import {StartAtPassageButton} from './start-at-passage-button';
 import {TestPassageButton} from './test-passage-button';
 import { usePrefsContext } from '../../../../store/prefs';
+import { renamePassageFB } from '../../../../store/stories/action-creators/rename-passage-fb';
 
 export interface PassageActionsProps {
 	getCenter: () => Point;
@@ -54,7 +55,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 			<CreatePassageButton getCenter={getCenter} story={story} />
 			<EditPassagesButton passages={selectedPassages} story={story} />
 			<RenamePassageButton
-				onRename={name => handleRename(name, soloSelectedPassage)}
+				onRename={(name) => {renamePassageFB(story, soloSelectedPassage, prefs.groupName, prefs.groupCode, name)}}
 				passage={soloSelectedPassage}
 				story={story}
 			/>

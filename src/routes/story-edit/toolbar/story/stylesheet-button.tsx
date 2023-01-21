@@ -11,19 +11,34 @@ export interface StylesheetButtonProps {
 
 export const StylesheetButton: React.FC<StylesheetButtonProps> = props => {
 	const {story} = props;
-	const {dispatch} = useDialogsContext();
+	const {dispatch, dialogs} = useDialogsContext();
 	const {t} = useTranslation();
 
 	return (
 		<IconButton
 			icon={<IconHash />}
 			label={t('routes.storyEdit.toolbar.stylesheet')}
-			onClick={() =>
-				dispatch({
-					type: 'addDialog',
+			onClick={() => {
+				if (dialogs.length > 0) {
+					dispatch({
+						type: 'removeAllDialogs'
+					})
+					setTimeout(() => {
+						dispatch({
+							type: 'addDialog',
 					component: StoryStylesheetDialog,
 					props: {storyId: story.id}
-				})
+						})
+					}, 700)
+				}
+				else {
+					dispatch({
+						type: 'addDialog',
+					component: StoryStylesheetDialog,
+					props: {storyId: story.id}
+					})
+				}
+			}
 			}
 		/>
 	);
