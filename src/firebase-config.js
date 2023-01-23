@@ -18,6 +18,8 @@ const fb_configs = {
 }
 
 console.log("Loading firebase")
+console.log(process.env.REACT_APP_FB_KEY)
+console.log(process.env.REACT_APP_NAME)
 
 if (!firebase.apps.length) {
     console.log("Connecting to firebase...")
