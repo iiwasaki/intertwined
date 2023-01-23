@@ -17,9 +17,7 @@ const fb_configs = {
     measurementId: "G-61FPX2TYRC"
 }
 
-console.log("Loading firebase")
-console.log(process.env.REACT_APP_FB_KEY)
-console.log(process.env.REACT_APP_NAME)
+console.log(process.env.REACT_APP_FB_API_KEY)
 
 if (!firebase.apps.length) {
     console.log("Connecting to firebase...")
