@@ -6,18 +6,18 @@ import firebase from "firebase/app"
 import "firebase/firestore"
 import "firebase/database"
 
-const fb_configs = {
-    apiKey: "AIzaSyAlGCG-47VvTtVndtm3hmvkUhgcKkXk50s",
-    authDomain: "intertwined-test-53c6b.firebaseapp.com",
-    databaseURL: "https://intertwined-test-53c6b-default-rtdb.firebaseio.com",
-    projectId: "intertwined-test-53c6b",
-    storageBucket: "intertwined-test-53c6b.appspot.com",
-    messagingSenderId: "664365222512",
-    appId: "1:664365222512:web:daca8db8328a61a3c7c2b5",
-    measurementId: "G-61FPX2TYRC"
-}
+/* If you are setting up your own, replace these with the configurations for your particular setup! */
 
-console.log(process.env.REACT_APP_FB_API_KEY)
+const fb_configs = {
+    apiKey: process.env.REACT_APP_FB_API_KEY,
+    authDomain: process.env.REACT_APP_FB_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_FB_DATABASEURL,
+    projectId: process.env.REACT_APP_FB_PROJECTID,
+    storageBucket: process.env.REACT_APP_FB_STORAGEBUCKET,
+    messagingSenderId: process.env.REACT_APP_FB_MESSAGESENDERID,
+    appId: process.env.REACT_APP_FB_APPID,
+    measurementId: process.env.REACT_APP_FB_MEASUREMENTID,
+}
 
 if (!firebase.apps.length) {
     console.log("Connecting to firebase...")
