@@ -49,7 +49,7 @@ export const UndoableStoriesContextProvider: React.FC = props => {
 
 			return storiesDispatch(action);
 		},
-		[stories, storiesDispatch]
+		[stories, storiesDispatch, prefs.groupName, prefs.groupCode]
 	);
 	const {t} = useTranslation();
 
