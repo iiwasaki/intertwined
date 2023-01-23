@@ -101,7 +101,7 @@
 		"build": "run-s clean build:web build:electron",
 		"build:analyze": "source-map-explorer 'dist/web/static/js/*.js'",
 		"build:docs": "cd docs/en && mdbook build",
-		"build:web": "react-scripts build",
+		"build:web": "BUILD_PATH=dist/web react-scripts build",
 		"postbuild:web": "cpy --cwd dist/web --parents . ../../electron-build/renderer; cd dist && cross-var zip -r twine-$npm_package_version-web.zip web && cd ..",
 		"build:electron": "npm-run-all --parallel build:web build:electron-main --serial build:electron-bundle",
 		"build:electron-main": "tsc --project tsconfig.electron.json",
