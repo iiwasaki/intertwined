@@ -22,7 +22,7 @@ export const ZoomButtons: React.FC<ZoomButtonsProps> = React.memo(({story}) => {
 		(zoom: number) => {
 			dispatch(updateStory(stories, story, {zoom}, prefs.groupName, prefs.groupCode));
 		},
-		[dispatch, stories, story]
+		[dispatch, stories, story, prefs.groupName, prefs.groupCode]
 	);
 
 	const style: React.CSSProperties = {

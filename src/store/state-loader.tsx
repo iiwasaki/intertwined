@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {defaults, usePrefsContext} from './prefs';
-import {StoriesState, useStoriesContext, Story} from './stories';
+import {useStoriesContext} from './stories';
 import {
 	formatWithNameAndVersion,
 	StoryFormat,
@@ -8,7 +8,6 @@ import {
 } from './story-formats';
 import {usePersistence} from './persistence/use-persistence';
 import {LoadingCurtain} from '../components/loading-curtain';
-import {db} from "../firebase-config"
 
 
 

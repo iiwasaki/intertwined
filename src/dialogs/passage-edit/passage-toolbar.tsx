@@ -6,7 +6,7 @@ import {UndoRedoButtons} from '../../components/codemirror';
 import {ButtonBar} from '../../components/container/button-bar';
 import {CheckboxButton} from '../../components/control/checkbox-button';
 import {MenuButton} from '../../components/control/menu-button';
-import {RenamePassageButton} from '../../components/passage/rename-passage-button';
+//import {RenamePassageButton} from '../../components/passage/rename-passage-button';
 import {AddTagButton} from '../../components/tag';
 import {
 	addPassageTag,
@@ -51,14 +51,15 @@ export const PassageToolbar: React.FC<PassageToolbarProps> = props => {
 		}
 	}
 
-	function handleRename(name: string) {
-		// Don't create newly linked passages here because the update action will
-		// try to recreate the passage as it's been renamed--it sees new links in
-		// existing passages, updates them, but does not see that the passage name
-		// has been updated since that hasn't happened yet.
+	// Trying handlerename from the window itself really makes Firebase unhappy - disabled for now.
+	// function handleRename(name: string) {
+	// 	// Don't create newly linked passages here because the update action will
+	// 	// try to recreate the passage as it's been renamed--it sees new links in
+	// 	// existing passages, updates them, but does not see that the passage name
+	// 	// has been updated since that hasn't happened yet.
 
-		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}, prefs.groupName, prefs.groupCode));
-	}
+	// 	dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}, prefs.groupName, prefs.groupCode));
+	// }
 
 	function handleSetAsStart() {
 		dispatch(updateStory(stories, story, {startPassage: passage.id}, prefs.groupName, prefs.groupCode));
@@ -105,11 +106,6 @@ export const PassageToolbar: React.FC<PassageToolbarProps> = props => {
 					}
 				]}
 				label={t('dialogs.passageEdit.size')}
-			/>
-			<RenamePassageButton
-				onRename={handleRename}
-				passage={passage}
-				story={story}
 			/>
 			<CheckboxButton
 				disabled={isStart}

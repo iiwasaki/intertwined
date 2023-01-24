@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ButtonBar} from '../../../../components/container/button-bar';
 import {RenameStoryButton} from '../../../../components/story/rename-story-button';
-import {Story, updateStory, useStoriesContext} from '../../../../store/stories';
+import {Story, useStoriesContext} from '../../../../store/stories';
 import {CreateStoryButton} from './create-story-button';
 import {DeleteStoryButton} from './delete-story-button';
 import {DuplicateStoryButton} from './duplicate-story-button';
@@ -45,3 +45,8 @@ export const StoryActions: React.FC<StoryActionsProps> = props => {
 		</ButtonBar>
 	);
 };
+
+
+/*
+like some people don't want to RP with an Asian girl and I've had experiences where if I didn't mention it, and it got time to like discuss who we are and stuff and I'd offer a reference for myself they would be like "Oh I don't like Asian girls sorry" or something and so I just figured I'd avoid that from the start by saying that I was Asian!
+*/

@@ -74,7 +74,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 	const handleDeselectPassage = React.useCallback(
 		(passage: Passage) =>
 			undoableStoriesDispatch(deselectPassage(story, passage, prefs.groupName, prefs.groupCode)),
-		[story, undoableStoriesDispatch]
+		[story, undoableStoriesDispatch, prefs.groupCode, prefs.groupName]
 	);
 
 	const handleDragPassages = React.useCallback(
@@ -104,7 +104,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 					: 'undoChange.movePassages'
 			);
 		},
-		[selectedPassages.length, story, undoableStoriesDispatch]
+		[selectedPassages.length, story, undoableStoriesDispatch, prefs.groupCode, prefs.groupName]
 	);
 
 	const handleEditPassage = React.useCallback(
@@ -135,7 +135,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 	const handleSelectPassage = React.useCallback(
 		(passage: Passage, exclusive: boolean) =>
 			undoableStoriesDispatch(selectPassage(story, passage, exclusive, prefs.groupName, prefs.groupCode)),
-		[story, undoableStoriesDispatch]
+		[story, undoableStoriesDispatch, prefs.groupName, prefs.groupCode]
 	);
 
 	const handleSelectRect = React.useCallback(
@@ -159,7 +159,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 				)
 			);
 		},
-		[selectedPassages, story, undoableStoriesDispatch]
+		[selectedPassages, story, undoableStoriesDispatch, prefs.groupName, prefs.groupCode]
 	);
 
 	// If we have just mounted and the story has no passages, create one for the
@@ -177,7 +177,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 				);
 			}
 		}
-	}, [getCenter, inited, story, undoableStoriesDispatch]);
+	}, [getCenter, inited, story, undoableStoriesDispatch, prefs.groupCode, prefs.groupName]);
 
 	React.useEffect(() => {
 		console.log("Making snapshot for story")
@@ -185,7 +185,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 			try {
 				console.log("Snapshot triggered")
 				if (snapshot?.data() === undefined) {
-					alert ("Story has been renamed or deleted; please go back to the main menu and refresh the library.")
+					alert("Story has been renamed or deleted; please go back to the main menu and refresh the library.")
 					history.push("/stories/")
 					return;
 				}
@@ -207,8 +207,8 @@ export const InnerStoryEditRoute: React.FC = () => {
 					})
 				}
 			}
-			catch(error) {
-				throw "Error"
+			catch (error) {
+				throw new Error("Error in creating story snapshot!")
 			}
 		}, (err) => {
 			throw new Error("Could not get story data from database - story does not exist, or incorrect group name or passcode.")
@@ -217,10 +217,12 @@ export const InnerStoryEditRoute: React.FC = () => {
 			console.log("Unsubbing from story")
 			unsubscribe()
 		}
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [prefs.groupCode, prefs.groupName, story.name])
 
 	React.useEffect(() => {
 		console.log("Making snapshots for passages")
+		storiesDispatch({type: 'clearState', storyId: storyId})
 		let unsubscribe = db.collection("passages").doc(prefs.groupName).collection("pass").doc(prefs.groupCode).collection(storyId).onSnapshot((snapshot) => {
 			console.log("Has pending writes?", snapshot.metadata.hasPendingWrites)
 			console.log("Dispatching passage act from story passage editing snapshot update")
@@ -259,7 +261,7 @@ export const InnerStoryEditRoute: React.FC = () => {
 				if (change.type === "removed") {
 					console.log("Deleted Passage: ", change.doc.data())
 					storiesDispatch({
-						type:"deletePassage",
+						type: "deletePassage",
 						passageId: change.doc.data().id,
 						storyId: change.doc.data().story,
 						groupName: prefs.groupName,
@@ -274,7 +276,8 @@ export const InnerStoryEditRoute: React.FC = () => {
 			console.log("Unsubscribing from passages for story")
 			unsubscribe()
 		}
-	}, [])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [prefs.groupName, prefs.groupCode, storyId])
 
 	const visibleZoom = useZoomTransition(story.zoom, mainContent.current);
 

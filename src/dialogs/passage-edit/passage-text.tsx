@@ -9,7 +9,6 @@ import {StoryFormat} from '../../store/story-formats';
 import {useCodeMirrorPassageHints} from '../../store/use-codemirror-passage-hints';
 import {useFormatCodeMirrorMode} from '../../store/use-format-codemirror-mode';
 import {codeMirrorOptionsFromPrefs} from '../../util/codemirror-options';
-import { db } from '../../firebase-config';
 
 export interface PassageTextProps {
 	onChange: (value: string) => void;
@@ -29,7 +28,6 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		storyFormat,
 		storyFormatExtensionsDisabled
 	} = props;
-	const [changePending, setChangePending] = React.useState(false);
 	const [localText, setLocalText] = React.useState(passage.text);
 	const {prefs} = usePrefsContext();
 	const autocompletePassageNames = useCodeMirrorPassageHints(story);
@@ -90,7 +88,6 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 		) => {
 			if (firePadInit){
 				onEditorChange(editor);
-				setChangePending(true);
 				debouncedOnChange(text);
 				setLocalText(text);
 			}
@@ -109,7 +106,7 @@ export const PassageText: React.FC<PassageTextProps> = props => {
 				prefixes: ['[[', '->']
 			}
 		}),
-		[autocompletePassageNames, mode, prefs, storyFormatExtensionsDisabled, t]
+		[autocompletePassageNames, mode, prefs, storyFormatExtensionsDisabled, t, passage.text]
 	);
 
 	return (

@@ -1,15 +1,16 @@
-import {createPassage} from './create-passage';
-import {createPassages} from './create-passages';
-import {createStory} from './create-story';
-import {deletePassage} from './delete-passage';
-import {deletePassages} from './delete-passages';
-import {deleteStory} from './delete-story';
-import {initState} from './init';
-import {repairState} from './repair';
-import {updatePassage} from './update-passage';
-import {updatePassages} from './update-passages';
-import {updateStory} from './update-story';
-import {StoriesAction, StoriesState} from '../stories.types';
+import { createPassage } from './create-passage';
+import { createPassages } from './create-passages';
+import { createStory } from './create-story';
+import { deletePassage } from './delete-passage';
+import { deletePassages } from './delete-passages';
+import { deleteStory } from './delete-story';
+import { initState } from './init';
+import { repairState } from './repair';
+import { updatePassage } from './update-passage';
+import { updatePassages } from './update-passages';
+import { updateStory } from './update-story';
+import { clearState } from './clear-state-fb';
+import { StoriesAction, StoriesState } from '../stories.types';
 
 export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 	state,
@@ -33,7 +34,8 @@ export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 
 		case 'deleteStory':
 			return deleteStory(state, action.storyId);
-
+		case 'clearState':
+			return clearState(state, action.storyId);
 		case 'init':
 			return initState(state, action.state);
 
@@ -50,6 +52,7 @@ export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 
 		case 'updatePassages':
 			return updatePassages(state, action.storyId, action.passageUpdates);
+
 
 		case 'updateStory':
 			console.log("In updateStory dispatched action")

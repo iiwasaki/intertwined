@@ -1,8 +1,6 @@
 import uuid from 'tiny-uuid';
 import {
-    CreatePassagesAction,
     Passage,
-    StoriesState,
     Story
 } from '../stories.types';
 import { passageDefaults } from '../defaults';
@@ -25,7 +23,8 @@ export async function createNewlyLinkedPassagesFirebase(
     groupCode: string
 ) {
     if (!story.passages.some(p => p.id === passage.id)) {
-        throw new Error('This passage does not belong to this story.');
+        alert('Error in passage update. This passage may have been recently deleted. Please refresh the page and try again.');
+        return;
     }
 
     const oldLinks = parseLinks(oldText);
@@ -85,7 +84,13 @@ export async function createNewlyLinkedPassagesFirebase(
 
     const passagesCollection = db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id);
 
-    for (let name of toCreate) {
+    let leftPositions: Number[] = []
+    for (let i=0; i<toCreate.length; i++){
+        left += passageDefs.width + passageGap
+        leftPositions[i] = left
+    }
+    for (let i=0; i<toCreate.length; i++) {
+        let name = toCreate[i]
         db.runTransaction((transaction) => {
             return transaction.get(passagesCollection.doc(name)).then((doc) => {
                 if (!doc.exists) {
@@ -93,7 +98,7 @@ export async function createNewlyLinkedPassagesFirebase(
                     let newId = uuid();
                     transaction.set(passagesCollection.doc(name), {
                         id: newId,
-                        left: left += passageDefs.width + passageGap,
+                        left: leftPositions[i],
                         name: name,
                         story: story.id,
                         tags: [],

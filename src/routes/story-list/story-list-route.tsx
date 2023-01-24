@@ -60,7 +60,7 @@ export const InnerStoryListRoute: React.FC = () => {
 				storiesDispatch(deselectStory(story, prefs.groupName, prefs.groupCode));
 			}
 		}
-	}, [selectedStories, stories, storiesDispatch, visibleStories]);
+	}, [selectedStories, stories, storiesDispatch, visibleStories, prefs.groupName, prefs.groupCode]);
 
 	React.useEffect(() => {
 		if (shouldShowDonationPrompt()) {

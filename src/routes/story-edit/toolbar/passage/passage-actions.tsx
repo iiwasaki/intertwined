@@ -2,10 +2,7 @@ import * as React from 'react';
 import {ButtonBar} from '../../../../components/container/button-bar';
 import {RenamePassageButton} from '../../../../components/passage/rename-passage-button';
 import {
-	Passage,
-	Story,
-	updatePassage,
-	useStoriesContext
+	Story
 } from '../../../../store/stories';
 import {Point} from '../../../../util/geometry';
 import {CreatePassageButton} from './create-passage-button';
@@ -26,7 +23,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 	getCenter,
 	story
 }) => {
-	const {dispatch} = useStoriesContext();
+	//const {dispatch} = useStoriesContext();
 	const {prefs} = usePrefsContext();
 	const selectedPassages = React.useMemo(
 		() => story.passages.filter(passage => passage.selected),
@@ -37,6 +34,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 		[selectedPassages]
 	);
 
+	/*
 	function handleRename(name: string, passage?: Passage) {
 		if (!passage) {
 			throw new Error('Passage is unset');
@@ -48,7 +46,7 @@ export const PassageActions: React.FC<PassageActionsProps> = ({
 		// has been updated since that hasn't happened yet.
 
 		dispatch(updatePassage(story, passage, {name}, {dontUpdateOthers: true}, prefs.groupName, prefs.groupCode));
-	}
+	}*/
 
 	return (
 		<ButtonBar>

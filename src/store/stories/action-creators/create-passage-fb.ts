@@ -1,7 +1,7 @@
 import uuid from 'tiny-uuid';
 import { PrefsState } from '../../prefs';
-import { StoriesAction, StoriesState, Story, Passage } from '../stories.types';
-import { storyDefaults, passageDefaults } from '../defaults';
+import { Passage } from '../stories.types';
+import { passageDefaults } from '../defaults';
 import { db } from '../../../firebase-config';
 
 /**

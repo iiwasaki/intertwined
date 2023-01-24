@@ -38,7 +38,7 @@ export const StoryStylesheetDialog: React.FC<StoryStylesheetDialogProps> = props
 			setCmEditor(editor);
 			debouncedOnChange(text);
 		}
-	}, [firePadInit]
+	}, [firePadInit, debouncedOnChange]
 	);
 
 	return (

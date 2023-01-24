@@ -31,7 +31,7 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 				dispatch(updateStory(stories, story, {script: value}, prefs.groupName, prefs.groupCode));
 			}, 2000)
 
-	const handleChange = React.useCallback( 
+	const handleChange = React.useCallback(
 		(
 			editor: CodeMirror.Editor,
 			data: CodeMirror.EditorChange,
@@ -41,9 +41,7 @@ export const StoryJavaScriptDialog: React.FC<StoryJavaScriptDialogProps> = props
 			setCmEditor(editor);
 			debouncedOnChange(text);
 		}
-		
-		
-	}, [firePadInit]
+	}, [firePadInit, debouncedOnChange]
 	);
 
 	return (

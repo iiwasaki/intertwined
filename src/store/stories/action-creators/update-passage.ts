@@ -24,7 +24,7 @@ export function updatePassage(
 	groupCode: string
 ): Thunk<StoriesState, StoriesAction> {
 	if (!story.passages.some(p => p.id === passage.id)) {
-		throw new Error('This passage does not belong to this story.');
+		throw new Error ('Error in passage update. This passage may have been recently deleted. Please refresh the page and try again.');
 	}
 
 	if (
@@ -51,9 +51,24 @@ export function updatePassage(
 		// 	storyId: story.id
 		// });
 
-		db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name).set({
-			text: props.text
-		}, {merge: true})
+		const passageRef = db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name);
+
+		db.runTransaction((transaction) => {
+			return transaction.get(passageRef).then((passageDoc) => {
+				if(!passageDoc.exists){
+					throw new Error (`Passage named ${passage.name} does not exist; it may have just been deleted or renamed. Please refresh and try again.`)
+				}
+				transaction.update(passageRef, {text: props.text})
+			}).catch((err) => {
+				throw new Error (err)
+			})
+		}).catch ((err) => {
+			console.log(`Error in updating passage: ${err}`)
+		})
+
+		// db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name).set({
+		// 	text: props.text
+		// }, {merge: true})
 
 		// Side effects from changes.
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router-dom';
+//import {useHistory} from 'react-router-dom';
 import {IconPlus} from '@tabler/icons';
 import {usePrefsContext} from '../../../../store/prefs';
 import {
@@ -9,16 +9,15 @@ import {
 	useStoriesContext
 } from '../../../../store/stories';
 import {PromptButton} from '../../../../components/control/prompt-button';
-import {unusedName} from '../../../../util/unused-name';
 import { db } from '../../../../firebase-config';
 import { usePersistence } from '../../../../store/persistence/use-persistence';
-import { useStoryFormatsContext } from '../../../../store/story-formats';
+//import { useStoryFormatsContext } from '../../../../store/story-formats';
 
 export const CreateStoryButton: React.FC = () => {
 	const {dispatch, stories} = useStoriesContext();
-	const {formats} = useStoryFormatsContext();
+	//const {formats} = useStoryFormatsContext();
 	const [newName, setNewName] = React.useState("");
-	const history = useHistory();
+	//const history = useHistory();
 	const {prefs} = usePrefsContext();
 	const {t} = useTranslation();
 	const {stories: storyPersistence} = usePersistence();

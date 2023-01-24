@@ -20,7 +20,7 @@ export const CreatePassageButton: React.FC<CreatePassageButtonProps> = props => 
 		const {left, top} = getCenter();
 
 		dispatch(createUntitledPassage(story, left, top, prefs.groupName, prefs.groupCode), 'undoChange.newPassage');
-	}, [dispatch, getCenter, story]);
+	}, [dispatch, getCenter, story, prefs.groupName, prefs.groupCode]);
 	const {t} = useTranslation();
 
 	return (

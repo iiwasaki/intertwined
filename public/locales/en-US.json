@@ -10,7 +10,7 @@
 	},
 	"common": {
 		"add": "Add",
-		"appName": "Twine",
+		"appName": "Intertwined",
 		"back": "Back",
 		"build": "Build",
 		"cancel": "Cancel",
@@ -138,6 +138,16 @@
 		}
 	},
 	"dialogs": {
+		"aboutIntertwined": {
+			"codeHeader": "Original Twine Code",
+			"codeRepo": "Visit Github Repository",
+			"disclaimer": "Please note that Intertwined is a proof of concept (consider it to be whatever comes earlier than a pre-alpha) and is NOT intended to be used in a large-scale, enterprising capacity. You are free to use it however you like, but please note that stories and groups may be deleted at any time. Please download your stories and back them up as often as possible. You can run your own version of Intertwined hooked up to your own Firebase instance that you manage by following the tutorial on the Intertwined repository.",
+			"donateToTwine": "Support the original creators of Twine",
+			"license": "This application is released under the <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPL v3 license</a>, but any work created with it may be released under any terms, including commercial ones.",
+			"localizationHeader": "Twine Localizations",
+			"intertwinedDescription": "Intertwined is a proof-of-concept extension of <a href=\"https://twinery.org\">Twine</a>, an open-source application for telling interactive, nonlinear stories made by Chris Klimas. Intertwined takes the Twine interface and functionality and extends it to allow for collaborative authorship of stories and increase its usability in educational settings. Some research using Intertwined can be seen in the proceedings from SIGSCE 2023.",
+			"title":"About Intertwined"
+		},
 		"aboutTwine": {
 			"donateToTwine": "Help Twine Grow With A Donation",
 			"codeHeader": "Code",
@@ -372,6 +382,7 @@
 	"routeActions": {
 		"app": {
 			"aboutApp": "About Twine",
+			"aboutIntertwined": "About Intertwined",
 			"preferences": "Preferences",
 			"reportBug": "Report a Bug",
 			"storyFormats": "Story Formats"

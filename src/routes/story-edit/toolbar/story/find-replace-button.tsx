@@ -2,7 +2,7 @@ import {IconSearch} from '@tabler/icons';
 import * as React from 'react';
 import {useTranslation} from 'react-i18next';
 import {IconButton} from '../../../../components/control/icon-button';
-import {StorySearchDialog, useDialogsContext} from '../../../../dialogs';
+//import {StorySearchDialog, useDialogsContext} from '../../../../dialogs';
 import {Story} from '../../../../store/stories';
 
 export interface FindReplaceButtonProps {
@@ -10,20 +10,22 @@ export interface FindReplaceButtonProps {
 }
 
 export const FindReplaceButton: React.FC<FindReplaceButtonProps> = props => {
-	const {story} = props;
-	const {dispatch} = useDialogsContext();
+	//const {story} = props;
+	//const {dispatch} = useDialogsContext();
 	const {t} = useTranslation();
 
 	return (
 		<IconButton
 			icon={<IconSearch />}
 			label={t('routes.storyEdit.toolbar.findAndReplace')}
-			onClick={() =>
-				dispatch({
-					type: 'addDialog',
-					component: StorySearchDialog,
-					props: {storyId: story.id}
-				})
+			onClick={() => {
+				alert("Find and replace is currently unavailable in Intertwined; sorry!")
+			}
+				// dispatch({
+				// 	type: 'addDialog',
+				// 	component: StorySearchDialog,
+				// 	props: {storyId: story.id}
+				// })
 			}
 		/>
 	);

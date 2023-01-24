@@ -66,7 +66,7 @@ export const InnerPassageEditDialog: React.FC<
 		(text: string) => {
 			dispatch(updatePassage(story, passage, {text}, {}, prefs.groupName, prefs.groupCode));
 		},
-		[dispatch, passage, story]
+		[dispatch, passage, story, prefs.groupName, prefs.groupCode]
 	);
 
 	function handleExecCommand(name: string) {

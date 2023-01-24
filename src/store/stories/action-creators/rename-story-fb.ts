@@ -20,7 +20,7 @@ export async function renameStoryFirebase(
     return db.runTransaction((transaction) => {
         return transaction.get(storyDocRef).then((storyDoc) => {
             if (!storyDoc.exists) {
-                throw "Original story no longer exists! Try reloading the page."
+                throw new Error("Original story no longer exists! Try reloading the page.")
             }
             transaction.set(storyCollectionRef.doc(newName), {
                 ...storyDoc.data(),

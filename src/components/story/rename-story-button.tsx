@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useTranslation} from 'react-i18next';
 import {IconWriting} from '@tabler/icons';
 import {PromptButton} from '../control/prompt-button';
-import {storyFileName} from '../../electron/shared';
+//import {storyFileName} from '../../electron/shared';
 import {Story} from '../../store/stories';
 import {IconButton} from '../control/icon-button';
 import { db } from '../../firebase-config';
@@ -27,7 +27,7 @@ interface EnabledRenameStoryButtonProps {
 }
 
 const EnabledRenameStoryButton: React.FC<EnabledRenameStoryButtonProps> = props => {
-	const {existingStories, onRename, story, groupName, groupCode} = props;
+	const { onRename, story, groupName, groupCode} = props;
 	const [newName, setNewName] = React.useState(story.name);
 	const {t} = useTranslation();
 

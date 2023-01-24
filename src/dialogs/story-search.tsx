@@ -56,14 +56,17 @@ export const StorySearchDialog: React.FC<StorySearchDialogProps> = props => {
 
 		return () =>
 			debouncedDispatch(highlightPassagesMatchingSearch(story, '', {}, prefs.groupName, prefs.groupCode));
-	}, [debouncedDispatch, find, flags, story]);
+	}, [debouncedDispatch, find, flags, story, prefs.groupName, prefs.groupCode]);
 
 	function handleReplaceWithChange(
 		editor: CodeMirror.Editor,
 		data: CodeMirror.EditorChange,
 		text: string
 	) {
-		setReplace(text);
+		if (firePadInit){
+			setReplace(text);
+		}
+		
 	}
 
 	function handleSearchForChange(

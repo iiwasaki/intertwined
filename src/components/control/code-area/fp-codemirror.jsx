@@ -1,5 +1,4 @@
 import { Component } from "react"
-import firebase from "firebase/app"
 import "firebase/database"
 import {
     UnControlled as CodeMirrorItem,

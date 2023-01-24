@@ -4,8 +4,8 @@ import * as React from 'react';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useTranslation} from 'react-i18next';
 import {IconButton} from '../../../../components/control/icon-button';
-import {deletePassages, Passage, Story} from '../../../../store/stories';
-import {useUndoableStoriesContext} from '../../../../store/undoable-stories';
+import {Passage, Story} from '../../../../store/stories';
+//import {useUndoableStoriesContext} from '../../../../store/undoable-stories';
 import { usePrefsContext } from '../../../../store/prefs';
 import { deletePassagesFB } from '../../../../store/stories';
 
@@ -18,7 +18,7 @@ export const DeletePassagesButton: React.FC<
 	DeletePassagesButtonProps
 > = props => {
 	const {passages, story} = props;
-	const {dispatch} = useUndoableStoriesContext();
+	//const {dispatch} = useUndoableStoriesContext();
 	const {t} = useTranslation();
 	const {prefs} = usePrefsContext();
 	const disabled = React.useMemo(() => {
@@ -41,7 +41,7 @@ export const DeletePassagesButton: React.FC<
 		// );
 
 		deletePassagesFB(story, passages, prefs.groupName, prefs.groupCode)
-	}, [dispatch, passages, story]);
+	}, [passages, story, prefs.groupName, prefs.groupCode]);
 
 	useHotkeys('Backspace,Delete', handleClick, [handleClick]);
 

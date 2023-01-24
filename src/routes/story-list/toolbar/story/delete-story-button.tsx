@@ -3,7 +3,7 @@ import * as React from 'react';
 import {useTranslation} from 'react-i18next';
 import {ConfirmButton} from '../../../../components/control/confirm-button';
 import { db } from '../../../../firebase-config';
-import {deleteStory, Story, useStoriesContext} from '../../../../store/stories';
+import {Story, useStoriesContext} from '../../../../store/stories';
 import {isElectronRenderer} from '../../../../util/is-electron';
 import { usePersistence } from '../../../../store/persistence/use-persistence';
 import { usePrefsContext } from '../../../../store/prefs';

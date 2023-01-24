@@ -8,7 +8,7 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 	console.log("In load")
 	console.log("Group name: ", groupName)
 	console.log("Group code: ", groupCode)
-	if (!groupName || !groupCode){
+	if (!groupName || !groupCode) {
 		return []
 	}
 	const results = await db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").get().catch((error) => {
@@ -46,17 +46,20 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 	console.log("Showing stories ", stories)
 	for (const key of Object.keys(stories)) {
 		const passages = await db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(key).get()
-		passages.forEach((query) => {
-			const passage: Passage = JSON.parse(JSON.stringify(query.data()))
-			stories[passage.story].passages.push({
-				...passageDefaults(),
-				...passage,
+		if (passages) {
+			passages.forEach((query) => {
+				const passage: Passage = JSON.parse(JSON.stringify(query.data()))
+				stories[passage.story].passages.push({
+					...passageDefaults(),
+					...passage,
 
-				// Remove empty tags.
-				tags: passage.tags ? passage.tags.filter(t => t.trim() !== '') : []
-			});
-			console.log("Stories so far: ", stories)
-		})
+					// Remove empty tags.
+					tags: passage.tags ? passage.tags.filter(t => t.trim() !== '') : []
+				});
+				console.log("Stories so far: ", stories)
+			})
+		}
+
 	}
 	return Object.values(stories);
 }

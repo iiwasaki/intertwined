@@ -8,7 +8,7 @@ export function renamePassageFB(story: Story, passage: Passage | undefined, grou
     let savePassage: {} | undefined;
     oldPassageRef.get().then((doc) => {
         if (!doc.exists){
-            throw "Passage no longer exists!"
+            throw new Error("Passage no longer exists!")
         }
         savePassage = doc.data()
         console.log("Deleting old data for renaming")

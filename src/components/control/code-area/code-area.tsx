@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-	Controlled as CodeMirror,
 	IUnControlledCodeMirror
 } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';

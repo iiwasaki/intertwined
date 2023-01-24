@@ -1,4 +1,4 @@
-import {IconAward, IconBug, IconFileCode, IconSettings} from '@tabler/icons';
+import {IconAward, IconFileCode, IconSettings} from '@tabler/icons';
 import * as React from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
@@ -26,16 +26,16 @@ export const AppActions: React.FC = () => {
 			/>
 			<IconButton
 				icon={<IconAward />}
-				label={t('routeActions.app.aboutApp')}
+				label={t('routeActions.app.aboutIntertwined')}
 				onClick={() =>
 					dispatch({type: 'addDialog', component: AboutTwineDialog})
 				}
 			/>
-			<IconButton
+			{/*<IconButton
 				icon={<IconBug />}
 				label={t('routeActions.app.reportBug')}
 				onClick={() => window.open('https://twinery.org/2bugs', '_blank')}
-			/>
+			/>*/}
 		</ButtonBar>
 	);
 };
