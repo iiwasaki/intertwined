@@ -1,18 +1,19 @@
 import {IconDeviceFloppy, IconHelp, IconMoodSmile} from '@tabler/icons';
-import {IconTwine} from '../../components/image/icon';
+//import {IconTwine} from '../../components/image/icon';
 import {isElectronRenderer} from '../../util/is-electron';
+import { IntertwinedIcon } from '../../components/image/icon';
 
 export const content = () => [
 	{
-		html: 'routes.welcome.greeting',
-		image: <IconTwine />,
+		html: 'routes.welcome.interGreeting',
+		image: <IntertwinedIcon/>,
 		nextLabel: 'routes.welcome.tellMeMore',
-		title: 'routes.welcome.greetingTitle'
+		title: 'routes.welcome.interTitle'
 	},
 	{
-		html: 'routes.welcome.help',
+		html: 'routes.welcome.interHelp',
 		image: <IconHelp />,
-		title: 'routes.welcome.helpTitle'
+		title: 'routes.welcome.interHelpTitle'
 	},
 	isElectronRenderer()
 		? {
@@ -21,12 +22,12 @@ export const content = () => [
 				title: 'routes.welcome.autosaveTitle'
 		  }
 		: {
-				html: 'routes.welcome.browserStorage',
+				html: 'routes.welcome.interStorage',
 				image: <IconDeviceFloppy />,
-				title: 'routes.welcome.browserStorageTitle'
+				title: 'routes.welcome.interStorageTitle'
 		  },
 	{
-		html: 'routes.welcome.done',
+		html: 'routes.welcome.interWelcomeDone',
 		image: <IconMoodSmile />,
 		nextLabel: 'routes.welcome.gotoStoryList',
 		title: 'routes.welcome.doneTitle'

@@ -60,7 +60,7 @@ export const WelcomeRoute: React.FC = () => {
 								}
 								onNext={index === allCards.length - 1 ? finish : showNext}
 								onSkip={finish}
-								showSkip={index === 0}
+								showSkip={false}
 								title={t(card.title)}
 							>
 								<div dangerouslySetInnerHTML={{__html: t(card.html)}} />
