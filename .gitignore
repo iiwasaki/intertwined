@@ -6,4 +6,3 @@ dist/*
 electron-build/*
 coverage/*
 docs/en/book/*
-.env
