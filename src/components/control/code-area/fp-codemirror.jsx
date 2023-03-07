@@ -24,8 +24,8 @@ class FirepadMirror extends Component {
     }
     componentDidMount() {
         // Connect to the Firebase RTDB reference for this Firepad instance
-        let firebase_node = this.props.storyId + this.props.element
-        let rt_text = rtdb.ref().child(firebase_node)
+        let firebase_node = this.props.storyId + "_public"
+        let rt_text = rtdb.ref().child("texts").child(firebase_node).child(this.props.element)
 
         const Firepad = require("firepad")
         this.firepad = new Firepad.fromCodeMirror(rt_text, this.editorInstance, { defaultText: this.props.options.placeholder })
