@@ -85,16 +85,15 @@ export async function createNewlyLinkedPassagesFirebase(
     const passagesCollection = db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id);
 
     let leftPositions: Number[] = []
-    for (let i=0; i<toCreate.length; i++){
+    for (let i = 0; i < toCreate.length; i++) {
         left += passageDefs.width + passageGap
         leftPositions[i] = left
     }
-    for (let i=0; i<toCreate.length; i++) {
+    for (let i = 0; i < toCreate.length; i++) {
         let name = toCreate[i]
         db.runTransaction((transaction) => {
             return transaction.get(passagesCollection.doc(name)).then((doc) => {
                 if (!doc.exists) {
-                    console.log("Creating new passage")
                     let newId = uuid();
                     transaction.set(passagesCollection.doc(name), {
                         id: newId,
@@ -113,42 +112,7 @@ export async function createNewlyLinkedPassagesFirebase(
                 }
             })
         }).then((newPassageId) => {
-        console.log(`Created new passage with name: ${name} and id ${newPassageId}`)
-    })
-    // const doc = await storyCollection.doc(name).get()
-    // if (!doc.exists) {
-    //     console.log("Doc does not exist")
-    //     storyCollection.doc(name).set({
-    //         id: name,
-    //         left: left += passageDefs.width + passageGap,
-    //         name: name,
-    //         story: story.id,
-    //         tags: [],
-    //         text: "",
-    //         top: top
-    //     })
-    // }
-    // else {
-    //     console.log("Doc exists")
-
-    // }
-}
-
-    // return dispatch => {
-
-    //     // Actually create them.
-
-    //     dispatch({
-    //         type: 'createPassages',
-    //         storyId: story.id,
-    //         props: toCreate.map(name => {
-    //             const result = { left, name, top };
-
-    //             left += passageDefs.width + passageGap;
-    //             return result;
-    //         }),
-    //         groupName: groupName,
-    //         groupCode: groupCode
-    //     });
-    // };
+            console.log(`Created new passage with name: ${name} and id ${newPassageId}`)
+        })
+    }
 }

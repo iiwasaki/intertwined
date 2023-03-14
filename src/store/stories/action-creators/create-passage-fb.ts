@@ -12,8 +12,6 @@ export async function createPassageFirebase(
     storyId: string,
 ): Promise<void> {
 
-    console.log("in createPassageFirebase, story id is: ", storyId)
-
     const newPassage: Passage = {
         ...passageDefaults(),
         id: uuid(),
@@ -22,7 +20,6 @@ export async function createPassageFirebase(
 
     const passageDoc = db.collection("passages").doc(prefs.groupName).collection("pass").doc(prefs.groupCode).collection(storyId).doc(newPassage.name);
 
-    console.log("Making passage with story")
     return passageDoc.set({
         id: newPassage.id,
         left: newPassage.left,

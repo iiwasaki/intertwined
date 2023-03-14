@@ -87,7 +87,6 @@ export const CreateStoryButton: React.FC = () => {
 		db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).collection("stories").doc(newName).get().then(async (doc) => {
 			if (!doc.exists){
 				createStoryFirebase(stories, prefs, {name: newName, storyFormat: prefs.storyFormat.name, storyFormatVersion: prefs.storyFormat.version}).then((id) => {
-					console.log("Made story with id: ", id)
 					createPassageFirebase(prefs, id).then(async () => {
 						const newStories = await storyPersistence.load(prefs.groupName, prefs.groupCode)
 						dispatch({type: 'init', state: newStories})

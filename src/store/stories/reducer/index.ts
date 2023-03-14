@@ -55,7 +55,6 @@ export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 
 
 		case 'updateStory':
-			console.log("In updateStory dispatched action")
 			return updateStory(state, action.storyId, action.props);
 		default:
 			console.warn(`${(action as any).type} not implemented yet`);

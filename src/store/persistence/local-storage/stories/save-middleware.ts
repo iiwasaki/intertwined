@@ -163,7 +163,6 @@ export function saveMiddleware(state: StoriesState, action: StoriesAction) {
 		case 'updateStory': {
 			const story = storyWithId(state, action.storyId);
 			if (isPersistableStoryChange(action.props)) {
-				console.log("In updateStory in save-middleware")
 				doUpdateTransaction(transaction => {
 					saveStory(transaction, story, action.groupName, action.groupCode);
 					story.passages.forEach(passage => savePassage(transaction, passage, action.groupName, action.groupCode));

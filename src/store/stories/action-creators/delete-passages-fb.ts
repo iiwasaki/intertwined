@@ -27,7 +27,6 @@ export function deletePassagesFB(
 	groupName: string,
 	groupCode: string,
 ) {
-    console.log("In deletepassages-fb, deleting...")
 	for (let passage of passages){
         deletePassageFB(story, passage, groupName, groupCode)
     }

@@ -42,15 +42,11 @@ If you are an experienced user, there is a section below with limited instructio
 
 ### Build-an-Intertwined Guide (for Windows)
 
-The full guide (and video) for Windows users can be found in this Google Doc by clicking here.
+The full guide (video coming soon!) for Windows users can be found in this Google Doc by clicking [here](https://docs.google.com/document/d/1_Hr7p6dKw3aDZh_qTMeqSWuDN38_eLwGCG2WpeIZt14/edit?usp=sharing).
 
 ### Build-an-Intertwined Guide (for Mac)
 
-The full guide (and video) for Mac users can be found in this Google Doc by clicking here.
-
-### Build-an-Intertwined Guide (for Linux)
-
-The full guide (and video) for Linux users can be found in this Google Doc by clicking here.
+The full guide (video coming soon!) for Mac users can be found in this Google Doc by clicking [here](https://docs.google.com/document/d/1_mLqJVHI_T32qyCHFi0BRF7PxjlKxVGC0W2HHGNnbVw/edit?usp=sharing).
 
 ### Build-an-Intertwined (for experienced users)
 

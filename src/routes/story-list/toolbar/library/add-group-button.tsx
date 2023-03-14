@@ -45,13 +45,12 @@ export const AddGroupButton: React.FC = () => {
                 };
             }
             else {
-                console.log("Doc doesn't exist, ", value)
                 return {
                     valid: true,
                 };
             }
         }).catch((error) => {
-            console.log("Error getting document, ", error)
+            console.error("Error getting document, ", error)
             return {
                 valid: false,
                 message: "Error connecting to Firebase database; please try again."
@@ -80,7 +79,6 @@ export const AddGroupButton: React.FC = () => {
     }
 
     function handleSubmit() {
-        console.log("adding new group!")
         db.collection("groups").doc(newGroup).collection("about").doc(newCode).set({
             name: newGroup,
         }).then(() => {
@@ -94,10 +92,10 @@ export const AddGroupButton: React.FC = () => {
                     dispatch(setPref('groupCode', newCode))
                 }
             }).catch((error) => {
-                console.log("Error setting new group in all groups list: ", error)
+                console.error("Error setting new group in all groups list: ", error)
             })
         }).catch ((error) => {
-            console.log("Error creating new group in collection: ", error)
+            console.error("Error creating new group in collection: ", error)
         })
 
     }

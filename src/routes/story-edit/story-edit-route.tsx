@@ -180,17 +180,14 @@ export const InnerStoryEditRoute: React.FC = () => {
 	}, [getCenter, inited, story, undoableStoriesDispatch, prefs.groupCode, prefs.groupName]);
 
 	React.useEffect(() => {
-		console.log("Making snapshot for story")
 		let unsubscribe = db.collection("groups").doc(prefs.groupName).collection("about").doc(prefs.groupCode).collection("stories").doc(story.name).onSnapshot((snapshot) => {
 			try {
-				console.log("Snapshot triggered")
 				if (snapshot?.data() === undefined) {
 					alert("Story has been renamed or deleted; please go back to the main menu and refresh the library.")
 					history.push("/stories/")
 					return;
 				}
 				if (!snapshot.metadata.hasPendingWrites) {
-					console.log("Dispatching from story editing snapshot update")
 					storiesDispatch({
 						type: "updateStory", storyId: snapshot?.data()?.id, props: {
 							name: snapshot?.data()?.name,
@@ -214,21 +211,16 @@ export const InnerStoryEditRoute: React.FC = () => {
 			throw new Error("Could not get story data from database - story does not exist, or incorrect group name or passcode.")
 		})
 		return () => {
-			console.log("Unsubbing from story")
 			unsubscribe()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [prefs.groupCode, prefs.groupName, story.name])
 
 	React.useEffect(() => {
-		console.log("Making snapshots for passages")
 		storiesDispatch({type: 'clearState', storyId: storyId})
 		let unsubscribe = db.collection("passages").doc(prefs.groupName).collection("pass").doc(prefs.groupCode).collection(storyId).onSnapshot((snapshot) => {
-			console.log("Has pending writes?", snapshot.metadata.hasPendingWrites)
-			console.log("Dispatching passage act from story passage editing snapshot update")
 			snapshot.docChanges().forEach((change) => {
 				if (change.type === "added") {
-					console.log("New Passage: ", change.doc.data())
 					storiesDispatch({
 						type: "createPassage", storyId: change.doc.data().story, props: {
 							id: change.doc.data().id,
@@ -259,7 +251,6 @@ export const InnerStoryEditRoute: React.FC = () => {
 					})
 				}
 				if (change.type === "removed") {
-					console.log("Deleted Passage: ", change.doc.data())
 					storiesDispatch({
 						type: "deletePassage",
 						passageId: change.doc.data().id,
@@ -273,7 +264,6 @@ export const InnerStoryEditRoute: React.FC = () => {
 		})
 
 		return () => {
-			console.log("Unsubscribing from passages for story")
 			unsubscribe()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

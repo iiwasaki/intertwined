@@ -81,7 +81,7 @@ export const InnerStoryListRoute: React.FC = () => {
 				setActiveGroupName("No group or incorrect group code")
 			}
 		}).catch((error) => {
-			console.log("Error in getting group: ", error)
+			console.error("Error in getting group: ", error)
 			setActiveGroupName("Incorrect group passcode")
 		})
 	}, [prefs.groupCode, prefs.groupName])

@@ -31,8 +31,6 @@ export const StoriesContextProvider: React.FC = props => {
 	> = React.useMemo(
 		() => (state, action) => {
 			const newState = reducer(state, action);
-			console.log("In reducer action " + action.type)
-			console.log(newState)
 
 			try {
 				storiesPersistence.saveMiddleware(newState, action, formats);

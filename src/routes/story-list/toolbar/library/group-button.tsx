@@ -34,14 +34,12 @@ export const GroupButton: React.FC = () => {
                 }
             }
             else {
-                console.log("Doc doesn't exist, ", value)
                 return {
                     valid: false,
                     message: "No group exists with that name."
                 };
             }
         }).catch ((error) => {
-            console.log("Error getting document, ", error)
             return {
                 valid: false,
                 message: "Error connecting to Firebase database; please try again."

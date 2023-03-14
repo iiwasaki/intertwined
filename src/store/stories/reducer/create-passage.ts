@@ -11,7 +11,6 @@ export function createPassage(
 	let storyExists = false;
 	let created = false;
 	const newState = state.map(story => {
-		console.log("In reducer create-passage!")
 		if (story.id !== storyId) {
 			return story;
 		}

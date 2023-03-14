@@ -51,11 +51,9 @@ export function saveStory(transaction: StorageTransaction, story: Story, groupNa
 		`twine-stories-${story.id}`,
 		JSON.stringify({ ...story, passages: undefined })
 	);
-	console.log("In saveStory in save.ts, groupname and code: ", groupName, groupCode)
 	db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).get().then((doc) => {
 		if (doc.exists) {
 			// Existing story - do not rewrite ifid, id in case it has deviated at all due to desync when two stories are created at once.
-			console.log("Existing story")
 			db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).set({
 				lastUpdate: story.lastUpdate.toString(),
 				name: story.name,
@@ -121,7 +119,6 @@ export function savePassage(transaction: StorageTransaction, passage: Passage, g
 		`twine-passages-${passage.id}`,
 		JSON.stringify(passage)
 	);
-	console.log("In savePassage in save.ts")
 	db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(passage.story).doc(passage.name).set({
 		id: passage.id,
 		left: passage.left,

@@ -42,15 +42,6 @@ export function updatePassage(
 		const oldName = passage.name;
 		const oldText = passage.text;
 
-		console.log("In the action-creators update-passage")
-
-		// dispatch({
-		// 	props,
-		// 	type: 'updatePassage',
-		// 	passageId: passage.id,
-		// 	storyId: story.id
-		// });
-
 		const passageRef = db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name);
 
 		db.runTransaction((transaction) => {
@@ -63,7 +54,7 @@ export function updatePassage(
 				throw new Error (err)
 			})
 		}).catch ((err) => {
-			console.log(`Error in updating passage: ${err}`)
+			console.error(`Error in updating passage: ${err}`)
 		})
 
 		// db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(story.id).doc(passage.name).set({

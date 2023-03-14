@@ -23,33 +23,6 @@ export const StateLoader: React.FC = ({children}) => {
 		useStoryFormatsContext();
 	const {prefs, stories, storyFormats} = usePersistence();
 
-	// Done in steps so that the repair action can see the inited state, and then
-	// each repair action can see the results of the preceding ones.
-	//
-	// Repairs must go:
-	// formats -> prefs (so it can repair bad format preferences) -> stories
-
-	/* No longer going to subscribe to the story list; users will have to manually refresh */
-	// React.useEffect(() => {
-	// 	if (inited){
-	// 		console.log("Init complete!")
-	// 		db.collection("stories").onSnapshot( (snapshot) => {
-	// 			snapshot.docChanges().forEach( (change) => {
-	// 				if (change.type === "added"){
-	// 					console.log("New story ", change.doc.data())
-	// 				}
-	// 				if (change.type === "modified"){
-	// 					console.log("Modified story: ", change.doc.data())
-	// 					storiesDispatch({type: "updateStory", storyId: change.doc.data().id, props: {name: change.doc.data().name}})
-	// 				}
-	// 				if (change.type === "removed"){
-	// 					console.log("Removed story: ", change.doc.data())
-	// 				}
-	// 			})
-	// 		})
-	// 	}
-	// }, [inited])
-
 	React.useEffect(() => {
 		async function run() {
 			if (!initing) {

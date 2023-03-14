@@ -30,17 +30,11 @@ class FirepadMirror extends Component {
         const Firepad = require("firepad")
         this.firepad = new Firepad.fromCodeMirror(rt_text, this.editorInstance, { defaultText: this.props.options.placeholder })
         this.firepad.on('ready', () => {
-            // if (firepad.isHistoryEmpty()) {
-            //     firepad.setText('Placeholder text')
-            // }
-            console.log("Firepad ready: ", this.props)
             this.props.setFirePadInit(true)
         })
     }
 
     componentWillUnmount() {
-        console.log("Unmounting")
-        console.log(this.firepad)
         this.firepad.dispose()
     }
 
@@ -50,7 +44,6 @@ class FirepadMirror extends Component {
             <CodeMirrorItem {...this.props} editorDidMount={editor => {
                 this.editorInstance = editor
                 setTimeout(() => {
-                    console.log("Actually handling mount")
                     this.editorInstance.focus();
                     this.editorInstance.refresh();
                 }, 500)

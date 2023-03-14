@@ -5,14 +5,11 @@ import { db } from '../../../../firebase-config';
 /* Firebase load */
 export async function load(groupName?: string, groupCode?: string): Promise<Story[]> {
 	const stories: Record<string, Story> = {};
-	console.log("In load")
-	console.log("Group name: ", groupName)
-	console.log("Group code: ", groupCode)
 	if (!groupName || !groupCode) {
 		return []
 	}
 	const results = await db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").get().catch((error) => {
-		console.log("Insufficient perms: ", error)
+		console.error("Insufficient permissions on Firebase, security rules are probably misconfigured: ", error)
 		return null
 	})
 	if (results) {
@@ -43,7 +40,6 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 	else {
 		return [];
 	}
-	console.log("Showing stories ", stories)
 	for (const key of Object.keys(stories)) {
 		const passages = await db.collection("passages").doc(groupName).collection("pass").doc(groupCode).collection(key).get()
 		if (passages) {
@@ -56,7 +52,6 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 					// Remove empty tags.
 					tags: passage.tags ? passage.tags.filter(t => t.trim() !== '') : []
 				});
-				console.log("Stories so far: ", stories)
 			})
 		}
 
@@ -65,19 +60,9 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 }
 
 /**
- * Parses initial state from local storage.
+ * Parses initial state from local storage. This is from the old Twine without Firebase.
 //  */
 // export async function load(): Promise<Story[]> {
-// 	console.log("Waiting for results from firebase.... ")
-// 	const results = await db.collection("stories").get()
-
-// 	results.forEach((doc) => {
-// 		const story: Story = JSON.parse(JSON.stringify(doc.data()))
-// 		console.log(story)
-// 	})
-// 	const passages = await db.collection("passages").doc("group_id")
-// 	console.log("Passages")
-// 	console.log(passages)
 // 	const stories: Record<string, Story> = {};
 // 	const serializedStories = window.localStorage.getItem('twine-stories');
 
@@ -130,16 +115,6 @@ export async function load(groupName?: string, groupCode?: string): Promise<Stor
 
 
 // 	const serializedPassages = window.localStorage.getItem('twine-passages');
-
-// 	console.log("Showing stories ", stories)
-// 	Object.keys(stories).forEach( async (st) => {
-// 		const passages = await db.collection("passages").doc("group_id").collection(st).get()
-// 		passages.forEach(( query ) => {
-// 			const passage : Passage = JSON.parse(JSON.stringify(query.data()))
-// 			console.log(passage)
-// 		})
-// 	})
-
 // 	if (serializedPassages) {
 // 		serializedPassages.split(',').forEach(id => {
 // 			const serializedPassage = window.localStorage.getItem(

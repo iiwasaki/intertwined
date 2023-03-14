@@ -80,7 +80,6 @@ export const DeleteStoryButton: React.FC<DeleteStoryButtonProps> = ({
 				let id = story?.id;
 				deleteStoryFB(prefs.groupName, prefs.groupCode, name).then( async (res) => {
 					if (res) {
-						console.log("Successfully deleted story, now deleting passages")
 						if (id !== undefined){
 							deleteAllPassagesFB(prefs.groupName, prefs.groupCode, id)
 							const newStories = await storiesDispatch.load(prefs.groupName, prefs.groupCode)

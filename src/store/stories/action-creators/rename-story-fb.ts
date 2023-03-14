@@ -11,7 +11,6 @@ export async function renameStoryFirebase(
     groupName: string,
     groupCode: string,
 ): Promise<boolean> {
-    console.log("in renameStoryFirebase")
     if (newName.trim() === '') {
         return Promise.reject(false)
     }
@@ -30,7 +29,6 @@ export async function renameStoryFirebase(
             return true;
         })
     }).then((result) => {
-        console.log("Result of duplication was: ", result)
         return result;
     }).catch((error) => {
         alert(`Error! ${error}`)

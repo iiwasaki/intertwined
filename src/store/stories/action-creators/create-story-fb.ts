@@ -13,7 +13,6 @@ export async function createStoryFirebase(
     props: Partial<Omit<Story, 'id'>> & Pick<Story, 'name'>
 ): Promise<string> {
 
-    console.log("in createStoryFirebase")
     if (props.name.trim() === '') {
         throw new Error('Story name cannot be empty');
     }
@@ -45,7 +44,6 @@ export async function createStoryFirebase(
             throw new Error("Story with this name already exists; please refresh the page and try again.")
         }
         else {
-            console.log("Making story")
             try {
                 await storyDoc.set({
                     ifid: story.ifid,
@@ -74,18 +72,3 @@ export async function createStoryFirebase(
         throw new Error(error)
     })
 }
-/*
-.then(() => {
-    console.log("Making passage with story")
-    passageDoc.set({
-        id: newPassage.id,
-        left: newPassage.left,
-        name: newPassage.name,
-        story: newPassage.story,
-        tags: newPassage.tags,
-        text: newPassage.text,
-        top: newPassage.top,
-    })
-}).then(() => {
-    return true
-})*/

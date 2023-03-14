@@ -11,10 +11,8 @@ export function renamePassageFB(story: Story, passage: Passage | undefined, grou
             throw new Error("Passage no longer exists!")
         }
         savePassage = doc.data()
-        console.log("Deleting old data for renaming")
         return oldPassageRef.delete()
     }).then(() => {
-        console.log("Inputting new data for renaming")
         passageCollectionRef.doc(newName).set({
             ...savePassage,
             name: newName
