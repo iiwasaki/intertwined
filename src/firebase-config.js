@@ -20,9 +20,10 @@ const fb_configs = {
 }
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(fb_configs, {experimentalForceLongPolling: true,})
+    firebase.initializeApp(fb_configs)
 }
+const db = firebase.firestore()
+const rtdb = firebase.database()
 
-export const db = firebase.firestore()
-export const rtdb = firebase.database()
+export {db, rtdb}
 
