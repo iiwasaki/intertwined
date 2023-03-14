@@ -16,11 +16,11 @@ const fb_configs = {
     storageBucket: process.env.REACT_APP_FB_STORAGEBUCKET,
     messagingSenderId: process.env.REACT_APP_FB_MESSAGESENDERID,
     appId: process.env.REACT_APP_FB_APPID,
-    measurementId: process.env.REACT_APP_FB_MEASUREMENTID,
+   // measurementId: process.env.REACT_APP_FB_MEASUREMENTID,
 }
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(fb_configs)
+    firebase.initializeApp(fb_configs, {experimentalForceLongPolling: true,})
 }
 
 export const db = firebase.firestore()
