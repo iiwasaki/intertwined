@@ -20,6 +20,7 @@ const fb_configs = {
 }
 
 if (!firebase.apps.length) {
+    console.log("Initializing Firebase...")
     firebase.initializeApp(fb_configs)
 }
 const db = firebase.firestore()
