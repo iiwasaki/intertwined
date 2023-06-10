@@ -24,7 +24,8 @@ export const FileChooser: React.FC<FileChooserProps> = props => {
 					onChange={handleChange}
 					orientation="vertical"
 				>
-					{t('dialogs.storyImport.filePrompt')}
+					<p>{t('dialogs.storyImport.filePrompt')}</p>
+					<p>{t('dialogs.storyImport.groupWarning')}</p>
 				</FileInput>
 			</p>
 		</div>

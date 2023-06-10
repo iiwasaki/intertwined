@@ -29,7 +29,6 @@ export function doUpdateTransaction(updater: StorageUpdater) {
 	};
 
 	updater(transaction);
-
 	window.localStorage.setItem('twine-stories', transaction.storyIds);
 	window.localStorage.setItem('twine-passages', transaction.passageIds);
 }
@@ -113,7 +112,6 @@ export function savePassage(transaction: StorageTransaction, passage: Passage, g
 	if (!passage.id) {
 		throw new Error('Passage has no ID');
 	}
-
 	transaction.passageIds = addUnique(transaction.passageIds, passage.id);
 	window.localStorage.setItem(
 		`twine-passages-${passage.id}`,

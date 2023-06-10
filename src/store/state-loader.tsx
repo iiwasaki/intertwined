@@ -97,7 +97,9 @@ export const StateLoader: React.FC = ({children}) => {
 				storiesDispatch({
 					type: 'repair',
 					allFormats: formatsState,
-					defaultFormat: safeFormat
+					defaultFormat: safeFormat,
+					groupName: prefsState.groupName,
+					groupCode: prefsState.groupCode
 				});
 			}
 			setStoriesRepaired(true);
@@ -111,6 +113,8 @@ export const StateLoader: React.FC = ({children}) => {
 		prefsRepaired,
 		prefsState.storyFormat.name,
 		prefsState.storyFormat.version,
+		prefsState.groupName,
+		prefsState.groupCode,
 		stories,
 		storiesDispatch,
 		storiesRepaired

@@ -128,6 +128,8 @@ export interface RepairStoriesAction {
 	type: 'repair';
 	allFormats: StoryFormat[];
 	defaultFormat: StoryFormat;
+	groupName: string;
+	groupCode: string;
 }
 
 export interface CreateStoryAction {

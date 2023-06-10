@@ -202,6 +202,7 @@
 		"storyImport": {
 			"deselectAll": "Deselect All",
 			"filePrompt": "To import stories into Twine, upload either an archive or published story file below.",
+			"groupWarning": "To avoid errors in saving, please ensure your library is connected with a proper Group Name and Group Passcode.",
 			"importDifferentFile": "Import a Different File",
 			"importSelected": "Import Selected Files",
 			"importThisStory": "Import This Story",

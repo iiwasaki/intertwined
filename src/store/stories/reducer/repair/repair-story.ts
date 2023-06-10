@@ -4,6 +4,8 @@ import {Story} from '../../stories.types';
 import {storyDefaults} from '../../defaults';
 import {StoryFormat} from '../../../story-formats';
 import {repairPassage} from './repair-passage';
+/* Firebase addons */
+import { db } from '../../../../firebase-config';
 
 function logRepair(
 	story: Story,
@@ -26,7 +28,9 @@ export function repairStory(
 	story: Story,
 	allStories: Story[],
 	allFormats: StoryFormat[],
-	defaultFormat: StoryFormat
+	defaultFormat: StoryFormat,
+	groupName: string,
+	groupCode: string
 ): Story {
 	const storyDefs = storyDefaults();
 	const repairs: Partial<Story> = {};
@@ -172,6 +176,15 @@ export function repairStory(
 	}
 
 	if (Object.keys(repairs).length > 0) {
+		// Intertwined specific: the stories need to be updated in the database and not just the local state.
+		db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).get().then((doc) => {
+			if (doc.exists) {
+				// Should always be here because the corrupted story would have had to be loaded in from Firebase
+				db.collection("groups").doc(groupName).collection("about").doc(groupCode).collection("stories").doc(story.name).set({
+					...repairs
+				}, {merge: true});
+			}
+		})
 		return {...story, ...repairs};
 	}
 

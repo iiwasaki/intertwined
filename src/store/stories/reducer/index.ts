@@ -40,7 +40,7 @@ export const reducer: React.Reducer<StoriesState, StoriesAction> = (
 			return initState(state, action.state);
 
 		case 'repair':
-			return repairState(state, action.allFormats, action.defaultFormat);
+			return repairState(state, action.allFormats, action.defaultFormat, action.groupName, action.groupCode);
 
 		case 'updatePassage':
 			return updatePassage(
