@@ -1,7 +1,9 @@
 ## Intertwined
 Intertwined is a proof-of-concept extension of Twine ([twinery.org](https://twinery.org)), an open-source tool for telling interactive, nonlinear stories created by Chris Klimas. Twine has had demonstrative success in the classroom as an educational tool, and Intertwined seeks to build upon that success by adding on the ability for multiple authors to collaborate on the same story in real-time across different computers.
 
-You can test out Intertwined by going to [intertwinedapp.com](https://intertwinedapp.com). Please note that the web app is still in active development and data will be deleted from time to time.
+~~You can test out Intertwined by going to [intertwinedapp.com](https://intertwinedapp.com). Please note that the web app is still in active development and data will be deleted from time to time.~~
+
+I could not keep up with paying for the hosting of Intertwined on its own separate web page with how little interaction it was actually getting, so if you are actually interested in it, please either build and try it out yourself (instructions below) or reach out to me at ishiniwasaki@gmail.com and I will re-host it temporarily. 
 
 Intertwined is not affiliated with Twine at all. Please send all correspondence regarding Intertwined to ishiniwasaki@gmail.com; please do not contact Chris or any of the people on the official Twine project, as they will have no idea what you are referring to.
 
